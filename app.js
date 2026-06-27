@@ -57,7 +57,7 @@ const wonM=n=>"₩"+n.toLocaleString("ko-KR")+"만";
 const esc=s=>(s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const avgView=c=>c.vids?Math.round(c.views/c.vids):0;
 
-let S={view:"home",role:null,form:{},_submitted:null,_cameFrom:"apply",cust:null,wf:{step:1,edit:null},myCamps:[]};
+let S={view:"home",role:null,form:{},_submitted:null,_cameFrom:"apply",cust:null,wf:{step:1,edit:null},myCamps:[],activeCamp:null};
 let SEL=new Set(),PROD={},_region="전체",_search="",ADM_ROWS=[],CRED_MSG="";
 
 const CARD="bg-white rounded-[28px] shadow-card";
@@ -80,7 +80,7 @@ function fbCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.sty
 function go(v){S.view=v;render();window.scrollTo(0,0);}
 function goHome(){S.view="home";render();window.scrollTo(0,0);}
 function newApply(){if(S.role==="customer"){S.form={name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:(S.cust&&S.cust.brand)||""};SEL=new Set();PROD={};go("cust-apply");}else{S.form={};SEL=new Set();PROD={};go("apply");}}
-function logout(){S.role=null;S.cust=null;S.wf={step:1,edit:null};go("home");}
+function logout(){S.role=null;S.cust=null;S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];go("home");}
 function render(){
   const v=S.view;let h;
   if(v==="home")h=viewHome();
@@ -201,3 +201,30 @@ function submitApply(){saveForm();const f=S.form;if(!f.name||!f.name.trim()||!f.
   fetch(SUPA_URL+"/rest/v1/knollad_applications",{method:"POST",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify(payload)}).then(r=>{if(!r.ok)console.warn("supabase",r.status);}).catch(e=>console.warn(e));
   if(S.role==="customer"){toast("추가 캠페인 신청이 접수되었습니다");SEL=new Set();PROD={};go("customer-dashboard");}else{go("apply-success");}}
 
+function viewApplySuccess(){const sub=S._submitted;
+const rows=sub&&sub.channels.length?`<div class="mt-5 space-y-2">${sub.channels.map(x=>`<div class="flex items-center gap-3 bg-g50 rounded-[20px] p-3">${logoEl(x.c,"w-10 h-10 text-base")}<div class="flex-1 text-left"><p class="text-[15px] font-bold text-g900">${esc(x.c.name)}</p><p class="text-[13px] text-g400">${x.p==='production'?'제작+발행':'단순발행'}</p></div><p class="text-[15px] font-bold text-g900 num">${wonM(x.p==='production'?x.c.prod:x.c.pub)}</p></div>`).join("")}<div class="flex justify-between items-center pt-3 px-1"><span class="text-[15px] font-bold text-g600">합계 (VAT 별도)</span><span class="text-[19px] font-bold text-blue num">${wonM(sub.total)}</span></div></div>`:"";
+return `<div class="min-h-screen bg-g50 flex items-center justify-center px-6 py-16"><div class="max-w-md w-full fade-up"><div class="${CARD} p-8 text-center">
+<div class="w-16 h-16 rounded-full bg-blue-tint flex items-center justify-center mx-auto mb-6"><i data-lucide="check" class="w-8 h-8 text-blue"></i></div>
+<h1 class="text-[26px] font-bold text-g900 mb-1.5">신청이 접수되었어요</h1><p class="text-[16px] text-g500">${sub?esc(sub.brand)+' 캠페인':'크놀AD 캠페인'} 신청이 정상 접수되었습니다.</p>
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 mt-4"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span><span class="text-[14px] font-bold text-amber-700">검토 대기중</span></div>${rows}
+<div class="mt-7 text-left bg-g50 rounded-[20px] p-4 text-[15px] text-g600 leading-relaxed">승인 완료 시 입력하신 이메일(${sub?esc(sub.email):'이메일'})을 아이디로 계정이 발급되고 비밀번호가 안내됩니다. ‘로그인’에서 로그인 후 진행 상태를 확인하세요.</div>
+<button onclick="goHome()" class="${BTN_GHOST} w-full mt-5">홈으로 돌아가기</button></div></div></div>`;}
+
+/* ===== 로그인 ===== */
+function viewLogin(){return `<div class="min-h-screen bg-g50 flex items-center justify-center px-6"><div class="w-full max-w-sm fade-up">
+<div class="text-center mb-8">${logoMark('w-14 h-14 mx-auto mb-3')}<h1 class="text-[24px] font-bold text-g900">로그인</h1><p class="text-[16px] text-g500 mt-1">승인된 고객 / 관리자 전용</p></div>
+<div class="${CARD} p-7 space-y-4">${field('아이디 (이메일)',`<input id="loginEmail" type="text" placeholder="name@company.com" class="${INPUT}">`)}${field('비밀번호',`<input id="loginPw" type="password" placeholder="발급받은 비밀번호" class="${INPUT}" onkeydown="if(event.key==='Enter')doLogin()">`)}<button onclick="doLogin()" id="loginBtn" class="${BTN} w-full">로그인</button></div>
+<p class="text-center text-[13px] text-g400 mt-4 leading-relaxed">관리자 승인 전에는 로그인할 수 없습니다.<br>승인 후 발급받은 이메일·비밀번호로 로그인하세요.</p><button onclick="goHome()" class="w-full text-center text-[15px] text-g500 hover:text-g800 mt-3">← 홈으로</button></div></div>`;}
+function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";
+  if(e==="admin"){if(pw==="admin123"){S.role="admin";go("admin-dashboard");}else toast("관리자 비밀번호가 올바르지 않습니다");return;}
+  if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");return;}
+  const btn=document.getElementById("loginBtn");if(btn)btn.textContent="확인 중…";
+  fetch(SUPA_URL+`/rest/v1/knollad_applications?account_id=eq.${encodeURIComponent(e)}&account_pw=eq.${encodeURIComponent(pw)}&status=eq.${encodeURIComponent("승인 완료")}&select=brand_name,contact_name&limit=1`,{headers:SH})
+  .then(r=>r.json()).then(rows=>{if(Array.isArray(rows)&&rows.length){S.role="customer";S.cust={email:e,brand:rows[0].brand_name,name:rows[0].contact_name};S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];go("customer-dashboard");}else{if(btn)btn.textContent="로그인";toast("승인된 계정이 아니거나 정보가 일치하지 않습니다");}})
+  .catch(()=>{if(btn)btn.textContent="로그인";toast("로그인 오류. 잠시 후 다시 시도해주세요");});}
+
+/* ===== SHELLS ===== */
+function sidebar(items,cur,badge){return `<aside class="w-56 border-r border-g100 flex flex-col fixed top-0 bottom-0 z-20 bg-white"><div class="px-5 py-5">${brandLogo(true,true)}${badge?`<span class="mt-2 inline-flex px-2 py-0.5 rounded-md bg-blue-tint text-blue text-[11px] font-bold">${badge}</span>`:""}</div><nav class="flex-1 px-3 space-y-1 overflow-y-auto">${items.map(it=>{const a=cur===it.id;return `<button onclick="${it.act||("go('"+it.id+"')")}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold ${a?'bg-blue-tint text-blue':'text-g500 hover:text-g800 hover:bg-g100'}"><i data-lucide="${it.icon}" class="w-[16px] h-[16px]"></i>${it.label}</button>`;}).join("")}</nav><div class="px-3 py-3 border-t border-g100"><button onclick="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="log-out" class="w-[16px] h-[16px]"></i>로그아웃</button></div></aside>`;}
+function customerShell(v){const items=[{id:"customer-dashboard",label:"캠페인 관리",icon:"layout-dashboard"},{id:"cust-channels",label:"채널 리스트",icon:"layers"},{id:"cust-apply",label:"캠페인 추가 신청",icon:"plus-circle",act:"newApply()"},{id:"workflow",label:"워크플로우",icon:"git-branch"},{id:"settlement",label:"정산",icon:"receipt"},{id:"mypage",label:"마이페이지",icon:"user"},{id:"report",label:"리포트",icon:"bar-chart-3"}];
+let b;if(v==="cust-channels")b=custChannels();else if(v==="cust-apply")b=custApply();else if(v==="workflow")b=viewWorkflow();else if(v==="settlement")b=viewSettlement();else if(v==="mypage")b=viewMyPage();else if(v==="report")b=viewReport();else b=viewCustomerDashboard();
+return `<div class="flex min-h-screen bg-g50">${sidebar(items,v)}<main class="flex-1 ml-56 min-h-screen">${b}</main></div>`;}
