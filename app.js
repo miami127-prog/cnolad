@@ -69,7 +69,7 @@ function statusBadge(s){return `<span class="inline-flex items-center px-2.5 py-
 function platBadge(p){return `<span class="text-[11px] px-2 py-0.5 rounded-md font-bold ${PLATFORM_STYLE[p]||'text-g600 bg-g100'}">${p}</span>`;}
 function logoEl(c,cl){return `<div class="${cl} rounded-[20px] bg-blue-tint flex items-center justify-center text-blue font-bold flex-shrink-0 overflow-hidden relative">`+(c.logo?`<img src="${c.logo}" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">`:'')+`<span>${esc(c.name[0])}</span></div>`;}
 function brandLogo(sm,clk){const i=`${logoMark(sm?'w-7 h-7':'w-9 h-9')}<span class="font-bold tracking-tight text-g900 ${sm?'text-[16px]':'text-xl'}">크놀<span class="text-blue">AD</span></span>`;return clk?`<button onclick="goHome()" class="flex items-center gap-2 cursor-pointer">${i}</button>`:`<div class="flex items-center gap-2">${i}</div>`;}
-function field(l,inner){return `<div><label class="block text-[15px] font-bold text-g600 mb-2">${l}</label>${inner}</div>`;}
+function field(l,inner){return `<div><label class="block text-[15px] font-medium text-g900 mb-2">${l}</label>${inner}</div>`;}
 function pageHeader(e,t,sub){return `<div class="mb-8"><p class="text-[15px] font-bold text-blue mb-2">${e}</p><h1 class="text-[32px] font-bold text-g900 leading-tight tracking-tight">${t}</h1>${sub?`<p class="text-[16px] text-g500 mt-2">${sub}</p>`:""}</div>`;}
 function modal(html){document.getElementById("modalRoot").innerHTML=`<div class="fixed inset-0 z-[300] bg-black/40 grid place-items-center p-5 fade-up" onclick="if(event.target===this)closeModal()"><div class="${CARD} p-7 max-w-md w-full shadow-pop">${html}</div></div>`;if(window.lucide)lucide.createIcons();}
 function closeModal(){document.getElementById("modalRoot").innerHTML="";}
@@ -136,21 +136,21 @@ function applyFields(){return `<div class="space-y-4">
 <div class="grid grid-cols-2 gap-3">${field('담당자명 <span class="text-blue">*</span>',`<input id="f_name" value="${fv('name')}" placeholder="홍길동" class="${INPUT}">`)}${field('이메일 <span class="text-blue">*</span>',`<input id="f_email" value="${fv('email')}" type="email" placeholder="name@company.com" class="${INPUT}">`)}</div>
 <div class="grid grid-cols-2 gap-3">${field('연락처 <span class="text-blue">*</span>',`<input id="f_phone" value="${fv('phone')}" placeholder="010-0000-0000" class="${INPUT}">`)}${field('브랜드 / 회사명 <span class="text-blue">*</span>',`<input id="f_brand" value="${fv('brand')}" placeholder="브랜드 / 회사명" class="${INPUT}">`)}</div>
 <div class="grid grid-cols-2 gap-3">${field('업로드 희망일',`<input id="f_date" value="${fv('date')}" type="date" class="${INPUT}">`)}${field('제품 링크',`<input id="f_link" value="${fv('link')}" placeholder="https://" class="${INPUT}">`)}</div>
-<div class="pt-1"><label class="block text-[15px] font-bold text-g600 mb-2">희망 채널 선택</label>${chSelectBtn()}<div id="selBox" class="${SEL.size?'mt-3':''}">${SEL.size?selectedSummary():''}</div></div>
+<div class="pt-1"><label class="block text-[15px] font-medium text-g900 mb-2">희망 채널 선택</label>${chSelectBtn()}<div id="selBox" class="${SEL.size?'mt-3':''}">${SEL.size?selectedSummary():''}</div></div>
 ${field('활용 소재',`<input id="f_material" value="${fv('material')}" placeholder="영상, 이미지, 직접 제작 등" class="${INPUT}">`)}
 ${field('광고 고지 방식',`<select id="f_ad" class="${INPUT}"><option ${S.form.ad==='광고표기 희망'?'selected':''}>광고표기 희망</option><option ${S.form.ad==='광고 미표기 희망'?'selected':''}>광고 미표기 희망</option><option ${S.form.ad==='별도 협의'?'selected':''}>별도 협의</option></select>`)}
 ${field('희망 영상 컨셉',`<textarea id="f_concept" rows="2" placeholder="분위기, 스타일, 레퍼런스 등을 자유롭게 적어주세요." class="${INPUT} resize-none">${fv('concept')}</textarea>`)}
 ${field('요청사항',`<textarea id="f_note" rows="2" placeholder="기타 요청사항" class="${INPUT} resize-none">${fv('note')}</textarea>`)}
-<div class="pt-2 border-t border-g100 mt-2"><p class="text-[15px] font-bold text-g700 mb-2.5 mt-3">필수 동의 항목</p>
-<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree1" ${S.form.agree1?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g700 flex-1">이용약관 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('terms')" class="text-[14px] text-g500 underline">내용 보기</button></label>
-<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree2" ${S.form.agree2?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g700 flex-1">개인정보 수집 및 이용 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('privacy')" class="text-[14px] text-g500 underline">내용 보기</button></label></div>
+<div class="pt-2 border-t border-g100 mt-2"><p class="text-[15px] font-medium text-g900 mb-2.5 mt-3">필수 동의 항목</p>
+<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree1" ${S.form.agree1?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">이용약관 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('terms')" class="text-[14px] text-g500 underline">내용 보기</button></label>
+<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree2" ${S.form.agree2?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">개인정보 수집 및 이용 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('privacy')" class="text-[14px] text-g500 underline">내용 보기</button></label></div>
 </div>`;}
-const NOTICE=`<div class="bg-blue-soft rounded-[20px] p-4 text-[15px] text-g700 leading-relaxed mb-6">캠페인 신청서를 제출하시면 내부 검토 후 승인 절차가 진행됩니다.<br>승인이 완료되면 고객 계정이 자동 생성되며, 로그인 정보가 이메일로 자동 발송됩니다.<br>이후 고객 전용 대시보드에서 캠페인 진행 현황, 자료 업로드, 컨펌 요청, 업로드 일정 및 리포트 현황을 실시간으로 확인하실 수 있습니다.</div>`;
+const NOTICE=`<div class="bg-blue-soft rounded-[20px] p-4 text-[15px] text-g800 leading-relaxed mb-6">캠페인 신청서를 제출하시면 내부 검토 후 승인 절차가 진행됩니다.<br>승인이 완료되면 고객 계정이 자동 생성되며, 로그인 정보가 이메일로 자동 발송됩니다.<br>이후 고객 전용 대시보드에서 캠페인 진행 현황, 자료 업로드, 컨펌 요청, 업로드 일정 및 리포트 현황을 실시간으로 확인하실 수 있습니다.</div>`;
 function viewApply(){
 return `<div class="min-h-screen">${topbar()}
 <div class="max-w-2xl mx-auto px-5 py-8 fade-up">
 <div class="${CARD} overflow-hidden">
-<div class="px-6 md:px-8 py-5 border-b border-g100 flex items-center gap-3">${logoMark('w-11 h-11')}<div><p class="text-[18px] font-bold text-g900">크놀AD 캠페인 신청서</p><p class="text-[14px] text-g500">에이치알컴퍼니(주) 직접 검토 · 승인</p></div></div>
+<div class="px-6 md:px-8 py-5 border-b border-g100 flex items-center gap-3">${logoMark('w-11 h-11')}<div><p class="text-[18px] font-bold text-g900">크놀AD 캠페인 신청서</p><p class="text-[14px] text-g600">에이치알컴퍼니(주) 직접 검토 · 승인</p></div></div>
 <div class="px-6 md:px-8 py-7">${NOTICE}${applyFields()}<button onclick="submitApply()" class="${BTN} w-full py-4 mt-6">캠페인 신청하기</button></div></div>
 </div>${siteFooter()}</div>`;}
 
