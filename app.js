@@ -61,7 +61,7 @@ let S={view:"home",role:null,form:{},_submitted:null,_cameFrom:"apply",cust:null
 let SEL=new Set(),PROD={},_region="전체",_search="",ADM_ROWS=[],CRED_MSG="";
 
 const CARD="bg-white rounded-[28px] shadow-card";
-const INPUT="w-full px-5 py-4 rounded-[20px] text-[17px] bg-g100 border border-transparent text-g900 placeholder:text-g400 focus:outline-none focus:bg-white focus:border-blue/30 shadow-[inset_0_1px_2px_rgba(17,24,39,0.05)] focus:shadow-[0_0_0_4px_rgba(49,130,246,0.13)] transition-all";
+const INPUT="w-full px-5 py-4 rounded-[20px] text-[17px] bg-g100 border border-transparent text-g900 placeholder:text-g500 focus:outline-none focus:bg-white focus:border-blue/30 shadow-[inset_0_1px_2px_rgba(17,24,39,0.05)] focus:shadow-[0_0_0_4px_rgba(49,130,246,0.13)] transition-all";
 const BTN="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-[20px] bg-gradient-to-b from-blue to-blue-dark text-white font-bold text-[17px] shadow-[0_8px_20px_rgba(49,130,246,0.33),inset_0_1px_0_rgba(255,255,255,0.3)] hover:brightness-[1.05] active:scale-[0.97] transition-all";
 const BTN_GHOST="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-[20px] bg-white text-g700 font-bold text-[17px] shadow-[0_3px_10px_rgba(17,24,39,0.09)] hover:bg-g50 active:scale-[0.97] transition-all";
 function logoMark(cls){return `<span class="${cls} inline-block flex-shrink-0"><svg viewBox="0 0 100 100" class="w-full h-full"><defs><clipPath id="kc"><path fill-rule="evenodd" d="M50 3a47 47 0 1 0 0 94a47 47 0 1 0 0-94M50 23a27 27 0 1 0 0 54a27 27 0 1 0 0-54"/></clipPath></defs><g clip-path="url(#kc)"><path fill="#2F80ED" d="M50 50 172.6 152.9-88.6 130Z"/><path fill="#EC3D8B" d="M50 50-88.6 130-88.6-30Z"/><path fill="#F2342F" d="M50 50-88.6-30 104.7-100.4Z"/><path fill="#FBB016" d="M50 50 104.7-100.4 172.6-52.9Z"/></g></svg></span>`;}
@@ -118,13 +118,13 @@ return `<div class="min-h-screen bg-white">${topbar()}
 <div class="mt-10 flex items-center justify-center gap-3 flex-wrap"><button onclick="newApply()" class="${BTN} px-9 text-[18px]">캠페인 신청하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>${isCust?`<button onclick="go('customer-dashboard')" class="${BTN_GHOST} px-8">캠페인 관리</button>`:''}</div>
 </div></section>
 <section class="px-6 pb-28"><div class="max-w-5xl mx-auto fade-up">
-<div class="rounded-[30px] p-[1.5px] bg-gradient-to-br from-blue/40 via-g100 to-pink-300/30 shadow-card">
-<div class="bg-white rounded-[28px] grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-g100 overflow-hidden">
-${[["49","개","자체 숏폼 채널"],["700","만+","전체 구독자"],["30","억+","월 자체 조회수"]].map(st=>`<div class="py-16 px-6 text-center"><div class="font-display font-bold text-g900 num leading-none tracking-tight"><span class="text-[60px] md:text-[88px] ctr" data-to="${st[0]}">0</span><span class="text-[30px] md:text-[44px] text-blue ml-1">${st[1]}</span></div><div class="text-[16px] text-g500 font-bold mt-6 tracking-wide">${st[2]}</div></div>`).join("")}
-<div class="py-16 px-6 text-center flex flex-col justify-center items-center"><div class="text-[31px] md:text-[36px] font-bold text-g900 leading-tight tracking-tight">기획·제작<br>업로드·리포트</div><div class="inline-flex items-center gap-1.5 mt-5 px-5 py-2 rounded-full bg-blue text-white text-[17px] font-bold shadow-[0_6px_16px_rgba(49,130,246,0.3)]">직접 실행</div></div>
+<div class="relative overflow-hidden rounded-[30px] shadow-[0_30px_80px_rgba(10,16,40,0.45)]" style="background:radial-gradient(circle at 12% 0%,rgba(49,130,246,0.45),transparent 42%),radial-gradient(circle at 92% 105%,rgba(124,58,237,0.4),transparent 46%),linear-gradient(135deg,#0b1228,#0a1024 55%,#080d1c)">
+<div class="absolute inset-0 opacity-[0.13] pointer-events-none" style="background-image:linear-gradient(rgba(255,255,255,0.7) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.7) 1px,transparent 1px);background-size:46px 46px"></div>
+<div class="relative grid grid-cols-1 sm:grid-cols-3 gap-y-12 py-20 px-6">
+${[["70","억+","회원 월간 조회수"],["3500","만+","회원 구독자"],["180","+","파트너 채널"]].map(st=>`<div class="text-center"><div class="font-display font-bold num leading-none tracking-tight"><span class="text-[58px] md:text-[80px] text-white ctr" data-to="${st[0]}">0</span><span class="text-[30px] md:text-[42px] text-[#5b9bff] ml-1">${st[1]}</span></div><div class="text-[16px] text-[#8a96b3] font-medium mt-5 tracking-wide">${st[2]}</div></div>`).join("")}
 </div></div>
 </div></section>${siteFooter()}</div>`;}
-function initCounters(){document.querySelectorAll(".ctr").forEach(el=>{const to=+el.dataset.to,t0=performance.now(),dur=1500;const tick=now=>{const p=Math.min((now-t0)/dur,1);el.textContent=Math.round((1-Math.pow(1-p,4))*to);if(p<1)requestAnimationFrame(tick);};requestAnimationFrame(tick);});}
+function initCounters(){document.querySelectorAll(".ctr").forEach(el=>{const to=+el.dataset.to,t0=performance.now(),dur=1500;const tick=now=>{const p=Math.min((now-t0)/dur,1);el.textContent=Math.round((1-Math.pow(1-p,4))*to).toLocaleString();if(p<1)requestAnimationFrame(tick);};requestAnimationFrame(tick);});}
 
 /* ===== 신청폼 ===== */
 function gv(id){const e=document.getElementById(id);return e?e.value:"";}
@@ -182,7 +182,7 @@ function channelTableBlock(){const l=filteredCH();
 return `<div class="bg-blue-soft rounded-2xl px-4 py-3 text-[14px] text-g700 mb-4 flex items-start gap-2"><i data-lucide="info" class="w-4 h-4 text-blue mt-0.5 flex-shrink-0"></i>인스타그램 또는 틱톡 계정을 운영하지 않는 채널의 경우, 다른 보유 채널을 통해 콘텐츠가 랜덤으로 업로드됩니다.</div>
 <div class="flex items-center gap-3 mb-4 flex-wrap">
 <div class="flex gap-2" id="pickChips">${["전체","국내","일본","미국"].map(r=>`<button onclick="setRegion('${r}')" class="px-4 py-2 rounded-2xl text-[14px] font-bold transition-all ${_region===r?'bg-blue text-white':'bg-white border border-g200 text-g600 hover:bg-g100'}">${r}</button>`).join("")}</div>
-<div class="relative flex-1 min-w-[200px] max-w-sm"><i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-g400"></i><input oninput="onSearch(this.value)" value="${esc(_search)}" class="w-full pl-11 pr-4 py-2.5 rounded-2xl text-[15px] bg-white border border-g200 focus:outline-none focus:border-blue/40" placeholder="채널명 검색"></div>
+<div class="relative flex-1 min-w-[200px] max-w-sm"><i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-g400"></i><input oninput="onSearch(this.value)" value="${esc(_search)}" class="w-full pl-11 pr-4 py-2.5 rounded-2xl text-[15px] bg-white border border-g200 placeholder:text-g500 focus:outline-none focus:border-blue/40" placeholder="채널명 검색"></div>
 <span class="ml-auto text-[14px] text-g400 font-medium" id="pickCount">${l.length}개 채널</span></div>
 <div class="${CARD} overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left min-w-[1060px]">
 <thead><tr class="border-b border-g200 bg-g50">${["NO","채널명","플랫폼","구독자 / 팔로워","총 조회수","지역","제작+발행","단순발행","선택"].map(h=>`<th class="px-4 py-3 text-[13px] font-bold text-g500 whitespace-nowrap">${h}</th>`).join("")}</tr></thead>
@@ -255,3 +255,4 @@ const WF=[
 function wfOf(c){return (c&&c.wf)?c.wf:{step:(c&&c.status==="승인 완료")?2:1};}
 function activeWf(){return wfOf(S.activeCamp);}
 function loadMyCamps(){if(!S.cust)return;fetch(SUPA_URL+"/rest/v1/knollad_applications?email=eq."+encodeURIComponent(S.cust.email)+"&order=created_at.desc&select=*",{headers:SH}).then(r=>r.json()).then(rows=>{S.myCamps=Array.isArray(rows)?rows:[];if((!S.activeCamp)&&S.myCamps.length){S.activeCamp=S.myCamps.find(a=>a.status==="승인 완료")||S.myCamps[0];}else if(S.activeCamp){const f=S.myCamps.find(a=>String(a.id)===String(S.activeCamp.id));if(f)S.activeCamp=f;}renderMyCamps();}).catch(()=>{});}
+function setActiveCamp(id){const a=(S.myCamps||[]).find(x=>String(x.id)===String(id));if(a){S.activeCamp=a;toast(a.brand_name+" 캠페인 선택됨");render();}}
