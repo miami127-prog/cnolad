@@ -83,21 +83,23 @@ function newApply(){if(S.role==="customer"){S.form={name:(S.cust&&S.cust.name)||
 function logout(){S.role=null;S.cust=null;S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];go("home");}
 function render(){
   const v=S.view;let h;
-  if(v==="home")h=viewHome();
+  if(v==="home"){
+    if(S.role==="customer")h=viewHome();
+    else if(S.role==="admin"){S.view="admin-dashboard";h=adminShell("admin-dashboard");}
+    else h=viewApply();
+  }
   else if(v==="apply")h=viewApply();
   else if(v==="channel-picker")h=viewPicker();
   else if(v==="apply-success")h=viewApplySuccess();
   else if(v==="login")h=viewLogin();
   else if(S.role==="customer")h=customerShell(v);
   else if(S.role==="admin")h=adminShell(v);
-  else h=viewHome();
+  else h=viewApply();
   document.getElementById("root").innerHTML=h;
   if(window.lucide)lucide.createIcons();
-  if(v==="home")initCounters();
+  if(S.view==="home"&&S.role==="customer")initCounters();
   if(v==="home"||v==="channel-picker"||v==="cust-channels"||v==="admin-channels")maybeLiveRefresh();
 }
-
-/* ===== HOME ===== */
 function topbar(){const lnk="text-[15px] font-bold text-g600 hover:text-g900 px-3 py-2 rounded-2xl hover:bg-g100";const sol="text-[15px] font-bold px-4 py-2.5 rounded-2xl bg-g100 text-g800 hover:bg-g200";let nav;
 if(S.role==="customer")nav=`<button onclick="newApply()" class="${lnk}">캠페인 신청하기</button><button onclick="go('customer-dashboard')" class="${lnk}">캠페인 관리</button><button onclick="go('mypage')" class="${lnk}">마이페이지</button><button onclick="logout()" class="${sol}">로그아웃</button>`;
 else if(S.role==="admin")nav=`<button onclick="go('admin-dashboard')" class="${lnk}">관리자 화면</button><button onclick="logout()" class="${sol}">로그아웃</button>`;
@@ -106,18 +108,21 @@ return `<header class="bg-white/85 backdrop-blur-xl border-b border-g100 sticky 
 function siteFooter(){return `<footer class="border-t border-g100 bg-white"><div class="max-w-5xl mx-auto px-6 py-10"><div class="flex items-center gap-2 mb-4">${logoMark('w-7 h-7')}<span class="font-bold text-g800">크놀AD</span></div>
 <p class="text-[14px] text-g500 leading-relaxed">© 2024 크놀애드 (에이치알컴퍼니 주식회사). All rights reserved.<br>사업자등록번호: 577-86-02157 · 본사: 대전 유성구 3-1 대전정보문화산업진흥원 3층 306호</p>
 <div class="flex items-center gap-3 mt-4 text-[14px] text-g500"><button onclick="openLegal('terms')" class="hover:text-g900 font-medium">이용약관</button><span class="text-g300">·</span><button onclick="openLegal('privacy')" class="hover:text-g900 font-medium">개인정보처리방침</button><span class="text-g300">·</span><button onclick="openLegal('cookie')" class="hover:text-g900 font-medium">쿠키정책</button></div></div></footer>`;}
-function viewHome(){
+function viewHome(){const isCust=S.role==="customer";
 return `<div class="min-h-screen bg-white">${topbar()}
-<section class="px-6 pt-16 pb-12 text-center"><div class="max-w-3xl mx-auto fade-up">
-<div class="flex items-center justify-center mb-2 mt-2">${logoMark('w-20 h-20 md:w-24 md:h-24')}</div>
-<h1 class="font-display text-[60px] md:text-[84px] font-bold tracking-tight text-g900 leading-[1]">크놀<span class="text-blue">AD</span></h1>
-<h2 class="text-[28px] md:text-[36px] font-bold text-g900 mt-5 tracking-tight">광고대행사가 아닙니다.</h2>
-<p class="text-[19px] md:text-[22px] text-g700 font-medium mt-3">자체 채널로 직접 실행하는 콘텐츠 광고 플랫폼입니다.</p>
-<div class="mt-9 flex items-center justify-center gap-3 flex-wrap"><button onclick="go('apply')" class="${BTN} px-9 text-[18px]">캠페인 신청하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button><button onclick="go('login')" class="${BTN_GHOST} px-8">로그인</button></div>
+<section class="px-6 pt-20 pb-14 text-center"><div class="max-w-3xl mx-auto fade-up">
+<div class="flex items-center justify-center mb-3">${logoMark('w-20 h-20 md:w-24 md:h-24')}</div>
+<h1 class="font-display text-[64px] md:text-[92px] font-bold tracking-tight text-g900 leading-[0.95]">크놀<span class="text-blue">AD</span></h1>
+<h2 class="text-[30px] md:text-[40px] font-bold text-g900 mt-6 tracking-tight">광고대행사가 아닙니다.</h2>
+<p class="text-[19px] md:text-[23px] text-g600 font-medium mt-4">자체 채널로 직접 실행하는 콘텐츠 광고 플랫폼입니다.</p>
+<div class="mt-10 flex items-center justify-center gap-3 flex-wrap"><button onclick="newApply()" class="${BTN} px-9 text-[18px]">캠페인 신청하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>${isCust?`<button onclick="go('customer-dashboard')" class="${BTN_GHOST} px-8">캠페인 관리</button>`:''}</div>
 </div></section>
-<section class="px-6 pb-24"><div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-${[["49","개","자체 숏폼 채널"],["700","만+","전체 구독자"],["30","억+","월 자체 조회수"]].map(s=>`<div class="${CARD} py-12 px-5 text-center hover:-translate-y-1.5 transition-transform duration-200"><div class="font-display font-bold text-g900 num leading-none tracking-tight"><span class="text-[52px] md:text-[72px] ctr" data-to="${s[0]}">0</span><span class="text-[28px] md:text-[38px] text-blue ml-0.5">${s[1]}</span></div><div class="text-[16px] text-g500 font-medium mt-4">${s[2]}</div></div>`).join("")}
-<div class="${CARD} py-12 px-5 text-center flex flex-col justify-center hover:-translate-y-1.5 transition-transform duration-200"><div class="text-[27px] md:text-[31px] font-bold text-g900 leading-tight">기획·제작<br>업로드·리포트</div><div class="text-[18px] font-bold text-blue mt-3">직접 실행</div></div>
+<section class="px-6 pb-28"><div class="max-w-5xl mx-auto fade-up">
+<div class="rounded-[30px] p-[1.5px] bg-gradient-to-br from-blue/40 via-g100 to-pink-300/30 shadow-card">
+<div class="bg-white rounded-[28px] grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-g100 overflow-hidden">
+${[["49","개","자체 숏폼 채널"],["700","만+","전체 구독자"],["30","억+","월 자체 조회수"]].map(st=>`<div class="py-16 px-6 text-center"><div class="font-display font-bold text-g900 num leading-none tracking-tight"><span class="text-[60px] md:text-[88px] ctr" data-to="${st[0]}">0</span><span class="text-[30px] md:text-[44px] text-blue ml-1">${st[1]}</span></div><div class="text-[16px] text-g500 font-bold mt-6 tracking-wide">${st[2]}</div></div>`).join("")}
+<div class="py-16 px-6 text-center flex flex-col justify-center items-center"><div class="text-[31px] md:text-[36px] font-bold text-g900 leading-tight tracking-tight">기획·제작<br>업로드·리포트</div><div class="inline-flex items-center gap-1.5 mt-5 px-5 py-2 rounded-full bg-blue text-white text-[17px] font-bold shadow-[0_6px_16px_rgba(49,130,246,0.3)]">직접 실행</div></div>
+</div></div>
 </div></section>${siteFooter()}</div>`;}
 function initCounters(){document.querySelectorAll(".ctr").forEach(el=>{const to=+el.dataset.to,t0=performance.now(),dur=1500;const tick=now=>{const p=Math.min((now-t0)/dur,1);el.textContent=Math.round((1-Math.pow(1-p,4))*to);if(p<1)requestAnimationFrame(tick);};requestAnimationFrame(tick);});}
 
@@ -159,24 +164,28 @@ function selectedSummary(){
 /* ===== 채널 테이블 ===== */
 function filteredCH(){const m={"국내":"KR","일본":"JP","미국":"US"};return CH.filter(c=>(_region==="전체"||c.region===m[_region])&&(c.name.includes(_search)||(c.read&&c.read.includes(_search))));}
 function selTotal(){let t=0;SEL.forEach(id=>{const c=CH.find(x=>x.id===id);t+=(PROD[id]==="publish")?c.pub:c.prod;});return t;}
-function pickRow(c,i){const sel=SEL.has(c.id);const subs=[["YouTube",fmtSub(c.yt)]];if(c.ig)subs.push(["Instagram",c.ig]);if(c.tt)subs.push(["TikTok",c.tt]);
+function pickRow(c,i){const sel=SEL.has(c.id);
+const subs=[`<div class="flex items-center justify-between gap-3"><span class="inline-flex items-center gap-1.5 text-[12px] text-g500"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>YouTube</span><span class="font-bold text-g900 num text-[14px]">${fmtSub(c.yt)}</span></div>`];
+if(c.ig)subs.push(`<div class="flex items-center justify-between gap-3"><span class="inline-flex items-center gap-1.5 text-[12px] text-g400"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Instagram</span><span class="font-bold text-g600 num text-[13px]">${c.ig}</span></div>`);
+if(c.tt)subs.push(`<div class="flex items-center justify-between gap-3"><span class="inline-flex items-center gap-1.5 text-[12px] text-g400"><span class="w-1.5 h-1.5 rounded-full bg-g800"></span>TikTok</span><span class="font-bold text-g600 num text-[13px]">${c.tt}</span></div>`);
 return `<tr class="border-b border-g100 last:border-0 cursor-pointer ${sel?'bg-blue-soft':'hover:bg-g50'}" onclick="togglePick('${c.id}')">
-<td class="px-4 py-4 text-[14px] text-g400 num align-middle">${String(i+1).padStart(2,"0")}</td>
-<td class="px-4 py-4 align-middle"><div class="flex items-center gap-3">${logoEl(c,"w-12 h-12 text-base")}<div class="min-w-0"><div class="flex items-center gap-1"><p class="font-bold text-g900 truncate text-[16px]">${esc(c.name)}</p>${c.featured?'<span class="text-blue text-xs">★</span>':''}${c.isNew?'<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded">NEW</span>':''}</div>${c.read?`<p class="text-[13px] text-g400 truncate">${esc(c.read)}</p>`:''}<a href="https://www.youtube.com/@${encodeURIComponent(c.handle)}" target="_blank" rel="noreferrer" onclick="event.stopPropagation()" class="text-[13px] text-blue font-bold">링크 ↗</a></div></div></td>
+<td class="px-4 py-4 text-[14px] text-g300 num align-middle font-bold">${String(i+1).padStart(2,"0")}</td>
+<td class="px-4 py-4 align-middle"><div class="flex items-center gap-3">${logoEl(c,"w-12 h-12 text-base")}<div class="min-w-0"><div class="flex items-center gap-1.5"><p class="font-bold text-g900 truncate text-[16px]">${esc(c.name)}</p>${c.featured?'<span class="text-blue text-xs">★</span>':''}${c.isNew?'<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded">NEW</span>':''}</div>${c.read?`<p class="text-[13px] text-g400 truncate">${esc(c.read)}</p>`:''}<a href="https://www.youtube.com/@${encodeURIComponent(c.handle)}" target="_blank" rel="noreferrer" onclick="event.stopPropagation()" class="text-[12px] text-blue font-bold inline-flex items-center gap-0.5">채널 보기 ↗</a></div></div></td>
 <td class="px-4 py-4 align-middle"><div class="flex gap-1 flex-wrap">${c.plat.map(platBadge).join("")}</div></td>
-<td class="px-4 py-4 align-middle"><div class="space-y-0.5 min-w-[120px]">${subs.map(s=>`<div class="flex justify-between gap-3 text-[13px]"><span class="text-g400">${s[0]}</span><span class="font-bold text-g800 num">${s[1]}</span></div>`).join("")}</div></td>
+<td class="px-4 py-4 align-middle"><div class="space-y-1.5 min-w-[150px]">${subs.join("")}</div></td>
+<td class="px-4 py-4 align-middle"><p class="text-[17px] font-bold text-g900 num leading-none">${fmtView(c.views)}</p><p class="text-[11px] text-g400 mt-1">총 조회수</p></td>
 <td class="px-4 py-4 align-middle"><span class="text-[13px] font-bold text-g500 bg-g100 px-2 py-1 rounded-lg">${REGION_LABEL[c.region]}</span></td>
 <td class="px-4 py-4 align-middle"><p class="text-[16px] font-bold text-blue num">${c.prod}만 원</p><p class="text-[11px] text-g400">VAT 별도</p></td>
 <td class="px-4 py-4 align-middle"><p class="text-[16px] font-bold text-g900 num">${c.pub}만 원</p><p class="text-[11px] text-g400">VAT 별도</p></td>
 <td class="px-4 py-4 align-middle text-center"><div class="cbx w-6 h-6 rounded-full grid place-items-center mx-auto ${sel?'bg-blue':'border-2 border-g300 bg-white'}">${sel?'<i data-lucide="check" class="w-3.5 h-3.5 text-white pop"></i>':''}</div></td></tr>`;}
 function channelTableBlock(){const l=filteredCH();
-return `<div class="bg-blue-soft rounded-2xl px-4 py-3 text-[14px] text-g700 mb-4 flex items-start gap-2"><i data-lucide="info" class="w-4 h-4 text-blue mt-0.5 flex-shrink-0"></i>인스타그램 또는 틱톡 계정을 운영하지 않는 채널의 경우, 협의된 다른 보유 채널을 통해 콘텐츠 업로드가 가능합니다.</div>
+return `<div class="bg-blue-soft rounded-2xl px-4 py-3 text-[14px] text-g700 mb-4 flex items-start gap-2"><i data-lucide="info" class="w-4 h-4 text-blue mt-0.5 flex-shrink-0"></i>인스타그램 또는 틱톡 계정을 운영하지 않는 채널의 경우, 다른 보유 채널을 통해 콘텐츠가 랜덤으로 업로드됩니다.</div>
 <div class="flex items-center gap-3 mb-4 flex-wrap">
 <div class="flex gap-2" id="pickChips">${["전체","국내","일본","미국"].map(r=>`<button onclick="setRegion('${r}')" class="px-4 py-2 rounded-2xl text-[14px] font-bold transition-all ${_region===r?'bg-blue text-white':'bg-white border border-g200 text-g600 hover:bg-g100'}">${r}</button>`).join("")}</div>
 <div class="relative flex-1 min-w-[200px] max-w-sm"><i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-g400"></i><input oninput="onSearch(this.value)" value="${esc(_search)}" class="w-full pl-11 pr-4 py-2.5 rounded-2xl text-[15px] bg-white border border-g200 focus:outline-none focus:border-blue/40" placeholder="채널명 검색"></div>
 <span class="ml-auto text-[14px] text-g400 font-medium" id="pickCount">${l.length}개 채널</span></div>
-<div class="${CARD} overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left min-w-[900px]">
-<thead><tr class="border-b border-g200 bg-g50">${["NO","채널명","플랫폼","구독자 / 팔로워","지역","제작+발행","단순발행","선택"].map(h=>`<th class="px-4 py-3 text-[13px] font-bold text-g500 whitespace-nowrap">${h}</th>`).join("")}</tr></thead>
+<div class="${CARD} overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left min-w-[1060px]">
+<thead><tr class="border-b border-g200 bg-g50">${["NO","채널명","플랫폼","구독자 / 팔로워","총 조회수","지역","제작+발행","단순발행","선택"].map(h=>`<th class="px-4 py-3 text-[13px] font-bold text-g500 whitespace-nowrap">${h}</th>`).join("")}</tr></thead>
 <tbody id="pickRows">${l.map(pickRow).join("")}</tbody></table></div></div>`;}
 function viewPicker(){
 return `<div class="min-h-screen bg-g50 pb-12">
@@ -225,6 +234,24 @@ function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=
 
 /* ===== SHELLS ===== */
 function sidebar(items,cur,badge){return `<aside class="w-56 border-r border-g100 flex flex-col fixed top-0 bottom-0 z-20 bg-white"><div class="px-5 py-5">${brandLogo(true,true)}${badge?`<span class="mt-2 inline-flex px-2 py-0.5 rounded-md bg-blue-tint text-blue text-[11px] font-bold">${badge}</span>`:""}</div><nav class="flex-1 px-3 space-y-1 overflow-y-auto">${items.map(it=>{const a=cur===it.id;return `<button onclick="${it.act||("go('"+it.id+"')")}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold ${a?'bg-blue-tint text-blue':'text-g500 hover:text-g800 hover:bg-g100'}"><i data-lucide="${it.icon}" class="w-[16px] h-[16px]"></i>${it.label}</button>`;}).join("")}</nav><div class="px-3 py-3 border-t border-g100"><button onclick="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="log-out" class="w-[16px] h-[16px]"></i>로그아웃</button></div></aside>`;}
-function customerShell(v){const items=[{id:"customer-dashboard",label:"캠페인 관리",icon:"layout-dashboard"},{id:"cust-channels",label:"채널 리스트",icon:"layers"},{id:"cust-apply",label:"캠페인 추가 신청",icon:"plus-circle",act:"newApply()"},{id:"workflow",label:"워크플로우",icon:"git-branch"},{id:"settlement",label:"정산",icon:"receipt"},{id:"mypage",label:"마이페이지",icon:"user"},{id:"report",label:"리포트",icon:"bar-chart-3"}];
-let b;if(v==="cust-channels")b=custChannels();else if(v==="cust-apply")b=custApply();else if(v==="workflow")b=viewWorkflow();else if(v==="settlement")b=viewSettlement();else if(v==="mypage")b=viewMyPage();else if(v==="report")b=viewReport();else b=viewCustomerDashboard();
+function customerShell(v){const items=[{id:"customer-dashboard",label:"캠페인 관리",icon:"layout-dashboard"},{id:"cust-channels",label:"채널 리스트",icon:"layers"},{id:"cust-apply",label:"캠페인 추가 신청",icon:"plus-circle",act:"newApply()"},{id:"workflow",label:"워크플로우",icon:"git-branch"},{id:"calendar",label:"캠페인 일정",icon:"calendar"},{id:"settlement",label:"정산",icon:"receipt"},{id:"report",label:"리포트",icon:"bar-chart-3"},{id:"mypage",label:"마이페이지",icon:"user"}];
+let b;if(v==="cust-channels")b=custChannels();else if(v==="cust-apply")b=custApply();else if(v==="workflow")b=viewWorkflow();else if(v==="calendar")b=viewCalendar();else if(v==="settlement")b=viewSettlement();else if(v==="mypage")b=viewMyPage();else if(v==="report")b=viewReport();else b=viewCustomerDashboard();
 return `<div class="flex min-h-screen bg-g50">${sidebar(items,v)}<main class="flex-1 ml-56 min-h-screen">${b}</main></div>`;}
+function adminShell(v){const items=[{id:"admin-dashboard",label:"캠페인 관리",icon:"clipboard-list"},{id:"admin-members",label:"회원DB",icon:"users"},{id:"admin-channels",label:"채널 DB",icon:"layers"}];let b=v==="admin-members"?viewAdminMembers():v==="admin-channels"?viewAdminChannels():viewAdminList();return `<div class="flex min-h-screen bg-g50">${sidebar(items,v,"관리자")}<main class="flex-1 ml-56 min-h-screen">${b}</main></div>`;}
+
+/* ===== CUSTOMER ===== */
+function custChannels(){return `<div class="p-8 md:p-10">
+<div class="flex items-center justify-between mb-6 flex-wrap gap-3"><div><p class="text-[15px] font-bold text-blue mb-2">CHANNELS</p><h1 class="text-[32px] font-bold text-g900 tracking-tight">채널 리스트</h1><p class="text-[16px] text-g500 mt-2">원하는 채널을 체크하면 ‘캠페인 추가 신청’에 반영됩니다</p></div><button onclick="go('cust-apply')" class="${BTN} px-6">선택 완료 <span id="selCnt">${SEL.size}</span> →</button></div>
+${channelTableBlock()}</div>`;}
+function custApply(){return `<div class="p-8 md:p-10"><div class="max-w-2xl">${pageHeader("CAMPAIGN","캠페인 추가 신청","새 캠페인을 신청하면 동일하게 검토 후 진행됩니다")}
+<div class="${CARD} p-6 md:p-8">${NOTICE}${applyFields()}<button onclick="submitApply()" class="${BTN} w-full py-4 mt-6">추가 캠페인 신청하기</button></div></div></div>`;}
+const WF=[
+{t:"문의 접수 및 상담",d:"단가·일정 안내 및 채널·제작 방향 협의",who:"완료"},
+{t:"자료 공유",d:"소재·가이드·레퍼런스 전달 (고객 → 크놀AD)",who:"고객",act:"data"},
+{t:"콘티 작성",d:"전달받은 자료로 콘티(기획안) 작성 후 전달 (크놀AD)",who:"크놀AD",act:"adminConti"},
+{t:"콘티 컨펌 및 피드백",d:"전달받은 콘티 검토 후 컨펌 또는 수정 요청 (고객)",who:"고객",act:"conti"},
+{t:"영상 제작",d:"확정 콘티로 촬영·편집 후 전달 (크놀AD)",who:"크놀AD",act:"adminVideo"},
+{t:"영상 컨펌 및 피드백",d:"전달받은 영상 검토 후 컨펌 또는 수정 요청 (고객)",who:"고객",act:"video"}];
+function wfOf(c){return (c&&c.wf)?c.wf:{step:(c&&c.status==="승인 완료")?2:1};}
+function activeWf(){return wfOf(S.activeCamp);}
+function loadMyCamps(){if(!S.cust)return;fetch(SUPA_URL+"/rest/v1/knollad_applications?email=eq."+encodeURIComponent(S.cust.email)+"&order=created_at.desc&select=*",{headers:SH}).then(r=>r.json()).then(rows=>{S.myCamps=Array.isArray(rows)?rows:[];if((!S.activeCamp)&&S.myCamps.length){S.activeCamp=S.myCamps.find(a=>a.status==="승인 완료")||S.myCamps[0];}else if(S.activeCamp){const f=S.myCamps.find(a=>String(a.id)===String(S.activeCamp.id));if(f)S.activeCamp=f;}renderMyCamps();}).catch(()=>{});}
