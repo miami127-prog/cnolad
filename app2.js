@@ -134,5 +134,5 @@ function maybeLiveRefresh(){
     else if(document.getElementById("selBox")){document.getElementById("selBox").innerHTML=SEL.size?selectedSummary():'';if(window.lucide)lucide.createIcons();}
   }).catch(()=>{_liveTried=false;});
 }
-function toast(msg){let t=document.getElementById("toast");if(!t){t=document.createElement("div");t.id="toast";t.className="fixed bottom-8 left-1/2 z-[400] px-5 py-3 rounded-[20px] bg-g900 text-white text-[15px] font-bold shadow-pop transition-all";t.style.opacity=0;document.body.appendChild(t);}t.textContent=msg;t.style.transform="translateX(-50%) translateY(0)";t.style.opacity=1;clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity=0,2800);}
+function toast(msg){let t=document.getElementById("toast");if(!t){t=document.createElement("div");t.id="toast";t.className="fixed bottom-8 left-1/2 z-[400] px-5 py-3 rounded-[20px] text-[15px] font-bold transition-all";t.style.background="#191F28";t.style.color="#ffffff";t.style.boxShadow="0 16px 50px rgba(17,24,39,0.22)";t.style.opacity=0;document.body.appendChild(t);}t.textContent=msg;t.style.background="#191F28";t.style.color="#ffffff";t.style.transform="translateX(-50%) translateY(0)";t.style.opacity=1;clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity=0,2800);}
 render();
