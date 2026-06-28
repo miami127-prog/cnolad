@@ -178,7 +178,7 @@ function selectedSummary(){
   if(SEL.size===0)return "";
   const items=[...SEL].map(id=>{const c=CH.find(x=>x.id===id);const q=QSEL[id]||{p:0,b:0};const sub=q.p*c.prod+q.b*c.pub;const parts=[];if(q.p)parts.push("제작+발행 ×"+q.p);if(q.b)parts.push("단순발행 ×"+q.b);
     return `<div class="flex items-center gap-3 bg-g50 rounded-[20px] p-3">${logoEl(c,"w-10 h-10 text-base")}<div class="flex-1 min-w-0"><p class="font-bold text-g900 truncate">${esc(c.name)}</p><p class="text-[13px] text-g500">${parts.join(" · ")}</p></div><span class="num text-blue font-bold text-[15px] flex-shrink-0">${wonM(sub)}</span><button onclick="togglePick('${c.id}')" class="w-7 h-7 rounded-full bg-g200 text-g500 grid place-items-center hover:bg-red-100 hover:text-red-500 flex-shrink-0"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;}).join("");
-  return `<div class="space-y-2">${items}</div><div class="flex justify-between items-center pt-3 mt-2 border-t border-g100"><span class="text-[16px] font-bold text-g600">합계 (VAT 별도)</span><span class="text-[20px] font-bold text-blue num">${wonM(selTotal())}</span></div>`;
+  return `<div class="space-y-2">${items}</div><div class="flex justify-between items-center pt-5 mt-5 border-t border-g100"><span class="text-[16px] font-bold text-g600">합계 (VAT 별도)</span><span class="text-[20px] font-bold text-blue num">${wonM(selTotal())}</span></div>`;
 }
 function filteredCH(){const m={"국내":"KR","일본":"JP","미국":"US"};return CH.filter(c=>(_region==="전체"||c.region===m[_region])&&(c.name.includes(_search)||(c.read&&c.read.includes(_search))));}
 function selTotal(){let t=0;SEL.forEach(id=>{const c=CH.find(x=>x.id===id);const q=QSEL[id]||{p:0,b:0};t+=q.p*c.prod+q.b*c.pub;});return t;}
