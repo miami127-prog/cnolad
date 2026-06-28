@@ -212,7 +212,7 @@ return `<div class="min-h-screen bg-g50 pb-12">
 <div class="sticky top-0 z-40 bg-white border-b border-g100"><div class="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
 <button onclick="finishPicker()" class="w-10 h-10 rounded-2xl bg-g100 grid place-items-center hover:bg-g200 flex-shrink-0"><i data-lucide="arrow-left" class="w-4 h-4 text-g700"></i></button>
 <div class="min-w-0"><p class="text-[20px] font-bold text-g900 leading-none">채널 선택</p><p class="text-[14px] text-g500 mt-1 truncate">원하는 채널을 선택해주세요 (복수 선택 가능)</p></div>
-<button onclick="finishPicker()" class="${BTN} ml-auto px-6 flex-shrink-0">선택 완료 <span id="selCnt">${SEL.size}</span></button></div></div>
+<div class="ml-auto flex items-center gap-3 flex-shrink-0"><div class="text-right leading-tight"><p class="text-[12px] text-g500">선택 <span id="selCnt">${SEL.size}</span>개 · 합계(VAT 별도)</p><span id="selTotal" class="text-[22px] text-blue num" style="font-weight:800">${wonM(selTotal())}</span></div><button onclick="finishPicker()" class="${BTN} px-6">선택 완료 →</button></div></div></div>
 <div class="max-w-7xl mx-auto px-6 pt-6">${channelTableBlock()}</div></div>`;}
 function togglePick(id){if(SEL.has(id))SEL.delete(id);else{SEL.add(id);if(!PROD[id])PROD[id]="production";}applyChange();}
 function setPickProduct(id,p){PROD[id]=p;applyChange();}
