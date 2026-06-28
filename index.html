@@ -24,7 +24,7 @@ input,button,textarea,select{font-family:inherit}
 @keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}.pop{animation:pop .25s ease both}
 .cbx{transition:transform .15s cubic-bezier(.22,1.4,.4,1),background .15s,border-color .15s}
 @keyframes wfglow{0%,100%{box-shadow:0 0 0 0 rgba(49,130,246,0.5)}50%{box-shadow:0 0 0 9px rgba(49,130,246,0)}}.wf-glow{animation:wfglow 1.8s ease-in-out infinite}
-.hero-wall{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:hidden;filter:blur(1px) brightness(.78) saturate(1.04);z-index:1}
+.hero-wall{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:hidden;filter:brightness(.72);z-index:1}
 .hw-row{display:flex;gap:12px;width:max-content;will-change:transform}
 .hw-row.l{animation-name:hwL}
 .hw-row.r{animation-name:hwR}
@@ -40,6 +40,8 @@ input,button,textarea,select{font-family:inherit}
 .rise{opacity:0;animation:riseUp 1.15s cubic-bezier(.16,1,.3,1) both}
 .cta-lift{transition:transform .18s ease,box-shadow .18s ease}
 .cta-lift:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.reveal{opacity:0;transform:translateY(44px);transition:opacity .95s cubic-bezier(.16,1,.3,1),transform .95s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
 </style>
 </head>
 <body class="font-sans">
