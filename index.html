@@ -24,18 +24,18 @@ input,button,textarea,select{font-family:inherit}
 @keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}.pop{animation:pop .25s ease both}
 .cbx{transition:transform .15s cubic-bezier(.22,1.4,.4,1),background .15s,border-color .15s}
 @keyframes wfglow{0%,100%{box-shadow:0 0 0 0 rgba(49,130,246,0.5)}50%{box-shadow:0 0 0 9px rgba(49,130,246,0)}}.wf-glow{animation:wfglow 1.8s ease-in-out infinite}
-.pf-wrap{overflow:hidden;width:100%;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
-.pf-track{display:flex;gap:18px;width:max-content;padding:6px 0;animation:pfscroll 58s linear infinite;will-change:transform}
-.pf-wrap:hover .pf-track{animation-play-state:paused}
-@keyframes pfscroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-.pf-card{position:relative;width:232px;height:412px;border-radius:22px;overflow:hidden;flex:0 0 auto;background:#000;box-shadow:0 10px 30px rgba(0,0,0,.18)}
-.pf-card iframe{position:absolute;top:50%;left:50%;width:733px;height:412px;transform:translate(-50%,-50%);border:0;pointer-events:none}
-.pf-ov{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.06) 30%,rgba(0,0,0,.16) 56%,rgba(0,0,0,.88) 100%)}
-.pf-top{position:absolute;top:14px;left:14px;right:14px;pointer-events:none}
-.pf-badge{display:inline-block;color:#fff;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:10px;background:rgba(0,0,0,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pf-bot{position:absolute;left:18px;right:18px;bottom:18px;color:#fff;pointer-events:none}
-.pf-lab{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.72);margin:0}
-.pf-big{font-size:25px;font-weight:800;line-height:1.05;margin:1px 0 0;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.hero-wall{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:12px;overflow:hidden;filter:blur(1.4px) brightness(.66) saturate(.92);z-index:1}
+.hw-row{display:flex;gap:12px;width:max-content;will-change:transform}
+.hw-row.l{animation-name:hwL}
+.hw-row.r{animation-name:hwR}
+.hw-row{animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes hwL{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes hwR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
+.hw-tile{position:relative;width:248px;height:140px;border-radius:12px;overflow:hidden;flex:0 0 auto;background:#0a0a0a}
+.hw-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.hw-tile iframe{position:absolute;top:50%;left:50%;width:250px;height:142px;transform:translate(-50%,-50%);border:0;pointer-events:none}
+.hero-dim{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(90deg,rgba(0,0,0,.95) 0%,rgba(0,0,0,.62) 44%,rgba(0,0,0,.62) 56%,rgba(0,0,0,.9) 100%)}
+.hero-dim2{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,.8),rgba(0,0,0,.2) 32%,rgba(0,0,0,.2) 68%,rgba(0,0,0,.82))}
 </style>
 </head>
 <body class="font-sans">
