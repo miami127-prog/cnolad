@@ -1,16 +1,3 @@
-function viewWorkflow(){const c=S.activeCamp;if(!c){setTimeout(loadMyCamps,30);return `<div class="p-8 md:p-10">${pageHeader("ORDER","캠페인 진행")}<div class="${CARD} p-12 text-center text-g500 text-[16px]">승인된 캠페인이 있어야 진행할 수 있습니다.<br>‘캠페인 관리’에서 캠페인을 선택하세요.</div></div>`;}
-const wf=wfOf(c);const cur=wf.step;const pct=Math.round(Math.min(cur,7)/7*100);markSeen(c,"cust");
-let action="";
-if(cur>=7){const paid=c.pay_status==="결제 완료";action=`<div class="text-center py-2"><div class="w-14 h-14 rounded-full bg-emerald-50 grid place-items-center mx-auto mb-3"><i data-lucide="party-popper" class="w-7 h-7 text-emerald-500"></i></div><p class="text-[17px] font-bold text-g900 mb-1">제작·업로드가 완료되었습니다</p><p class="text-[14px] text-g500 mb-4">리포트에서 성과를 확인하고 결제를 진행해주세요.</p><div class="flex gap-2"><button onclick="go('report')" class="${BTN_GHOST} flex-1">리포트 보기</button><button onclick="go('settlement')" class="${BTN} flex-1">${paid?"결제 완료됨":"결제 / 정산"}</button></div></div>`;}
-else action=wfPanel(WF[cur-1]);
-const notes=c.notes||[];
-return `<div class="p-8 md:p-10">${pageHeader("ORDER","캠페인 진행",esc(c.brand_name)+" · 진행 상황과 주고받는 자료를 한눈에 확인하세요")}
-<div class="${CARD} p-6 mb-5">${wfStepper(cur)}<div class="flex items-center gap-3 mt-5"><div class="flex-1 bg-g100 rounded-full h-2 overflow-hidden"><div class="h-2 rounded-full transition-all duration-500" style="width:${pct}%;background:linear-gradient(90deg,#3182F6,#1B64DA)"></div></div><span class="text-[14px] font-bold text-blue num">${pct}%</span></div></div>
-<div class="grid lg:grid-cols-5 gap-5"><div class="lg:col-span-3 space-y-5">
-<div class="${CARD} p-6 border-2 border-blue"><div class="flex items-center gap-2 mb-3"><span class="w-2 h-2 rounded-full bg-blue"></span><h2 class="text-[22px] font-bold text-g900">현재 진행 상황</h2></div>${action}</div>
-<div class="${CARD} p-6"><h2 class="text-[20px] font-bold text-g900 mb-4">진행 내역 · 주고받은 자료</h2>${wfActivityFeed(c)}</div></div>
-<div class="lg:col-span-2"><div class="${CARD} p-6 lg:sticky lg:top-6"><h2 class="text-[20px] font-bold text-g900 mb-3">메시지</h2><div class="space-y-2 max-h-[48vh] overflow-y-auto mb-3 pr-1">${notes.length?notes.map(noteRow).join(""):'<p class="text-g400 text-center py-8 text-[16px]">메시지가 없습니다.<br>궁금한 점을 자유롭게 남겨보세요.</p>'}</div><textarea id="wfMsgInput" rows="2" placeholder="메시지 입력…" class="${INPUT} resize-none mb-2"></textarea><button onclick="wfMsg()" class="${BTN} w-full py-3">보내기</button></div></div></div></div>`;}
-const PAY_ACCOUNT={bank:"우리은행",no:"1005-504-167163",holder:"에이치알컴퍼니(주)"};
 function viewSettlement(){setTimeout(loadMyCamps,30);const camps=(S.myCamps||[]).filter(function(a){return a.status==="승인 완료";});
 const head=pageHeader("PAYMENT","결제 / 정산","캠페인별로 대금을 에이치알컴퍼니(주) 계좌로 입금해주세요");
 if(!camps.length)return `<div class="p-8 md:p-10"><div class="max-w-2xl">${head}<div class="${CARD} p-12 text-center text-g500 text-[16px]">승인 완료된 캠페인이 없습니다.</div></div></div>`;
