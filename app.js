@@ -256,21 +256,16 @@ return `<div class="min-h-screen bg-g50 flex items-center justify-center px-6 py
 <button onclick="goHome()" class="${BTN_GHOST} w-full mt-5">홈으로 돌아가기</button></div></div></div>`;}
 
 /* ===== 로그인 ===== */
-function viewLogin(){return `<div class="min-h-screen flex">
-<div class="hidden lg:flex flex-col justify-between p-12 text-white" style="flex:1.1;background:radial-gradient(circle at 18% 12%,rgba(49,130,246,.55),transparent 45%),radial-gradient(circle at 92% 92%,rgba(124,58,237,.42),transparent 52%),linear-gradient(135deg,#0b1228,#0a1024 60%,#080d1c)">
-<button onclick="goHome()" class="flex items-center gap-2 self-start" style="color:rgba(255,255,255,.75);font-size:15px;font-weight:600">← 홈으로</button>
-<div class="fade-up"><div class="mb-7 w-16 h-16 rounded-2xl bg-white/95 flex items-center justify-center">${logoMark('w-11 h-11')}</div><h2 style="font-size:40px;font-weight:800;line-height:1.18;letter-spacing:-.02em">크놀AD<br><span style="color:#5b9bff">파트너 전용</span> 공간</h2><p class="mt-5" style="color:rgba(255,255,255,.62);font-size:17px;line-height:1.7">캠페인 진행 상황·주고받는 자료·정산까지<br>한 곳에서 편하게 관리하세요.</p>
-<div class="mt-9 space-y-3">${[["layout-dashboard","실시간 진행 대시보드"],["message-circle","담당자와 메신저 소통"],["bar-chart-3","조회수·성과 리포트"]].map(x=>`<div class="flex items-center gap-3" style="color:rgba(255,255,255,.82);font-size:15px;font-weight:600"><span class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(49,130,246,.22)"><i data-lucide="${x[0]}" class="w-[18px] h-[18px]" style="color:#5b9bff"></i></span>${x[1]}</div>`).join("")}</div></div>
-<p style="color:rgba(255,255,255,.4);font-size:13px">© 2024 에이치알컴퍼니(주) · 크놀AD</p></div>
-<div class="flex items-center justify-center px-6 py-12" style="flex:1;background:#F7F9FC">
-<div class="w-full max-w-sm fade-up">
-<div class="lg:hidden text-center mb-7">${logoMark('w-14 h-14 mx-auto mb-3')}</div>
-<h1 class="text-g900" style="font-size:28px;font-weight:800">로그인</h1>
-<p class="text-g500 mt-1.5 mb-7" style="font-size:15px">승인된 고객 · 관리자 전용 공간입니다.</p>
+function viewLogin(){return `<div class="min-h-screen flex items-center justify-center px-6 py-12" style="background:radial-gradient(circle at 50% -10%,rgba(49,130,246,.14),transparent 55%),#F4F7FC">
+<div class="w-full max-w-md fade-up">
+<button onclick="goHome()" class="text-g500 hover:text-g800 mb-5" style="font-size:14px;font-weight:600">← 홈으로</button>
+<div class="${CARD} p-8 md:p-9">
+<div class="text-center mb-7"><div class="w-16 h-16 rounded-2xl bg-blue-soft flex items-center justify-center mx-auto mb-4">${logoMark('w-11 h-11')}</div><h1 class="text-g900" style="font-size:27px;font-weight:800">크놀AD 로그인</h1><p class="text-g500 mt-1.5" style="font-size:15px">승인된 고객 · 관리자 전용 공간입니다</p></div>
 <div class="space-y-4">${field('아이디 (이메일)',`<input id="loginEmail" type="text" placeholder="name@company.com" class="${INPUT}">`)}${field('비밀번호',`<input id="loginPw" type="password" placeholder="발급받은 비밀번호" class="${INPUT}" onkeydown="if(event.key==='Enter')doLogin()">`)}<button onclick="doLogin()" id="loginBtn" class="${BTN} w-full cta-lift" style="margin-top:4px">로그인 →</button></div>
 <div class="mt-6 p-4 rounded-2xl" style="background:#EEF4FF;border:1px solid #DCE7FF"><p style="font-size:13px;color:#1B64DA;line-height:1.6">관리자 승인 후 발급받은 이메일·비밀번호로 로그인하세요. 승인 전에는 로그인할 수 없습니다.</p></div>
+</div>
 <button onclick="newApply()" class="w-full text-center mt-5 text-g500 hover:text-g800" style="font-size:14px">아직 신청 전이신가요? <span class="text-blue" style="font-weight:700">캠페인 신청하기 →</span></button>
-</div></div></div>`;}
+</div></div>`;}
 function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";
   if(e==="admin"){if(pw==="admin123"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else toast("관리자 비밀번호가 올바르지 않습니다");return;}
   if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");return;}
@@ -335,3 +330,4 @@ function wfSave(patch){const c=S.activeCamp;if(!c){toast("진행할 캠페인이
 function wfDataSubmit(){const link=(gv("wfRef")||"").trim();const fi=document.getElementById("wfData");if(fi&&fi.files&&fi.files.length){uploadToStorage("wfData",function(url){wfSave({step:3,note:null,dataUrl:url,dataLink:link||null});toast("자료가 제출되었습니다 · 크놀AD가 콘티를 작성합니다");});}else if(link){wfSave({step:3,note:null,dataLink:link});toast("링크가 제출되었습니다 · 크놀AD가 콘티를 작성합니다");}else{toast("파일을 올리거나 링크를 입력해주세요");}}
 function wfConfirm(){const wf=activeWf();if(wf.step===4)wfSave({step:5});else if(wf.step===6)wfSave({step:7});toast("컨펌되었습니다 · 다음 단계로 진행됩니다");}
 function wfReqEdit(){const t=(gv("wfFb")||"").trim();const wf=activeWf();if(wf.step===4)wfSave({step:3,conti:null,note:t});else if(wf.step===6)wfSave({step:5,video:null,note:t});toast("수정 요청이 전달되었습니다 · 크놀AD가 반영 후 재전달합니다");}
+function openLink(u){if(!u){toast("링크가 아직 없습니다");return;}window.open(u,"_blank");}
