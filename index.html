@@ -33,7 +33,7 @@ input,button,textarea,select{font-family:inherit}
 @keyframes hwR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
 .hw-tile{position:relative;width:182px;height:323px;border-radius:16px;overflow:hidden;flex:0 0 auto;background:#0a0a0a}
 .hw-tile img{width:100%;height:100%;object-fit:cover;display:block}
-.hw-tile iframe{position:absolute;top:50%;left:50%;width:574px;height:323px;transform:translate(-50%,-50%);border:0;pointer-events:none}
+.hw-tile iframe{position:absolute;top:50%;left:50%;width:780px;height:439px;transform:translate(-50%,-50%);border:0;pointer-events:none}
 .hero-dim{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.5) 46%,rgba(0,0,0,.5) 54%,rgba(0,0,0,.86) 100%)}
 .hero-dim2{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,.8),rgba(0,0,0,.2) 32%,rgba(0,0,0,.2) 68%,rgba(0,0,0,.82))}
 @keyframes riseUp{0%{opacity:0;transform:translateY(38px)}100%{opacity:1;transform:translateY(0)}}
@@ -42,6 +42,8 @@ input,button,textarea,select{font-family:inherit}
 .cta-lift:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
 .reveal{opacity:0;transform:translateY(44px);transition:opacity .95s cubic-bezier(.16,1,.3,1),transform .95s cubic-bezier(.16,1,.3,1)}
 .reveal.in{opacity:1;transform:none}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(94,224,127,.7)}70%{box-shadow:0 0 0 9px rgba(94,224,127,0)}100%{box-shadow:0 0 0 0 rgba(94,224,127,0)}}
+.live-dot{animation:livePulse 1.5s ease-out infinite}
 </style>
 </head>
 <body class="font-sans">
