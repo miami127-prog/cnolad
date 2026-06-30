@@ -100,7 +100,7 @@ function render(){
 }
 function topbar(){var dark=true;
 var lnk=dark?"text-[15px] font-bold text-white/75 hover:text-white px-2.5 py-2 rounded-xl hover:bg-white/10 transition-colors":"text-[15px] font-bold text-g600 hover:text-g900 px-2.5 py-2 rounded-xl hover:bg-g100 transition-colors";
-var sol=dark?"text-[15px] font-bold px-4 py-2.5 rounded-xl bg-white text-g900 hover:bg-g100 transition-colors":"text-[15px] font-bold px-4 py-2.5 rounded-xl bg-g900 text-white hover:bg-black transition-colors";
+var sol=dark?"text-[15px] font-bold ml-2.5 px-4 py-2.5 rounded-xl bg-white text-g900 hover:bg-g100 transition-colors":"text-[15px] font-bold ml-2.5 px-4 py-2.5 rounded-xl bg-g900 text-white hover:bg-black transition-colors";
 var nav;
 if(S.role==="customer")nav=`<button onclick="toggleConsult()" class="${lnk}">실시간 상담</button><button onclick="newApply()" class="${lnk}">캠페인 신청하기</button><button onclick="go('customer-dashboard')" class="${lnk}">캠페인 관리</button><button onclick="go('mypage')" class="${lnk}">마이페이지</button><button onclick="logout()" class="${sol}">로그아웃</button>`;
 else if(S.role==="admin")nav=`<button onclick="go('admin-dashboard')" class="${lnk}">관리자 화면</button><button onclick="logout()" class="${sol}">로그아웃</button>`;
