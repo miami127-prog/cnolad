@@ -164,8 +164,8 @@ function openLegal(k){const L=LEGAL[k];modal(`<div class="flex items-center just
 function copyText(t){const ok=()=>toast("복사되었습니다");if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok).catch(()=>fbCopy(t));}else fbCopy(t);}
 function fbCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("복사되었습니다");}catch(e){toast("복사 실패");}document.body.removeChild(ta);}
 
-function go(v){S.view=v;render();window.scrollTo(0,0);logEvent("visit",v,(VIEW_TITLE[v]||v));}
-function goHome(){S.view="home";render();window.scrollTo(0,0);}
+function go(v){S.view=v;render();window.scrollTo(0,0);syncUrl(v);logEvent("visit",v,(VIEW_TITLE[v]||v));}
+function goHome(){S.view="home";render();window.scrollTo(0,0);syncUrl("home");}
 function newApply(){if(S.role==="customer"){S.form={name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:(S.cust&&S.cust.brand)||""};SEL=new Set();PROD={};QSEL={};go("cust-apply");}else{S.form={};SEL=new Set();PROD={};QSEL={};go("apply");}}
 function logout(){S.role=null;S.cust=null;S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.removeItem("knollad_sess");}catch(_e){}go("home");}
 function render(){
