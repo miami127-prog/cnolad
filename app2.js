@@ -58,7 +58,7 @@ return `<div class="p-8 md:p-10">${head}<div class="grid md:grid-cols-2 gap-4 ma
 
 function viewCalendar(){setTimeout(loadMyCamps,30);const nd=new Date();if(S.calY==null){S.calY=nd.getFullYear();S.calM=nd.getMonth();}const y=S.calY,m=S.calM;
 const startDow=new Date(y,m,1).getDay();const days=new Date(y,m+1,0).getDate();const todayStr=`${nd.getFullYear()}-${String(nd.getMonth()+1).padStart(2,'0')}-${String(nd.getDate()).padStart(2,'0')}`;
-const ev=[];(S.myCamps||[]).forEach(a=>{if(a.preferred_date)ev.push({date:a.preferred_date,title:(a.brand_name||'')+" 업로드",type:"auto",campId:a.id});});
+const ev=[];(S.myCamps||[]).forEach(a=>{if(a.preferred_date)[].push({date:a.preferred_date,title:(a.brand_name||'')+" 업로드",type:"auto",campId:a.id});});
 const sch=(S.activeCamp&&S.activeCamp.schedule)||[];sch.forEach(e=>ev.push({date:e.date,title:e.title,type:"manual",id:e.id}));
 let cells="";for(let i=0;i<startDow;i++)cells+='<div></div>';
 for(let d=1;d<=days;d++){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const isT=ds===todayStr;const es=ev.filter(e=>e.date===ds);
@@ -131,7 +131,7 @@ return `<div class="p-8 md:p-10">${pageHeader("WORKFLOW","워크플로우 관리
 <div class="lg:col-span-2 space-y-4">${a?admWfDetail(a):`<div class="${CARD} p-12 text-center text-g500 text-[16px]">왼쪽에서 캠페인을 선택하세요.</div>`}</div></div></div>`;}
 function viewAdminCalendar(){if(!ADM_ROWS.length)setTimeout(loadApps,30);const nd=new Date();if(S.calY==null){S.calY=nd.getFullYear();S.calM=nd.getMonth();}const y=S.calY,m=S.calM;
 const startDow=new Date(y,m,1).getDay();const days=new Date(y,m+1,0).getDate();const todayStr=`${nd.getFullYear()}-${String(nd.getMonth()+1).padStart(2,'0')}-${String(nd.getDate()).padStart(2,'0')}`;
-const ev=[];ADM_ROWS.forEach(a=>{if(a.status==="승인 완료"&&a.preferred_date)ev.push({date:a.preferred_date,title:(a.brand_name||"")+" 업로드",type:"auto",cid:a.id});(a.schedule||[]).forEach(e=>{if(e&&e.date)ev.push({date:e.date,title:(a.brand_name?a.brand_name+" · ":"")+(e.title||""),type:"manual",cid:a.id});});});
+const ev=[];ADM_ROWS.forEach(a=>{if(a.status==="승인 완료"&&a.preferred_date)[].push({date:a.preferred_date,title:(a.brand_name||"")+" 업로드",type:"auto",cid:a.id});(a.schedule||[]).forEach(e=>{if(e&&e.date)ev.push({date:e.date,title:(a.brand_name?a.brand_name+" · ":"")+(e.title||""),type:"manual",cid:a.id});});});
 let cells="";for(let i=0;i<startDow;i++)cells+='<div></div>';
 for(let d=1;d<=days;d++){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const isT=ds===todayStr;const es=ev.filter(e=>e.date===ds);
 cells+=`<div class="min-h-[120px] md:min-h-[140px] border ${isT?"border-blue bg-blue-soft":"border-g100"} rounded-2xl p-2.5"><div class="text-[15px] font-bold ${isT?"text-blue":"text-g500"} mb-1">${d}</div>${es.map(e=>`<div onclick="admCampDetail('${e.cid}')" title="${esc(e.title)}" class="mb-1 text-[12px] px-2 py-1 rounded-lg cursor-pointer hover:opacity-80 ${e.type==="auto"?"bg-blue-tint text-blue":"bg-emerald-50 text-emerald-700"} truncate font-bold">${esc(e.title)}</div>`).join("")}</div>`;}
