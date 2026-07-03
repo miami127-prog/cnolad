@@ -357,7 +357,7 @@ function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=
   if(e==="admin"){if(pw==="admin123"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else toast("관리자 비밀번호가 올바르지 않습니다");return;}
   if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");return;}
   const btn=document.getElementById("loginBtn");if(btn)btn.textContent="확인 중…";
-  fetch(SUPA_URL+`/rest/v1/knollad_members?email=eq.${encodeURIComponent(e)}&password=eq.${encodeURIComponent(pw)}&select=brand_name,contact_name&limit=1`,{headers:SH})
+  fetch(SUPA_URL+"/rest/v1/rpc/knollad_login",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},SH),body:JSON.stringify({p_email:e,p_password:pw})})
   .then(r=>r.json()).then(rows=>{if(Array.isArray(rows)&&rows.length){S.role="customer";S.cust={email:e,brand:rows[0].brand_name,name:rows[0].contact_name};S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.setItem("knollad_sess",JSON.stringify({role:"customer",cust:S.cust}));}catch(_e){}logEvent("login");go("customer-dashboard");}else{if(btn)btn.textContent="로그인";toast("승인된 계정이 아니거나 정보가 일치하지 않습니다");}})
   .catch(()=>{if(btn)btn.textContent="로그인";toast("로그인 오류. 잠시 후 다시 시도해주세요");});}
 
