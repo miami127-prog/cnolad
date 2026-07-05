@@ -229,7 +229,10 @@ return `<div class="min-h-screen" style="background:#000">${topbar()}
 <div class="hero-wall" id="heroWall">${wallRows()}</div>
 <div class="hero-dim"></div><div class="hero-dim2"></div>
 <div class="relative px-6 mx-auto flex items-center" style="max-width:1100px;min-height:100vh;z-index:5">
-<div class="${(S.cust&&S.cust.role==="파트너사")?"":"grid grid-cols-2 gap-3"}">${(S.cust&&S.cust.role==="파트너사")?"":field('연락처 <span<p class="mt-5 rise" style="color:#fff;font-size:clamp(20px,2.6vw,32px);font-weight:700;animation-delay:.36s;text-shadow:0 2px 16px rgba(0,0,0,.8)">크놀AD가 <span style="color:#5b9bff">직접 만들고</span>, <span style="color:#5b9bff">직접 노출</span>합니다.</p>
+<div class="fade-up" style="max-width:760px">
+<div class="flex items-center mb-7 rise" style="animation-delay:.02s">${logoMark('w-16 h-16 md:w-20 md:h-20')}</div>
+<h1 class="font-display tracking-tight" style="font-weight:800"><span class="rise" style="display:block;color:#fff;font-size:clamp(58px,10.5vw,142px);line-height:.95;animation-delay:.1s;text-shadow:0 4px 30px rgba(0,0,0,.75)">크놀AD는</span><span class="rise" style="display:block;margin-top:18px;font-size:clamp(24px,3.6vw,48px);font-weight:800;color:#fff;line-height:1.26;animation-delay:.24s;text-shadow:0 2px 22px rgba(0,0,0,.8)">자체 채널로 <span style="color:#5b9bff">직접 실행하는</span> 숏폼 콘텐츠 광고 플랫폼입니다.</span></h1>
+<p class="mt-5 rise" style="color:#fff;font-size:clamp(20px,2.6vw,32px);font-weight:700;animation-delay:.36s;text-shadow:0 2px 16px rgba(0,0,0,.8)">크놀AD가 <span style="color:#5b9bff">직접 만들고</span>, <span style="color:#5b9bff">직접 노출</span>합니다.</p>
 <div class="mt-10 flex items-center gap-3 flex-wrap rise" style="animation-delay:.48s"><button onclick="newApply()" class="${BTN} px-9 text-[18px] cta-lift">캠페인 신청하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button><button onclick="${isCust?"go('customer-dashboard')":"go('login')"}" class="px-8 py-3 rounded-2xl font-bold cta-lift" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)">캠페인 관리</button></div>
 </div></div>
 </section>
@@ -320,7 +323,7 @@ function onSearch(v){_search=v;updateTable();}
 function setRegion(r){_region=r;updateTable();const ch=document.getElementById("pickChips");if(ch)ch.querySelectorAll("button").forEach(b=>{const on=b.textContent.trim()===r;b.className=`px-4 py-2 rounded-2xl text-[14px] font-bold transition-all ${on?'bg-blue text-white':'bg-white border border-g200 text-g600 hover:bg-g100'}`;});}
 function openPicker(){saveForm();if(S.role==="customer"){go("cust-channels");}else{S._cameFrom="apply";go("channel-picker");}}
 function finishPicker(){if(S.role==="customer"){go("cust-apply");}else{go(S._cameFrom||"apply");}}
-function submitApply(){saveForm();const f=S.form;if(!f.name||!f.name.trim()||!f.email||!f.email.trim()||!f.phone||!f.phone.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자명·이메일·연락처·브랜드명을 모두 입력해주세요");return;}
+function submitApply(){saveForm();const f=S.form;var _isP=(S.cust&&S.cust.role==="파트너사");if(_isP){if(!f.manager||!f.manager.trim()||!f.email||!f.email.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자·이메일·브랜드명을 입력해주세요");return;}f.name=f.manager;}else if(!f.name||!f.name.trim()||!f.email||!f.email.trim()||!f.phone||!f.phone.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자명·이메일·연락처·브랜드명을 모두 입력해주세요");return;}
   if(!f.agree1||!f.agree2||!f.agree3){toast("필수 동의 항목(이용약관·개인정보·2차 활용)에 동의해주세요");return;}
   const chans=[...SEL].map(id=>{const c=CH.find(x=>x.id===id),q=QSEL[id]||{p:1,b:0};return {id:c.id,name:c.name,prodQty:q.p,pubQty:q.b,prod_price:pxOf(c).prod,pub_price:pxOf(c).pub,qty:q.p+q.b,amount:q.p*pxOf(c).prod+q.b*pxOf(c).pub,price:q.p*pxOf(c).prod+q.b*pxOf(c).pub,product:(q.p&&q.b)?('제작+발행×'+q.p+' / 단순발행×'+q.b):(q.p?('제작+발행×'+q.p):('단순발행×'+q.b))};});
   S._submitted={brand:f.brand,email:f.email.toLowerCase(),channels:[...SEL].map(id=>({c:CH.find(x=>x.id===id),q:QSEL[id]||{p:1,b:0}})),total:selTotal()};
