@@ -258,7 +258,7 @@ function applyFields(){return `<div class="space-y-4">${(S.cust&&S.cust.role==="
 <div class="${(S.cust&&S.cust.role==="파트너사")?"":"grid grid-cols-2 gap-3"}">${(S.cust&&S.cust.role==="파트너사")?"":field('연락처 <span class="text-blue">*</span>',`<input id="f_phone" value="${fv('phone')}" placeholder="010-0000-0000" class="${INPUT}">`)}${field('브랜드 / 회사명 <span class="text-blue">*</span>',`<input id="f_brand" value="${fv('brand')}" placeholder="브랜드 / 회사명" class="${INPUT}">`)}</div>
 <div class="grid grid-cols-2 gap-3">${field('업로드 희망일',`<input id="f_date" value="${fv('date')}" type="date" class="${INPUT}">`)}${field('제품 링크',`<input id="f_link" value="${fv('link')}" placeholder="https://" class="${INPUT}">`)}</div>
 <div class="pt-1"><label class="block text-[15px] font-medium text-g900 mb-2">희망 채널 선택</label>${chSelectBtn()}<div id="selBox" class="${SEL.size?'mt-3':''}">${SEL.size?selectedSummary():''}</div></div>
-${field('활용 소재',`<input id="f_material" value="${fv('material')}" placeholder="영상, 이미지, 직접 제작 등" class="${INPUT}">`)}
+${field('활용 소재',`<textarea id="f_material" rows="2" placeholder="영상, 이미지, 직접 제작 등 (여러 개는 줄바꿈으로 입력)" class="${INPUT} resize-none">${fv('material')}</textarea>`)}
 ${field('광고 고지 방식',`<select id="f_ad" class="${INPUT}"><option ${S.form.ad==='광고표기 희망'?'selected':''}>광고표기 희망</option><option ${S.form.ad==='광고 미표기 희망'?'selected':''}>광고 미표기 희망</option><option ${S.form.ad==='별도 협의'?'selected':''}>별도 협의</option></select>`)}
 ${field('희망 영상 컨셉',`<textarea id="f_concept" rows="2" placeholder="분위기, 스타일, 레퍼런스 등을 자유롭게 적어주세요." class="${INPUT} resize-none">${fv('concept')}</textarea>`)}
 ${field('요청사항',`<textarea id="f_note" rows="2" placeholder="기타 요청사항" class="${INPUT} resize-none">${fv('note')}</textarea>`)}
