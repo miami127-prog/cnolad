@@ -177,6 +177,7 @@ function render(){
   else if(v==="login")h=viewLogin();
   else if(S.role==="customer")h=customerShell(v);
   else if(S.role==="admin")h=adminShell(v);
+  else if(S.role==="cs")h=adminShell(v);
   else h=viewApply();
   document.getElementById("root").innerHTML=h;
   if(window.lucide)lucide.createIcons();
@@ -355,6 +356,7 @@ function viewLogin(){return `<div class="min-h-screen flex items-center justify-
 </div></div>`;}
 function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";
   if(e==="admin"){if(pw==="admin123"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else toast("관리자 비밀번호가 올바르지 않습니다");return;}
+  if(e==="cnolcs1"){if(pw==="cnolcs123"){S.role="cs";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"cs"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else toast("CS 비밀번호가 올바르지 않습니다");return;}
   if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");return;}
   const btn=document.getElementById("loginBtn");if(btn)btn.textContent="확인 중…";
   fetch(SUPA_URL+"/rest/v1/rpc/knollad_login",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},SH),body:JSON.stringify({p_email:e,p_password:pw})})
@@ -368,7 +370,7 @@ let b;if(v==="cust-channels")b=custChannels();else if(v==="cust-apply")b=custApp
 const ua=S.activeCamp?unreadCount(S.activeCamp,"cust"):0;const bell=buildTasks().length;
 items.forEach(function(it){if(it.id==="workflow")it.dot=wfPending(S.activeCamp)||ua>0;if(it.id==="notes")it.dot=ua>0;if(it.id==="todo")it.dot=bell>0;});
 return `<div class="flex min-h-screen bg-g50">${sidebar(items,v,null,bell,true)}<main class="flex-1 ml-56 min-h-screen">${mgrBar()}${b}</main></div>`;}
-function adminShell(v){if(!(ADM_ROWS||[]).length)setTimeout(loadApps,30);const items=[{id:"admin-dashboard",label:"캠페인 관리",icon:"clipboard-list"},{id:"admin-todo",label:"해야 할 일",icon:"list-todo"},{id:"admin-consults",label:"실시간 상담",icon:"message-circle"},{id:"admin-workflow",label:"워크플로우 관리",icon:"list-checks"},{id:"admin-calendar",label:"캠페인 일정",icon:"calendar"},{id:"admin-sales",label:"매출분석",icon:"trending-up"},{id:"admin-members",label:"회원DB",icon:"users"},{id:"admin-channels",label:"채널 DB",icon:"layers"},{id:"admin-guide",label:"가이드라인",icon:"book-open"}];let b=v==="admin-consults"?viewAdminConsults():v==="admin-members"?viewAdminMembers():v==="admin-channels"?viewAdminChannels():v==="admin-workflow"?viewAdminWorkflow():v==="admin-calendar"?viewAdminCalendar():v==="admin-sales"?viewAdminSales():v==="admin-todo"?viewTodo():v==="admin-guide"?viewGuide():viewAdminList();
+function adminShell(v){if(!(ADM_ROWS||[]).length)setTimeout(loadApps,30);const items=[{id:"admin-dashboard",label:"캠페인 관리",icon:"clipboard-list"},{id:"admin-todo",label:"해야 할 일",icon:"list-todo"},{id:"admin-consults",label:"실시간 상담",icon:"message-circle"},{id:"admin-workflow",label:"워크플로우 관리",icon:"list-checks"},{id:"admin-calendar",label:"캠페인 일정",icon:"calendar"},{id:"admin-sales",label:"매출분석",icon:"trending-up"},{id:"admin-members",label:"회원DB",icon:"users"},{id:"admin-channels",label:"채널 DB",icon:"layers"},{id:"admin-guide",label:"가이드라인",icon:"book-open"}];if(S.role==="cs"){for(var _ci=items.length-1;_ci>=0;_ci--){if(items[_ci].id==="admin-sales"||items[_ci].id==="admin-members"||items[_ci].id==="admin-channels")items.splice(_ci,1);}if(v==="admin-sales"||v==="admin-members"||v==="admin-channels"){v="admin-dashboard";S.view="admin-dashboard";}}let b=v==="admin-consults"?viewAdminConsults():v==="admin-members"?viewAdminMembers():v==="admin-channels"?viewAdminChannels():v==="admin-workflow"?viewAdminWorkflow():v==="admin-calendar"?viewAdminCalendar():v==="admin-sales"?viewAdminSales():v==="admin-todo"?viewTodo():v==="admin-guide"?viewGuide():viewAdminList();
 const bell=buildTasks().length;
 items.forEach(function(it){if(it.id==="admin-todo")it.dot=bell>0;if(it.id==="admin-dashboard")it.dot=(ADM_ROWS||[]).some(function(c){return !campSeen(c.id);});if(it.id==="admin-workflow")it.dot=(ADM_ROWS||[]).some(function(c){return c.status==="승인 완료"&&unreadCount(c,"adm")>0;});if(it.id==="admin-consults")it.dot=(S.consults||[]).some(function(c){var m=c.messages||[];return m.length&&m[m.length-1].role==="cust";});});if(!S.consults)setTimeout(loadConsults,60);
 return `<div class="flex min-h-screen bg-g50">${sidebar(items,v,"관리자",bell,true)}<main class="flex-1 ml-56 min-h-screen">${mgrBar()}${b}</main></div>`;}
