@@ -278,7 +278,7 @@ function viewApply(){
 return `<div class="min-h-screen">${topbar()}
 <div class="max-w-2xl mx-auto px-5 py-8 fade-up">
 <div class="${CARD} overflow-hidden">
-<div class="px-6 md:px-8 py-3 border-b border-g100 flex items-center gap-3">${logoMark('w-11 h-11')}<div><p class="text-[18px] font-bold text-g900">크놀AD 캠페인 신청서</p></div><button onclick="toggleConsult()" class="ml-auto inline-flex items-center gap-1.5 text-[14px] font-bold text-blue bg-blue-soft hover:opacity-80 px-3.5 py-2 rounded-xl whitespace-nowrap">실시간 상담</button></div>
+<div class="px-6 md:px-8 py-3 border-b border-g100 flex items-center gap-3">${logoMark('w-11 h-11')}<div><p class="text-[18px] font-bold text-g900">크놀AD 캠페인 신청서</p></div><button onclick="toggleConsult()" class="ml-auto inline-flex items-center gap-1.5 text-[14px] font-bold text-blue bg-blue-soft hover:opacity-80 px-3.5 py-2 rounded-xl whitespace-nowrap">채팅 문의하기</button></div>
 <div class="px-6 md:px-8 pt-3.5 pb-7">${NOTICE}${applyFields()}<button onclick="submitApply()" class="${BTN} w-full py-4 mt-6">캠페인 신청하기</button></div></div>
 </div>${siteFooter()}</div>`;}
 
