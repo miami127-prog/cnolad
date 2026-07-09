@@ -164,7 +164,7 @@ function openLegal(k){const L=LEGAL[k];modal(`<div class="flex items-center just
 function copyText(t){const ok=()=>toast("복사되었습니다");if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok).catch(()=>fbCopy(t));}else fbCopy(t);}
 function fbCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("복사되었습니다");}catch(e){toast("복사 실패");}document.body.removeChild(ta);}
 
-function go(v){S.view=v;render();window.scrollTo(0,0);syncUrl(v);logEvent("visit",v,(VIEW_TITLE[v]||v));}
+function go(v){if(v==="cust-channels")S._pickFrom=null;S.view=v;render();window.scrollTo(0,0);syncUrl(v);logEvent("visit",v,(VIEW_TITLE[v]||v));}
 function goHome(){S.view="home";render();window.scrollTo(0,0);syncUrl("home");}
 function newApply(){if(S.role==="customer"){S.form={name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:(S.cust&&S.cust.brand)||""};SEL=new Set();PROD={};QSEL={};go("cust-apply");}else{S.form={};SEL=new Set();PROD={};QSEL={};go("apply");}}
 function logout(){S.role=null;S.cust=null;S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.removeItem("knollad_sess");}catch(_e){}go("home");}
@@ -327,8 +327,8 @@ function applyChange(){const r=document.getElementById("pickRows");if(r)updateTa
 function updateTable(){const l=filteredCH();const r=document.getElementById("pickRows");if(r)r.innerHTML=l.length?l.map(pickRow).join(""):`<tr><td colspan="9" class="text-center py-12 text-g400 text-sm">검색 결과가 없습니다.</td></tr>`;const c=document.getElementById("pickCount");if(c)c.textContent=l.length+"개 채널";if(window.lucide)lucide.createIcons();}
 function onSearch(v){_search=v;updateTable();}
 function setRegion(r){_region=r;updateTable();const ch=document.getElementById("pickChips");if(ch)ch.querySelectorAll("button").forEach(b=>{const on=b.textContent.trim()===r;b.className=`px-4 py-2 rounded-2xl text-[14px] font-bold transition-all ${on?'bg-blue text-white':'bg-white border border-g200 text-g600 hover:bg-g100'}`;});}
-function openPicker(){saveForm();if(S.role==="customer"){go("cust-channels");}else{S._cameFrom="apply";go("channel-picker");}}
-function finishPicker(){if(S.role==="customer"){go("cust-apply");}else{go(S._cameFrom||"apply");}}
+function openPicker(){saveForm();if(S.role==="customer"){go("cust-channels");S._pickFrom="cust-apply";}else{S._cameFrom="apply";go("channel-picker");}}
+function finishPicker(){if(S.role==="customer"){var b=S._pickFrom||"customer-dashboard";S._pickFrom=null;go(b);}else{go(S._cameFrom||"apply");}}
 function notifyTelegram(t){try{fetch(SUPA_URL+"/functions/v1/notify-telegram",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},SH),body:JSON.stringify({text:t})}).catch(function(){});}catch(e){}}
 function submitApply(){saveForm();const f=S.form;var _isP=(S.cust&&S.cust.role==="파트너사");if(_isP){if(!f.manager||!f.manager.trim()||!f.email||!f.email.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자·이메일·브랜드명을 입력해주세요");return;}f.name=f.manager;}else if(!f.name||!f.name.trim()||!f.email||!f.email.trim()||!f.phone||!f.phone.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자명·이메일·연락처·브랜드명을 모두 입력해주세요");return;}
   if(!f.agree1||!f.agree2){toast("필수 동의 항목(이용약관·개인정보)에 동의해주세요");return;}
