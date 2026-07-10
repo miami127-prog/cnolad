@@ -473,7 +473,7 @@ if(g&&g.children.length===2){g.children[0].style.order="2";g.children[1].style.o
 }
 if(txt.indexOf("메시지")===0&&txt.indexOf("고객 소통")>0){
 var card=hs[i].parentElement;
-if(card){var inner=card.querySelector('[style*="46vh"]');if(inner)inner.style.height="64vh";}
+if(card){var inner=card.querySelector('[style*="46vh"]')||card.querySelector("[data-kko]");if(inner){inner.setAttribute("data-kko","1");inner.style.height="64vh";inner.style.background="#b2c7d9";inner.style.borderRadius="16px";inner.style.padding="12px";inner.style.display="flex";inner.style.flexDirection="column";inner.style.gap="10px";inner.style.overflowY="auto";if(inner.firstElementChild)inner.firstElementChild.style.marginTop="auto";inner.scrollTop=inner.scrollHeight;}}
 }
 }
 }catch(e){}
