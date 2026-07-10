@@ -433,10 +433,12 @@ function openLink(u){if(!u){toast("링크가 아직 없습니다");return;}windo
 var _cnLogosDone=false;
 function cnLoadLogos(){if(_cnLogosDone)return;_cnLogosDone=true;var ids=CH.map(function(c){return c.id;}).filter(Boolean),i;for(i=0;i<ids.length;i+=50){var chunk=ids.slice(i,i+50);fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet&maxResults=50&key="+YT_API_KEY+"&id="+chunk.join(",")).then(function(r){return r.json();}).then(function(d){var hit=false;(d.items||[]).forEach(function(it){var c=CH.find(function(x){return x.id===it.id;});if(c&&it.snippet&&it.snippet.thumbnails){var th=it.snippet.thumbnails;var u=((th.medium||th.default||th.high)||{}).url||null;if(u){c.logo=u;hit=true;}}});if(hit&&typeof render==="function"&&typeof S!=="undefined"&&["apply","cust-apply","channels","cust-channels","channel-picker","channel-detail"].indexOf(S.view)>=0){if(typeof saveForm==="function"){try{saveForm();}catch(e){}}render();}}).catch(function(){});}}
 window.addEventListener("load",function(){try{cnLoadLogos();}catch(e){}});
+function kkoTime(at){if(!at)return "";var d=new Date(at);if(isNaN(d.getTime()))return "";var h=d.getHours(),m=d.getMinutes();var ap=h<12?"오전":"오후";var hh=h%12;if(hh===0)hh=12;return ap+" "+hh+":"+(m<10?"0"+m:m);}
+function kkoDateTime(at){if(!at)return "";var d=new Date(at);if(isNaN(d.getTime()))return "";var y=d.getFullYear(),mo=d.getMonth()+1,da=d.getDate();return y+"."+(mo<10?"0"+mo:mo)+"."+(da<10?"0"+da:da)+" "+kkoTime(at);}
 function kakaoNoteRow(nt){
 var isKnoll=(nt.role==="knoll"||nt.who==="크놀AD");
 var me=(S.role==="admin")?isKnoll:(nt.role==="cust"||nt.who==="고객"||(S.cust&&nt.who===S.cust.name));
-var at=String(nt.at||"");var time=at.length>=16?at.slice(11,16):"";
+var time=kkoTime(nt.at);
 var av=isKnoll?logoMark("w-9 h-9"):'<div class="w-9 h-9 rounded-[14px] grid place-items-center font-bold text-[14px] flex-shrink-0" style="background:#dfe4ea;color:#4b5563">'+esc(String(nt.who||"고").charAt(0))+'</div>';
 var inner="";
 if(nt.title)inner+='<p class="text-[15px] font-bold mb-1">'+esc(nt.title)+'</p>';
