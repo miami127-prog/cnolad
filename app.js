@@ -501,34 +501,10 @@ if(!kkoIsChatInput(ta))return;
 var b=kkoSendBtn(ta);if(!b)return;
 e.preventDefault();e.stopPropagation();b.click();
 }catch(err){}},true);}
-function kkoPayFix(){try{
-var hasSettle=false,hs=document.querySelectorAll("h1,h2,h3");
-for(var i=0;i<hs.length;i++){var t=(hs[i].textContent||"").trim();
-if(t.indexOf("세금계산서")===0)hasSettle=true;
-if(t.indexOf("정산")===0&&t.indexOf("월말")>=0){hs[i].textContent="정산";hasSettle=true;}}
-if(!hasSettle)return;
-var ps=document.querySelectorAll("p");
-for(var j=0;j<ps.length;j++){var q=(ps[j].textContent||"").trim();
-if(q.indexOf("일괄 정산합니다")>=0){ps[j].textContent="세금계산서 발행 후 바로 입금해 주세요";}
-else if(q.indexOf("정산 요청을 누르면")>=0){ps[j].remove();}
-else if(q.indexOf("월말")>=0&&q.indexOf("일괄")>=0&&q.indexOf("아닙니다")<0){ps[j].remove();}}
-var bs=document.querySelectorAll("button");
-for(var k=0;k<bs.length;k++){if((bs[k].textContent||"").indexOf("일괄 정산 요청")>=0)bs[k].remove();}
-if(document.getElementById("kkoPayNote"))return;
-var anchor=null,h2=document.querySelectorAll("h2,h3");
-for(var m=0;m<h2.length;m++){if((h2[m].textContent||"").trim().indexOf("세금계산서")===0){anchor=h2[m].parentElement;break;}}
-if(!anchor)return;
-var d=document.createElement("div");d.id="kkoPayNote";
-d.style.cssText="background:#eef4ff;border:1px solid #cddffb;border-radius:16px;padding:14px 16px;margin:12px 0";
-d.innerHTML='<p style="font-weight:800;color:#111827;font-size:15.5px;margin-bottom:6px">입금 안내</p>'
-+'<p style="font-size:14.5px;color:#374151;line-height:1.7;word-break:keep-all">세금계산서 <b>발행 후 바로 입금</b>해 주세요. (월말 일괄 정산이 아닙니다)</p>'
-+'<p style="font-size:14.5px;color:#111827;line-height:1.7;margin-top:6px;word-break:keep-all">예금주 <b>에이치알컴퍼니 주식회사</b> · <b>우리은행</b> 계좌번호 <b>1005-504-167163</b></p>';
-anchor.insertAdjacentElement("afterend",d);
-}catch(e){}}
 function kkoFix(){try{
 var st=document.getElementById("kkoChat");
 if(!st){st=document.createElement("style");st.id="kkoChat";document.head.appendChild(st);}
-st.textContent="#chatScroll{background:#b2c7d9!important}"+"#acScroll{background:#b2c7d9!important}"+"#csScroll{display:flex!important;flex-direction:column!important}"+'div[style*="46vh"]{height:64vh!important;background:#b2c7d9!important;border-radius:16px;padding:12px;overflow-y:auto}';
+st.textContent="#chatScroll{background:#b2c7d9!important}"+"#acScroll{background:#b2c7d9!important}"+"#csScroll{display:flex!important;flex-direction:column!important}"+'[data-kkochat]{background:#b2c7d9!important;border-radius:16px!important;padding:12px!important;overflow-y:auto!important}';
 var cs=document.getElementById("chatScroll");
 if(cs&&cs.parentElement&&cs.parentElement.style&&cs.parentElement.style.height)cs.parentElement.style.height="84vh";
 ["chatScroll","csScroll","acScroll"].forEach(function(id){var e=document.getElementById(id);if(e)e.scrollTop=e.scrollHeight;});
@@ -565,7 +541,6 @@ if(!other)continue;
 g.setAttribute("data-kkoswap","1");g.children[0].style.order="2";g.children[1].style.order="1";}
 kkoBindEnter();
 kkoIsoFix();
-kkoPayFix();
 }catch(e){}}
 window.addEventListener("load",function(){try{
 window.noteRow=kakaoNoteRow;
