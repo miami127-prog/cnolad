@@ -526,9 +526,36 @@ g.setAttribute("data-kkoswap","1");
 g.children[0].style.order="2";g.children[1].style.order="1";
 }
 kkoBindEnter(document);
+kkoIsoFix();
 kkoPayFix();
 }catch(e){}
 }
+function kkoCsBubble(m,idx,arr){
+var isK=(m.role==="knoll"||m.who==="크놀AD");
+var mine=csMine(m);
+var time=kkoTime(m.at);
+var av=isK?logoMark("w-7 h-7"):'<div style="width:28px;height:28px;border-radius:10px;background:#dfe4ea;color:#4b5563;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">'+esc(String(m.who||"고").charAt(0))+'</div>';
+var bub='<div style="max-width:72%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.45;word-break:break-word;'
++(mine?'background:#FEE500;color:#191600':'background:#fff;color:#191919')+';box-shadow:0 1px 2px rgba(0,0,0,.08)">'+esc(m.text||"")+'</div>';
+var unread=mine&&csUnread(idx,arr);
+var tm='<span style="font-size:11px;color:#111827;font-weight:600;flex-shrink:0;display:inline-flex;flex-direction:column;align-items:flex-end;line-height:1.25">'
++(unread?'<b style="color:#e5a50a;font-size:11px">1</b>':'')+time+'</span>';
+if(mine)return '<div class="kko-msg" style="display:flex;justify-content:flex-end;align-items:flex-start;gap:6px">'+tm+bub+av+'</div>';
+return '<div class="kko-msg" style="display:flex;justify-content:flex-start;align-items:flex-start;gap:6px">'+av+'<div style="min-width:0"><p style="font-size:11px;font-weight:700;color:#3d4a56;margin:0 0 3px 2px">'+esc(String(m.who||""))+'</p><div style="display:flex;align-items:flex-end;gap:6px">'+bub+tm+'</div></div></div>';
+}
+function kkoIsoFix(){try{
+var re=/^(.*?)(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})(.*)$/;
+var ps=document.querySelectorAll("p");
+for(var i=0;i<ps.length;i++){
+if(ps[i].children.length)continue;
+var t=(ps[i].textContent||"");
+var m=t.match(re);
+if(!m)continue;
+var d=kkoDateTime(m[2]+"T"+m[3]+":00");
+if(!d)continue;
+ps[i].textContent=m[1]+d+m[4];
+}
+}catch(e){}}
 function kkoSendBtn(ta){
 var card=ta;
 for(var i=0;i<6&&card&&card.parentElement;i++){card=card.parentElement;
@@ -690,6 +717,7 @@ g.parentElement.insertBefore(d,g);
 }catch(e){}}
 window.addEventListener("load",function(){try{
 window.noteRow=kakaoNoteRow;
+window.csBubble=kkoCsBubble;
 if(typeof render==="function"&&!window.__kkoWrapped){
 var _r=render;window.__kkoWrapped=true;
 window.render=function(){var v=_r.apply(this,arguments);setTimeout(kkoFix,0);return v;};
