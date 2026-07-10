@@ -433,3 +433,27 @@ function openLink(u){if(!u){toast("링크가 아직 없습니다");return;}windo
 var _cnLogosDone=false;
 function cnLoadLogos(){if(_cnLogosDone)return;_cnLogosDone=true;var ids=CH.map(function(c){return c.id;}).filter(Boolean),i;for(i=0;i<ids.length;i+=50){var chunk=ids.slice(i,i+50);fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet&maxResults=50&key="+YT_API_KEY+"&id="+chunk.join(",")).then(function(r){return r.json();}).then(function(d){var hit=false;(d.items||[]).forEach(function(it){var c=CH.find(function(x){return x.id===it.id;});if(c&&it.snippet&&it.snippet.thumbnails){var th=it.snippet.thumbnails;var u=((th.medium||th.default||th.high)||{}).url||null;if(u){c.logo=u;hit=true;}}});if(hit&&typeof render==="function"&&typeof S!=="undefined"&&["apply","cust-apply","channels","cust-channels","channel-picker","channel-detail"].indexOf(S.view)>=0){if(typeof saveForm==="function"){try{saveForm();}catch(e){}}render();}}).catch(function(){});}}
 window.addEventListener("load",function(){try{cnLoadLogos();}catch(e){}});
+function kakaoNoteRow(nt){
+var isKnoll=(nt.role==="knoll"||nt.who==="크놀AD");
+var me=(S.role==="admin")?isKnoll:(nt.role==="cust"||nt.who==="고객"||(S.cust&&nt.who===S.cust.name));
+var at=String(nt.at||"");var time=at.length>=16?at.slice(11,16):"";
+var av=isKnoll?logoMark("w-9 h-9"):'<div class="w-9 h-9 rounded-[14px] grid place-items-center font-bold text-[14px] flex-shrink-0" style="background:#dfe4ea;color:#4b5563">'+esc(String(nt.who||"고").charAt(0))+'</div>';
+var inner="";
+if(nt.title)inner+='<p class="text-[15px] font-bold mb-1">'+esc(nt.title)+'</p>';
+if(nt.text)inner+='<p class="text-[15px] whitespace-pre-wrap leading-relaxed break-words">'+esc(nt.text)+'</p>';
+if(nt.fileUrl||nt.link){inner+='<div class="mt-2 flex gap-3">';
+if(nt.fileUrl)inner+='<button onclick="openLink(\''+esc(nt.fileUrl)+'\')" class="text-[13px] font-bold underline" style="color:#1a56db">첨부파일 ↗</button>';
+if(nt.link)inner+='<button onclick="openLink(\''+esc(nt.link)+'\')" class="text-[13px] font-bold underline" style="color:#1a56db">링크 ↗</button>';
+inner+='</div>';}
+var bub='<div class="rounded-[14px] px-3.5 py-2.5" style="'+(me?'background:#FEE500;color:#191600':'background:#ffffff;color:#191919')+';box-shadow:0 1px 1.5px rgba(0,0,0,.08)">'+inner+'</div>';
+var tm='<span class="text-[11px] flex-shrink-0 pb-0.5" style="color:#55606b">'+time+'</span>';
+if(me)return '<div class="flex justify-end items-start gap-2"><div class="flex items-end gap-1.5 max-w-[78%] min-w-0">'+tm+'<div class="min-w-0">'+bub+'</div></div>'+av+'</div>';
+return '<div class="flex justify-start items-start gap-2">'+av+'<div class="max-w-[78%] min-w-0"><p class="text-[12px] font-bold mb-1" style="color:#3d4a56">'+esc(String(nt.who||""))+'</p><div class="flex items-end gap-1.5"><div class="min-w-0">'+bub+'</div>'+tm+'</div></div></div>';
+}
+window.addEventListener("load",function(){try{
+window.noteRow=kakaoNoteRow;
+var st=document.createElement("style");st.id="kkoChat";
+st.textContent="#chatScroll{background:#b2c7d9!important}";
+document.head.appendChild(st);
+if(typeof render==="function"&&typeof S!=="undefined"&&S.view)render();
+}catch(e){}});
