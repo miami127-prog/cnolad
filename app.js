@@ -447,7 +447,7 @@ function csMine(m){return (m.role==="cust"||m.who==="고객"||(typeof S!=="undef
 function csUnread(idx,arr){if(!arr||typeof idx!=="number")return false;for(var j=idx+1;j<arr.length;j++){if(!csMine(arr[j]))return false;}return true;}
 function kakaoNoteRow(nt,idx,arr){
 var isKnoll=(nt.role==="knoll"||nt.who==="크놀AD");
-var me=(S.role==="admin")?isKnoll:(nt.role==="cust"||nt.who==="고객"||(S.cust&&nt.who===S.cust.name));
+var me=kkoMine(nt);
 var time=kkoTime(nt.at);
 var av=isKnoll?logoMark("w-9 h-9"):'<div class="w-9 h-9 rounded-[14px] grid place-items-center font-bold text-[14px] flex-shrink-0" style="background:#dfe4ea;color:#4b5563">'+esc(String(nt.who||"고").charAt(0))+'</div>';
 var inner="";
@@ -458,149 +458,60 @@ if(nt.fileUrl)inner+='<button onclick="openLink(\''+esc(nt.fileUrl)+'\')" class=
 if(nt.link)inner+='<button onclick="openLink(\''+esc(nt.link)+'\')" class="text-[13px] font-bold underline" style="color:#1a56db">링크 ↗</button>';
 inner+='</div>';}
 var bub='<div class="rounded-[14px] px-3.5 py-2.5" style="'+(me?'background:#FEE500;color:#191600':'background:#ffffff;color:#191919')+';box-shadow:0 1px 1.5px rgba(0,0,0,.08)">'+inner+'</div>';
-var unread=me&&kkoUnread(idx,arr,true);var tm='<span class="flex-shrink-0 pb-0.5 inline-flex flex-col items-end" style="line-height:1.25">'+(unread?'<b style="color:#e5a50a;font-size:11px">1</b>':"")+'<span class="text-[11px]" style="color:#111827;font-weight:600">'+time+'</span></span>';
+var unread=me&&kkoUnread(idx,arr,true);
+var tm='<span class="flex-shrink-0 pb-0.5 inline-flex flex-col items-end" style="line-height:1.25">'+(unread?'<b style="color:#e5a50a;font-size:11px">1</b>':"")+'<span class="text-[11px]" style="color:#111827;font-weight:600">'+time+'</span></span>';
 if(me)return '<div class="kko-msg flex justify-end items-start gap-2"><div class="flex items-end gap-1.5 max-w-[78%] min-w-0">'+tm+'<div class="min-w-0">'+bub+'</div></div>'+av+'</div>';
 return '<div class="kko-msg flex justify-start items-start gap-2">'+av+'<div class="max-w-[78%] min-w-0"><p class="text-[12px] font-bold mb-1" style="color:#3d4a56">'+esc(String(nt.who||""))+'</p><div class="flex items-end gap-1.5"><div class="min-w-0">'+bub+'</div>'+tm+'</div></div></div>';
-}
-function kkoFix(){
-try{
-var st=document.getElementById("kkoChat");
-if(!st){st=document.createElement("style");st.id="kkoChat";document.head.appendChild(st);}
-st.textContent="#chatScroll{background:#b2c7d9!important}"
-+"#csScroll{display:flex!important;flex-direction:column!important}"
-+"#acScroll{background:#b2c7d9!important}";
-var cs=document.getElementById("chatScroll");
-if(cs&&cs.parentElement&&cs.parentElement.style&&cs.parentElement.style.height)cs.parentElement.style.height="84vh";
-["chatScroll","csScroll","acScroll"].forEach(function(id){var e=document.getElementById(id);if(e)e.scrollTop=e.scrollHeight;});
-
-/* 말풍선이 있는 모든 스크롤 컨테이너를 구조로 탐지 */
-var seen=[];
-var msgs=document.querySelectorAll(".kko-msg");
-for(var i=0;i<msgs.length;i++){
-var box=msgs[i].parentElement;
-if(!box||seen.indexOf(box)>=0)continue;
-seen.push(box);
-if(box.id==="chatScroll"||box.id==="acScroll"||box.id==="csScroll"){box.scrollTop=box.scrollHeight;continue;}
-if(!box.hasAttribute("data-kkobox2")){
-box.setAttribute("data-kkobox2","1");
-box.style.background="#b2c7d9";box.style.borderRadius="16px";box.style.padding="12px";
-box.style.overflowY="auto";box.style.display="block";
-if(!box.style.height&&!box.style.maxHeight)box.style.height="46vh";
-}
-box.scrollTop=box.scrollHeight;
-}
-
-/* 제목이 '메시지'로 시작하는 카드: 빈 상태 + 입력창 처리 */
-var hs=document.querySelectorAll("h2,h3");
-for(var k=0;k<hs.length;k++){
-var txt=(hs[k].textContent||"").trim();
-if(txt.indexOf("메시지")!==0)continue;
-var card=hs[k].parentElement;if(!card)continue;
-var inner=card.querySelector('[style*="46vh"]')||card.querySelector("[data-kkobox2]");
-if(inner&&!inner.hasAttribute("data-kkobox2")){
-inner.setAttribute("data-kkobox2","1");
-inner.style.height="64vh";inner.style.background="#b2c7d9";inner.style.borderRadius="16px";
-inner.style.padding="12px";inner.style.overflowY="auto";
-}
-if(inner){inner.scrollTop=inner.scrollHeight;}
-var ta=card.querySelector("textarea");
-if(ta){ta.style.border="1px solid #d5dae0";ta.style.borderRadius="12px";ta.style.padding="10px 12px";
-ta.style.background="#fff";ta.style.outline="none";ta.style.width="100%";ta.style.resize="none";ta.style.minHeight="46px";
-var wrap=ta.parentElement;while(wrap&&wrap.parentElement&&wrap.parentElement!==card)wrap=wrap.parentElement;
-if(wrap&&wrap!==ta&&!wrap.hasAttribute("data-kkobox")){wrap.setAttribute("data-kkobox","1");
-wrap.style.border="1px solid #d5dae0";wrap.style.borderRadius="16px";wrap.style.padding="10px";
-wrap.style.background="#fff";wrap.style.marginTop="10px";}
-var fi=card.querySelector('input[type="file"]');
-if(fi){fi.style.fontSize="12px";fi.style.maxWidth="100%";fi.style.marginTop="6px";}}
-}
-
-/* 현재 진행 상황 <-> 메시지 카드 좌우 교체 (2칸 그리드일 때만) */
-var h2s=document.querySelectorAll("h2,h3");
-for(var m=0;m<h2s.length;m++){
-if((h2s[m].textContent||"").trim()!=="현재 진행 상황")continue;
-var g=h2s[m].closest("div.grid");
-if(!g||g.children.length!==2||g.hasAttribute("data-kkoswap"))continue;
-var other=null;
-for(var c=0;c<2;c++){var h=g.children[c].querySelector("h2,h3");if(h&&(h.textContent||"").trim().indexOf("메시지")===0)other=g.children[c];}
-if(!other)continue;
-g.setAttribute("data-kkoswap","1");
-g.children[0].style.order="2";g.children[1].style.order="1";
-}
-kkoBindEnter(document);
-kkoIsoFix();
-kkoPayFix();
-}catch(e){}
 }
 function kkoCsBubble(m,idx,arr){
 var isK=(m.role==="knoll"||m.who==="크놀AD");
 var mine=csMine(m);
 var time=kkoTime(m.at);
 var av=isK?logoMark("w-7 h-7"):'<div style="width:28px;height:28px;border-radius:10px;background:#dfe4ea;color:#4b5563;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">'+esc(String(m.who||"고").charAt(0))+'</div>';
-var bub='<div style="max-width:72%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.45;word-break:break-word;'
-+(mine?'background:#FEE500;color:#191600':'background:#fff;color:#191919')+';box-shadow:0 1px 2px rgba(0,0,0,.08)">'+esc(m.text||"")+'</div>';
+var bub='<div style="max-width:72%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.45;word-break:break-word;'+(mine?'background:#FEE500;color:#191600':'background:#fff;color:#191919')+';box-shadow:0 1px 2px rgba(0,0,0,.08)">'+esc(m.text||"")+'</div>';
 var unread=mine&&csUnread(idx,arr);
-var tm='<span style="font-size:11px;color:#111827;font-weight:600;flex-shrink:0;display:inline-flex;flex-direction:column;align-items:flex-end;line-height:1.25">'
-+(unread?'<b style="color:#e5a50a;font-size:11px">1</b>':'')+time+'</span>';
+var tm='<span style="font-size:11px;color:#111827;font-weight:600;flex-shrink:0;display:inline-flex;flex-direction:column;align-items:flex-end;line-height:1.25">'+(unread?'<b style="color:#e5a50a;font-size:11px">1</b>':'')+time+'</span>';
 if(mine)return '<div class="kko-msg" style="display:flex;justify-content:flex-end;align-items:flex-start;gap:6px">'+tm+bub+av+'</div>';
 return '<div class="kko-msg" style="display:flex;justify-content:flex-start;align-items:flex-start;gap:6px">'+av+'<div style="min-width:0"><p style="font-size:11px;font-weight:700;color:#3d4a56;margin:0 0 3px 2px">'+esc(String(m.who||""))+'</p><div style="display:flex;align-items:flex-end;gap:6px">'+bub+tm+'</div></div></div>';
 }
-function kkoIsoFix(){try{
-var re=/^(.*?)(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})(.*)$/;
-var ps=document.querySelectorAll("p");
-for(var i=0;i<ps.length;i++){
-if(ps[i].children.length)continue;
-var t=(ps[i].textContent||"");
-var m=t.match(re);
-if(!m)continue;
-var d=kkoDateTime(m[2]+"T"+m[3]+":00");
-if(!d)continue;
-ps[i].textContent=m[1]+d+m[4];
-}
-}catch(e){}}
-function kkoSendBtn(ta){
-var card=ta;
-for(var i=0;i<6&&card&&card.parentElement;i++){card=card.parentElement;
-var bs=card.querySelectorAll("button");
-for(var j=bs.length-1;j>=0;j--){
-var oc=bs[j].getAttribute("onclick")||"";
-if(/Send|send|addNote|admAddNote|consultSend|chatSend/.test(oc))return bs[j];
-if((bs[j].querySelector&&bs[j].querySelector('[data-lucide="send"]')))return bs[j];
-if((bs[j].textContent||"").trim()==="전송")return bs[j];
-}
-}
-return null;
-}
-function kkoBindEnter(root){
-var tas=(root||document).querySelectorAll("textarea, input#cs_send");
-for(var i=0;i<tas.length;i++){
-var ta=tas[i];
-if(ta.hasAttribute("data-kkoenter"))continue;
-var id=ta.id||"";
-var inChat=(id==="chatMsg"||id==="cs_send"||!!kkoSendBtn(ta));
-if(!inChat)continue;
-ta.setAttribute("data-kkoenter","1");
-ta.addEventListener("keydown",function(e){
-if(e.key!=="Enter")return;
-if(e.shiftKey)return;
+function kkoIsoFix(){try{var re=/^(.*?)(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})(.*)$/;var ps=document.querySelectorAll("p");
+for(var i=0;i<ps.length;i++){if(ps[i].children.length)continue;var t=(ps[i].textContent||"");var m=t.match(re);if(!m)continue;var d=kkoDateTime(m[2]+"T"+m[3]+":00");if(!d)continue;ps[i].textContent=m[1]+d+m[4];}}catch(e){}}
+function kkoChatCard(ta){var c=ta;for(var i=0;i<7&&c&&c.parentElement;i++){c=c.parentElement;
+if(c.querySelector&&c.querySelector(".kko-msg"))return c;
+var h=c.querySelector&&c.querySelector("h2,h3");
+if(h&&(h.textContent||"").trim().indexOf("메시지")===0)return c;}
+return null;}
+function kkoIsChatInput(ta){if(!ta)return false;var id=ta.id||"";if(id==="chatMsg"||id==="cs_send")return true;
+var ph=(ta.getAttribute&&ta.getAttribute("placeholder"))||"";if(ph.indexOf("메시지")>=0)return true;return !!kkoChatCard(ta);}
+function kkoSendBtn(ta){var card=kkoChatCard(ta);var scope=card||ta.parentElement;if(!scope)return null;
+var bs=scope.querySelectorAll("button");if(!bs.length)return null;
+for(var j=0;j<bs.length;j++){var oc=(bs[j].getAttribute("onclick")||"")+" "+(typeof bs[j].onclick==="function"?String(bs[j].onclick):"");
+if(/chatSend|consultSend|admAddNote|addNote|Send\(/.test(oc))return bs[j];}
+for(var k=0;k<bs.length;k++){if(bs[k].querySelector&&bs[k].querySelector("svg.lucide-send,[data-lucide='send']"))return bs[k];
+if((bs[k].textContent||"").trim()==="전송")return bs[k];}
+return bs[bs.length-1];}
+function kkoBindEnter(){if(window.__kkoEnterBound)return;window.__kkoEnterBound=true;
+document.addEventListener("keydown",function(e){try{
+if(e.key!=="Enter"||e.shiftKey)return;
 if(e.isComposing||e.keyCode===229)return;
-var b=kkoSendBtn(e.target);
-if(!b)return;
-e.preventDefault();
-b.click();
-});
-}
-}
+var ta=e.target;if(!ta||!ta.tagName)return;
+var tag=ta.tagName.toUpperCase();
+if(tag!=="TEXTAREA"&&!(tag==="INPUT"&&ta.id==="cs_send"))return;
+if(!kkoIsChatInput(ta))return;
+var b=kkoSendBtn(ta);if(!b)return;
+e.preventDefault();e.stopPropagation();b.click();
+}catch(err){}},true);}
 function kkoPayFix(){try{
 var hasSettle=false,hs=document.querySelectorAll("h1,h2,h3");
 for(var i=0;i<hs.length;i++){var t=(hs[i].textContent||"").trim();
-if(t.indexOf("세금계산서")===0){hasSettle=true;}
+if(t.indexOf("세금계산서")===0)hasSettle=true;
 if(t.indexOf("정산")===0&&t.indexOf("월말")>=0){hs[i].textContent="정산";hasSettle=true;}}
 if(!hasSettle)return;
 var ps=document.querySelectorAll("p");
 for(var j=0;j<ps.length;j++){var q=(ps[j].textContent||"").trim();
 if(q.indexOf("일괄 정산합니다")>=0){ps[j].textContent="세금계산서 발행 후 바로 입금해 주세요";}
-else if(q.indexOf("정산 요청을 누르면")>=0||q.indexOf("일괄 정산 요청")>=0){ps[j].remove();}
-else if(q.indexOf("월말")>=0&&q.indexOf("일괄")>=0){ps[j].remove();}}
+else if(q.indexOf("정산 요청을 누르면")>=0){ps[j].remove();}
+else if(q.indexOf("월말")>=0&&q.indexOf("일괄")>=0&&q.indexOf("아닙니다")<0){ps[j].remove();}}
 var bs=document.querySelectorAll("button");
 for(var k=0;k<bs.length;k++){if((bs[k].textContent||"").indexOf("일괄 정산 요청")>=0)bs[k].remove();}
 if(document.getElementById("kkoPayNote"))return;
@@ -614,83 +525,36 @@ d.innerHTML='<p style="font-weight:800;color:#111827;font-size:15.5px;margin-bot
 +'<p style="font-size:14.5px;color:#111827;line-height:1.7;margin-top:6px;word-break:keep-all">예금주 <b>에이치알컴퍼니 주식회사</b> · <b>우리은행</b> 계좌번호 <b>1005-504-167163</b></p>';
 anchor.insertAdjacentElement("afterend",d);
 }catch(e){}}
-window.addEventListener("load",function(){try{cnLoadLogos();}catch(e){}});
-function kkoTime(at){if(!at)return "";var d=new Date(at);if(isNaN(d.getTime()))return "";var h=d.getHours(),m=d.getMinutes();var ap=h<12?"오전":"오후";var hh=h%12;if(hh===0)hh=12;return ap+" "+hh+":"+(m<10?"0"+m:m);}
-function kkoDateTime(at){if(!at)return "";var d=new Date(at);if(isNaN(d.getTime()))return "";var y=d.getFullYear(),mo=d.getMonth()+1,da=d.getDate();return y+"."+(mo<10?"0"+mo:mo)+"."+(da<10?"0"+da:da)+" "+kkoTime(at);}
-function kkoMine(nt){var isK=(nt.role==="knoll"||nt.who==="크놀AD");return (typeof S!=="undefined"&&S.role==="admin")?isK:(nt.role==="cust"||nt.who==="고객"||(typeof S!=="undefined"&&S.cust&&nt.who===S.cust.name));}
-function kkoUnread(idx,arr,mine){if(!arr||typeof idx!=="number")return false;for(var j=idx+1;j<arr.length;j++){if(kkoMine(arr[j])!==mine)return false;}return true;}
-function csMine(m){return (m.role==="cust"||m.who==="고객"||(typeof S!=="undefined"&&S.cust&&m.who===S.cust.name));}
-function csUnread(idx,arr){if(!arr||typeof idx!=="number")return false;for(var j=idx+1;j<arr.length;j++){if(!csMine(arr[j]))return false;}return true;}
-function kakaoNoteRow(nt,idx,arr){
-var isKnoll=(nt.role==="knoll"||nt.who==="크놀AD");
-var me=(S.role==="admin")?isKnoll:(nt.role==="cust"||nt.who==="고객"||(S.cust&&nt.who===S.cust.name));
-var time=kkoTime(nt.at);
-var av=isKnoll?logoMark("w-9 h-9"):'<div class="w-9 h-9 rounded-[14px] grid place-items-center font-bold text-[14px] flex-shrink-0" style="background:#dfe4ea;color:#4b5563">'+esc(String(nt.who||"고").charAt(0))+'</div>';
-var inner="";
-if(nt.title)inner+='<p class="text-[15px] font-bold mb-1">'+esc(nt.title)+'</p>';
-if(nt.text)inner+='<p class="text-[15px] whitespace-pre-wrap leading-relaxed break-words">'+esc(nt.text)+'</p>';
-if(nt.fileUrl||nt.link){inner+='<div class="mt-2 flex gap-3">';
-if(nt.fileUrl)inner+='<button onclick="openLink(\''+esc(nt.fileUrl)+'\')" class="text-[13px] font-bold underline" style="color:#1a56db">첨부파일 ↗</button>';
-if(nt.link)inner+='<button onclick="openLink(\''+esc(nt.link)+'\')" class="text-[13px] font-bold underline" style="color:#1a56db">링크 ↗</button>';
-inner+='</div>';}
-var bub='<div class="rounded-[14px] px-3.5 py-2.5" style="'+(me?'background:#FEE500;color:#191600':'background:#ffffff;color:#191919')+';box-shadow:0 1px 1.5px rgba(0,0,0,.08)">'+inner+'</div>';
-var unread=me&&kkoUnread(idx,arr,true);var tm='<span class="flex-shrink-0 pb-0.5 inline-flex flex-col items-end" style="line-height:1.25">'+(unread?'<b style="color:#e5a50a;font-size:11px">1</b>':"")+'<span class="text-[11px]" style="color:#111827;font-weight:600">'+time+'</span></span>';
-if(me)return '<div class="kko-msg flex justify-end items-start gap-2"><div class="flex items-end gap-1.5 max-w-[78%] min-w-0">'+tm+'<div class="min-w-0">'+bub+'</div></div>'+av+'</div>';
-return '<div class="kko-msg flex justify-start items-start gap-2">'+av+'<div class="max-w-[78%] min-w-0"><p class="text-[12px] font-bold mb-1" style="color:#3d4a56">'+esc(String(nt.who||""))+'</p><div class="flex items-end gap-1.5"><div class="min-w-0">'+bub+'</div>'+tm+'</div></div></div>';
-}
-function kkoFix(){
-try{
+function kkoFix(){try{
 var st=document.getElementById("kkoChat");
 if(!st){st=document.createElement("style");st.id="kkoChat";document.head.appendChild(st);}
-st.textContent="#chatScroll{background:#b2c7d9!important}"
-+"#csScroll{display:flex!important;flex-direction:column!important}"
-+"#acScroll{background:#b2c7d9!important}";
+st.textContent="#chatScroll{background:#b2c7d9!important}"+"#csScroll{display:flex!important;flex-direction:column!important}"+"#acScroll{background:#b2c7d9!important}";
 var cs=document.getElementById("chatScroll");
 if(cs&&cs.parentElement&&cs.parentElement.style&&cs.parentElement.style.height)cs.parentElement.style.height="84vh";
 ["chatScroll","csScroll","acScroll"].forEach(function(id){var e=document.getElementById(id);if(e)e.scrollTop=e.scrollHeight;});
-
-/* 말풍선이 있는 모든 스크롤 컨테이너를 구조로 탐지 */
-var seen=[];
-var msgs=document.querySelectorAll(".kko-msg");
-for(var i=0;i<msgs.length;i++){
-var box=msgs[i].parentElement;
-if(!box||seen.indexOf(box)>=0)continue;
-seen.push(box);
+var seen=[],msgs=document.querySelectorAll(".kko-msg");
+for(var i=0;i<msgs.length;i++){var box=msgs[i].parentElement;
+if(!box||seen.indexOf(box)>=0)continue;seen.push(box);
 if(box.id==="chatScroll"||box.id==="acScroll"||box.id==="csScroll"){box.scrollTop=box.scrollHeight;continue;}
-if(!box.hasAttribute("data-kkobox2")){
-box.setAttribute("data-kkobox2","1");
-box.style.background="#b2c7d9";box.style.borderRadius="16px";box.style.padding="12px";
-box.style.overflowY="auto";box.style.display="block";
-if(!box.style.height&&!box.style.maxHeight)box.style.height="46vh";
-}
-box.scrollTop=box.scrollHeight;
-}
-
-/* 제목이 '메시지'로 시작하는 카드: 빈 상태 + 입력창 처리 */
+if(!box.hasAttribute("data-kkobox2")){box.setAttribute("data-kkobox2","1");
+box.style.background="#b2c7d9";box.style.borderRadius="16px";box.style.padding="12px";box.style.overflowY="auto";
+if(!box.style.height&&!box.style.maxHeight)box.style.height="46vh";}
+box.scrollTop=box.scrollHeight;}
 var hs=document.querySelectorAll("h2,h3");
-for(var k=0;k<hs.length;k++){
-var txt=(hs[k].textContent||"").trim();
+for(var k=0;k<hs.length;k++){var txt=(hs[k].textContent||"").trim();
 if(txt.indexOf("메시지")!==0)continue;
 var card=hs[k].parentElement;if(!card)continue;
 var inner=card.querySelector('[style*="46vh"]')||card.querySelector("[data-kkobox2]");
-if(inner&&!inner.hasAttribute("data-kkobox2")){
-inner.setAttribute("data-kkobox2","1");
-inner.style.height="64vh";inner.style.background="#b2c7d9";inner.style.borderRadius="16px";
-inner.style.padding="12px";inner.style.overflowY="auto";
-}
-if(inner){inner.scrollTop=inner.scrollHeight;}
+if(inner&&!inner.hasAttribute("data-kkobox2")){inner.setAttribute("data-kkobox2","1");
+inner.style.height="64vh";inner.style.background="#b2c7d9";inner.style.borderRadius="16px";inner.style.padding="12px";inner.style.overflowY="auto";}
+if(inner)inner.scrollTop=inner.scrollHeight;
 var ta=card.querySelector("textarea");
-if(ta){ta.style.border="1px solid #d5dae0";ta.style.borderRadius="12px";ta.style.padding="10px 12px";
-ta.style.background="#fff";ta.style.outline="none";ta.style.width="100%";ta.style.resize="none";ta.style.minHeight="46px";
+if(ta){ta.style.border="1px solid #d5dae0";ta.style.borderRadius="12px";ta.style.padding="10px 12px";ta.style.background="#fff";ta.style.outline="none";ta.style.width="100%";ta.style.resize="none";ta.style.minHeight="46px";
 var wrap=ta.parentElement;while(wrap&&wrap.parentElement&&wrap.parentElement!==card)wrap=wrap.parentElement;
 if(wrap&&wrap!==ta&&!wrap.hasAttribute("data-kkobox")){wrap.setAttribute("data-kkobox","1");
-wrap.style.border="1px solid #d5dae0";wrap.style.borderRadius="16px";wrap.style.padding="10px";
-wrap.style.background="#fff";wrap.style.marginTop="10px";}
+wrap.style.border="1px solid #d5dae0";wrap.style.borderRadius="16px";wrap.style.padding="10px";wrap.style.background="#fff";wrap.style.marginTop="10px";}
 var fi=card.querySelector('input[type="file"]');
-if(fi){fi.style.fontSize="12px";fi.style.maxWidth="100%";fi.style.marginTop="6px";}}
-}
-
-/* 현재 진행 상황 <-> 메시지 카드 좌우 교체 (2칸 그리드일 때만) */
+if(fi){fi.style.fontSize="12px";fi.style.maxWidth="100%";fi.style.marginTop="6px";}}}
 var h2s=document.querySelectorAll("h2,h3");
 for(var m=0;m<h2s.length;m++){
 if((h2s[m].textContent||"").trim()!=="현재 진행 상황")continue;
@@ -699,30 +563,16 @@ if(!g||g.children.length!==2||g.hasAttribute("data-kkoswap"))continue;
 var other=null;
 for(var c=0;c<2;c++){var h=g.children[c].querySelector("h2,h3");if(h&&(h.textContent||"").trim().indexOf("메시지")===0)other=g.children[c];}
 if(!other)continue;
-g.setAttribute("data-kkoswap","1");
-g.children[0].style.order="2";g.children[1].style.order="1";
-}
+g.setAttribute("data-kkoswap","1");g.children[0].style.order="2";g.children[1].style.order="1";}
+kkoBindEnter();
+kkoIsoFix();
 kkoPayFix();
-}catch(e){}
-}
-function kkoPayFix(){try{
-if(typeof S==="undefined"||S.view!=="settlement")return;
-if(document.getElementById("kkoPayNote"))return;
-var g=document.querySelector(".max-w-5xl > .grid");if(!g||!g.parentElement)return;
-var d=document.createElement("div");d.id="kkoPayNote";
-d.style.cssText="background:#eef4ff;border:1px solid #cddffb;border-radius:16px;padding:14px 16px;margin-bottom:16px";
-d.innerHTML='<p style="font-weight:800;color:#111827;font-size:15.5px;margin-bottom:6px">입금 안내</p>'
-+'<p style="font-size:14.5px;color:#374151;line-height:1.7;word-break:keep-all">세금계산서 <b>발행 후 바로 입금</b>해 주세요. (월말 일괄 정산이 아닙니다)</p>'
-+'<p style="font-size:14.5px;color:#111827;line-height:1.7;margin-top:6px;word-break:keep-all">예금주 <b>에이치알컴퍼니 주식회사</b> · <b>우리은행</b> 계좌번호 <b>1005-504-167163</b></p>';
-g.parentElement.insertBefore(d,g);
 }catch(e){}}
 window.addEventListener("load",function(){try{
 window.noteRow=kakaoNoteRow;
 window.csBubble=kkoCsBubble;
-if(typeof render==="function"&&!window.__kkoWrapped){
-var _r=render;window.__kkoWrapped=true;
-window.render=function(){var v=_r.apply(this,arguments);setTimeout(kkoFix,0);return v;};
-}
+if(typeof render==="function"&&!window.__kkoWrapped){var _r=render;window.__kkoWrapped=true;
+window.render=function(){var v=_r.apply(this,arguments);setTimeout(kkoFix,0);return v;};}
 kkoFix();
 if(typeof render==="function"&&typeof S!=="undefined"&&S.view)render();
 }catch(e){}});
