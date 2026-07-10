@@ -525,8 +525,42 @@ if(!other)continue;
 g.setAttribute("data-kkoswap","1");
 g.children[0].style.order="2";g.children[1].style.order="1";
 }
+kkoBindEnter(document);
 kkoPayFix();
 }catch(e){}
+}
+function kkoSendBtn(ta){
+var card=ta;
+for(var i=0;i<6&&card&&card.parentElement;i++){card=card.parentElement;
+var bs=card.querySelectorAll("button");
+for(var j=bs.length-1;j>=0;j--){
+var oc=bs[j].getAttribute("onclick")||"";
+if(/Send|send|addNote|admAddNote|consultSend|chatSend/.test(oc))return bs[j];
+if((bs[j].querySelector&&bs[j].querySelector('[data-lucide="send"]')))return bs[j];
+if((bs[j].textContent||"").trim()==="전송")return bs[j];
+}
+}
+return null;
+}
+function kkoBindEnter(root){
+var tas=(root||document).querySelectorAll("textarea, input#cs_send");
+for(var i=0;i<tas.length;i++){
+var ta=tas[i];
+if(ta.hasAttribute("data-kkoenter"))continue;
+var id=ta.id||"";
+var inChat=(id==="chatMsg"||id==="cs_send"||!!kkoSendBtn(ta));
+if(!inChat)continue;
+ta.setAttribute("data-kkoenter","1");
+ta.addEventListener("keydown",function(e){
+if(e.key!=="Enter")return;
+if(e.shiftKey)return;
+if(e.isComposing||e.keyCode===229)return;
+var b=kkoSendBtn(e.target);
+if(!b)return;
+e.preventDefault();
+b.click();
+});
+}
 }
 function kkoPayFix(){try{
 var hasSettle=false,hs=document.querySelectorAll("h1,h2,h3");
