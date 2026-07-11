@@ -461,6 +461,7 @@ function kakaoNoteRow(nt,idx,arr){
 var isKnoll=(nt.role==="knoll"||nt.who==="크놀AD");
 var me=kkoMine(nt);
 var time=kkoTime(nt.at);
+var dv="";try{var _dk=function(x){return x?new Date(x).toLocaleDateString("en-CA",{timeZone:"Asia/Seoul"}):"";};var _cd=_dk(nt.at);if(_cd&&(!arr||!idx||_dk((arr[idx-1]||{}).at)!==_cd)){dv='<div class="flex items-center justify-center py-2"><span class="text-[11px] px-3 py-1 rounded-full" style="background:rgba(0,0,0,0.06);color:#556677">'+new Date(nt.at).toLocaleDateString("ko-KR",{timeZone:"Asia/Seoul",year:"numeric",month:"long",day:"numeric",weekday:"long"})+'</span></div>';}}catch(e){dv="";}
 var av=isKnoll?logoMark("w-9 h-9"):'<div class="w-9 h-9 rounded-[14px] grid place-items-center font-bold text-[14px] flex-shrink-0" style="background:#dfe4ea;color:#4b5563">'+esc(String(nt.who||"고").charAt(0))+'</div>';
 var inner="";
 if(nt.title)inner+='<p class="text-[15px] font-bold mb-1">'+esc(nt.title)+'</p>';
@@ -472,8 +473,8 @@ inner+='</div>';}
 var bub='<div class="rounded-[14px] px-3.5 py-2.5" style="'+(me?'background:#FEE500;color:#191600':'background:#ffffff;color:#191919')+';box-shadow:0 1px 1.5px rgba(0,0,0,.08)">'+inner+'</div>';
 var unread=me&&kkoUnread(idx,arr,true);
 var tm='<span class="flex-shrink-0 pb-0.5 inline-flex flex-col items-end" style="line-height:1.25">'+(unread?'<b style="color:#e5a50a;font-size:11px">1</b>':"")+'<span class="text-[11px]" style="color:#111827;font-weight:600">'+time+'</span></span>';
-if(me)return '<div class="kko-msg flex justify-end items-start gap-2"><div class="flex items-end gap-1.5 max-w-[78%] min-w-0">'+tm+'<div class="min-w-0">'+bub+'</div></div>'+av+'</div>';
-return '<div class="kko-msg flex justify-start items-start gap-2">'+av+'<div class="max-w-[78%] min-w-0"><p class="text-[12px] font-bold mb-1" style="color:#3d4a56">'+esc(String(nt.who||""))+'</p><div class="flex items-end gap-1.5"><div class="min-w-0">'+bub+'</div>'+tm+'</div></div></div>';
+if(me)return dv+'<div class="kko-msg flex justify-end items-start gap-2"><div class="flex items-end gap-1.5 max-w-[78%] min-w-0">'+tm+'<div class="min-w-0">'+bub+'</div></div>'+av+'</div>';
+return dv+'<div class="kko-msg flex justify-start items-start gap-2">'+av+'<div class="max-w-[78%] min-w-0"><p class="text-[12px] font-bold mb-1" style="color:#3d4a56">'+esc(String(nt.who||""))+'</p><div class="flex items-end gap-1.5"><div class="min-w-0">'+bub+'</div>'+tm+'</div></div></div>';
 }
 function kkoCsBubble(m,idx,arr){
 var isK=(m.role==="knoll"||m.who==="크놀AD");
