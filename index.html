@@ -60,6 +60,20 @@ input,button,textarea,select{font-family:inherit}
 .reveal.in{opacity:1;transform:none}
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(94,224,127,.7)}70%{box-shadow:0 0 0 9px rgba(94,224,127,0)}100%{box-shadow:0 0 0 0 rgba(94,224,127,0)}}
 .live-dot{animation:livePulse 1.5s ease-out infinite}
+
+/* ===== Mobile only (max-width 767px) — PC 영향 없음 ===== */
+@media (max-width:767px){
+aside.w-56{top:auto!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;height:64px!important;flex-direction:row!important;align-items:center!important;border-right:none!important;border-top:1px solid #E5E8EB!important;z-index:50!important;box-shadow:0 -6px 18px rgba(0,0,0,.07);}
+aside.w-56>div:first-child{display:none!important;}
+aside.w-56 nav{display:flex!important;flex-direction:row!important;align-items:center!important;gap:2px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:6px 8px!important;width:100%!important;-webkit-overflow-scrolling:touch;}
+aside.w-56 nav>button{flex:0 0 auto!important;width:auto!important;flex-direction:column!important;justify-content:center!important;gap:3px!important;padding:5px 9px!important;font-size:10.5px!important;line-height:1.15!important;margin:0!important;border-radius:12px!important;white-space:nowrap!important;}
+aside.w-56 nav>button svg,aside.w-56 nav>button i{width:20px!important;height:20px!important;}
+aside.w-56>div:last-child{padding:0 6px 0 0!important;border-top:none!important;flex:0 0 auto!important;margin:0!important;}
+aside.w-56>div:last-child button{flex-direction:column!important;gap:3px!important;padding:5px 9px!important;font-size:10.5px!important;width:auto!important;white-space:nowrap!important;}
+main.ml-56{margin-left:0!important;padding-bottom:78px!important;}
+main .p-8{padding:16px!important;}
+main table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+}
 </style>
 </head>
 <body class="font-sans">
