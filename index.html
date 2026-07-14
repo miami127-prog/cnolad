@@ -61,6 +61,9 @@ input,button,textarea,select{font-family:inherit}
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(94,224,127,.7)}70%{box-shadow:0 0 0 9px rgba(94,224,127,0)}100%{box-shadow:0 0 0 0 rgba(94,224,127,0)}}
 .live-dot{animation:livePulse 1.5s ease-out infinite}
 
+
+/* 긴 URL·텍스트 줄바꿈 (잘림 방지) */
+.whitespace-pre-wrap{overflow-wrap:anywhere;word-break:break-word;}
 /* ===== Mobile only (max-width 767px) — PC 영향 없음 ===== */
 @media (max-width:767px){
 aside.w-56{top:auto!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;height:64px!important;flex-direction:row!important;align-items:center!important;border-right:none!important;border-top:1px solid #E5E8EB!important;z-index:50!important;box-shadow:0 -6px 18px rgba(0,0,0,.07);}
