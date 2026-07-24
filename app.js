@@ -182,7 +182,7 @@ function render(){
   else h=viewApply();
   document.getElementById("root").innerHTML=h;
   if(window.lucide)lucide.createIcons();
-  var _cr=document.getElementById("consultRoot");if(!_cr){_cr=document.createElement("div");_cr.id="consultRoot";document.body.appendChild(_cr);_cr.innerHTML=consultWidget();}var _tip=document.getElementById("consultTip");if(_tip)_tip.style.display=(v==="home")?"":"none";
+  var _cr=document.getElementById("consultRoot");if(!_cr){_cr=document.createElement("div");_cr.id="consultRoot";document.body.appendChild(_cr);_cr.innerHTML=consultWidget();}var _tip=document.getElementById("consultTip");if(_tip)_tip.style.display=(v==="home"||v==="portfolio")?"":"none";var _fab=document.getElementById("consultFab");if(_fab)_fab.style.display=(v==="home"||v==="portfolio")?"":"none";
   if(S.view==="home"){setTimeout(function(){upgradeWall();initReveal();armCounters();},120);}
   if(v==="home"||v==="channel-picker"||v==="cust-channels"||v==="admin-channels")maybeLiveRefresh();
   if(S.role)saveSession();
