@@ -32,17 +32,17 @@ const CH=[
 {id:"UCYmMeHSKuvQjcIvQR-NGtBg",name:"オイシイワールド",read:"맛있는 세계",region:"JP",plat:["YouTube"],handle:"オイシイワールド",yt:5810,views:31918180,vids:131,ig:null,tt:null,prod:65,pub:35},
 {id:"UCcvwI1XlOWS3EwXb8j5-Zsw",name:"モグモグ",read:"모구모구",region:"JP",plat:["YouTube"],handle:"MoguMogu_Ham",yt:13400,views:83550280,vids:273,ig:null,tt:null,prod:65,pub:35},
 {id:"UCQ4hIx2_4vYFbt7CN23E4ig",name:"トレ韓",read:"토레칸",region:"JP",plat:["YouTube","Instagram"],handle:"トレ韓",yt:46700,views:544168696,vids:590,ig:"1,799",tt:null,prod:65,pub:35},
-{id:"UCtfDMssguy3mUW0TUk_Uvyg",name:"沼落ちKPOP",read:"누마오치 KPOP",region:"JP",plat:["YouTube"],handle:"沼落ちKPOP",yt:92,views:580510,vids:16,ig:null,tt:null,prod:65,pub:30},
-{id:"UCDJikeprAhIMW7uKPzZnUdw",name:"スゴっ",read:"스고",region:"JP",plat:["YouTube"],handle:"スゴっ",yt:31300,views:248584654,vids:495,ig:null,tt:null,prod:65,pub:30},
-{id:"UC38D9AsPEhJ3OdLz1OBsA5g",name:"一瞬で神",read:"한순간에 神",region:"JP",plat:["YouTube"],handle:"一瞬で神",yt:933,views:4574681,vids:28,ig:null,tt:null,prod:65,pub:30},
-{id:"UC3B1yQWf-Gdgqoqrl53ZWVg",name:"チラ見シネマ",read:"살짝보기 시네마",region:"JP",plat:["YouTube"],handle:"gekire_cinema",yt:8050,views:44667956,vids:95,ig:null,tt:null,prod:65,pub:30},
-{id:"UCBfwnliZeZfOc2OuVtTpMnQ",name:"楽しい1分",read:"즐거운 1분",region:"JP",plat:["YouTube"],handle:"Ipuun_Tanoshii",yt:29,views:15728,vids:12,ig:null,tt:null,prod:65,pub:30},
-{id:"UCDAGHDuQpchWqaJztqYSR0A",name:"ぼっち映画",read:"혼자 영화",region:"JP",plat:["YouTube"],handle:"botchieiga_movie",yt:1940,views:7094638,vids:34,ig:null,tt:null,prod:65,pub:30},
-{id:"UCKk4ZPziethv4gE1hfype_A",name:"エグエグ",read:"에구에구",region:"JP",plat:["YouTube"],handle:"登録しろサムライたち",yt:5250,views:19556046,vids:45,ig:null,tt:null,prod:65,pub:30},
-{id:"UCUlzj-b_X9MSDIyGjUN52tQ",name:"切りぬクッキー",read:"키리누 쿠키",region:"JP",plat:["YouTube"],handle:"切りぬクッキー",yt:67,views:360666,vids:21,ig:null,tt:null,prod:65,pub:30,isNew:true},
-{id:"UCi3q_5ZCXzdIPc2ZCjZPAtA",name:"そんなバナナ",read:"그런 바나나",region:"JP",plat:["YouTube"],handle:"そんなバナナ-x2r",yt:40,views:271460,vids:21,ig:null,tt:null,prod:65,pub:30,isNew:true},
-{id:"UC-xgOG-CsVXlt7dth87uHbg",name:"PopFlow",read:null,region:"US",plat:["YouTube"],handle:"K-PopFlow",yt:7790,views:32637007,vids:116,ig:null,tt:null,prod:65,pub:30},
-{id:"UCyfYBtZkh5anII0AUn2ehww",name:"KPOPVERSE",read:null,region:"US",plat:["YouTube"],handle:"K-popverse_k",yt:3410,views:24419729,vids:87,ig:null,tt:null,prod:65,pub:30}];
+{id:"UCtfDMssguy3mUW0TUk_Uvyg",name:"沼落ちKPOP",read:"누마오치 KPOP",region:"JP",plat:["YouTube"],handle:"沼落ちKPOP",yt:92,views:580510,vids:16,ig:null,tt:null,prod:65,pub:35},
+{id:"UCDJikeprAhIMW7uKPzZnUdw",name:"スゴっ",read:"스고",region:"JP",plat:["YouTube"],handle:"スゴっ",yt:31300,views:248584654,vids:495,ig:null,tt:null,prod:65,pub:35},
+{id:"UC38D9AsPEhJ3OdLz1OBsA5g",name:"一瞬で神",read:"한순간에 神",region:"JP",plat:["YouTube"],handle:"一瞬で神",yt:933,views:4574681,vids:28,ig:null,tt:null,prod:65,pub:35},
+{id:"UC3B1yQWf-Gdgqoqrl53ZWVg",name:"チラ見シネマ",read:"살짝보기 시네마",region:"JP",plat:["YouTube"],handle:"gekire_cinema",yt:8050,views:44667956,vids:95,ig:null,tt:null,prod:65,pub:35},
+{id:"UCBfwnliZeZfOc2OuVtTpMnQ",name:"楽しい1分",read:"즐거운 1분",region:"JP",plat:["YouTube"],handle:"Ipuun_Tanoshii",yt:29,views:15728,vids:12,ig:null,tt:null,prod:65,pub:35},
+{id:"UCDAGHDuQpchWqaJztqYSR0A",name:"ぼっち映画",read:"혼자 영화",region:"JP",plat:["YouTube"],handle:"botchieiga_movie",yt:1940,views:7094638,vids:34,ig:null,tt:null,prod:65,pub:35},
+{id:"UCKk4ZPziethv4gE1hfype_A",name:"エグエグ",read:"에구에구",region:"JP",plat:["YouTube"],handle:"登録しろサムライたち",yt:5250,views:19556046,vids:45,ig:null,tt:null,prod:65,pub:35},
+{id:"UCUlzj-b_X9MSDIyGjUN52tQ",name:"切りぬクッキー",read:"키리누 쿠키",region:"JP",plat:["YouTube"],handle:"切りぬクッキー",yt:67,views:360666,vids:21,ig:null,tt:null,prod:65,pub:35,isNew:true},
+{id:"UCi3q_5ZCXzdIPc2ZCjZPAtA",name:"そんなバナナ",read:"그런 바나나",region:"JP",plat:["YouTube"],handle:"そんなバナナ-x2r",yt:40,views:271460,vids:21,ig:null,tt:null,prod:65,pub:35,isNew:true},
+{id:"UC-xgOG-CsVXlt7dth87uHbg",name:"PopFlow",read:null,region:"US",plat:["YouTube"],handle:"K-PopFlow",yt:7790,views:32637007,vids:116,ig:null,tt:null,prod:65,pub:35},
+{id:"UCyfYBtZkh5anII0AUn2ehww",name:"KPOPVERSE",read:null,region:"US",plat:["YouTube"],handle:"K-popverse_k",yt:3410,views:24419729,vids:87,ig:null,tt:null,prod:65,pub:35}];
 const REGION_LABEL={KR:"국내",JP:"일본",US:"미국"};
 const STATUS_STYLE={"검토 대기중":"text-amber-700 bg-amber-50","승인 완료":"text-emerald-700 bg-emerald-50","반려":"text-red-700 bg-red-50","수정 요청":"text-orange-700 bg-orange-50","진행중":"text-blue bg-blue-tint","업로드 완료":"text-teal-700 bg-teal-50","리포트 완료":"text-cyan-700 bg-cyan-50","종료":"text-g600 bg-g100","결제 대기중":"text-amber-700 bg-amber-50","결제 완료":"text-emerald-700 bg-emerald-50","입금 확인중":"text-blue bg-blue-tint"};
 const PLATFORM_STYLE={YouTube:"text-red-500 bg-red-50",Instagram:"text-pink-500 bg-pink-50",TikTok:"text-g800 bg-g100"};
