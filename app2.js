@@ -283,9 +283,9 @@ function pathFor(v){return PATHS[v]||("/"+v);}
 function syncUrl(v){try{var pth=pathFor(v);if((location.pathname||"/")!==pth)history.pushState({v:v},"",pth);}catch(e){}}
 function routeFromPath(){var pth=(location.pathname||"/").replace(/\/+$/,"")||"/";if(pth==="/campaign"){S.form=(S.role==="customer")?{name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:(S.cust&&S.cust.brand)||""}:{};SEL=new Set();PROD={};QSEL={};S.view=(S.role==="customer")?"cust-apply":"apply";return;}if(pth==="/"){S.view="home";return;}var found=null;for(var k in PATHS){if(PATHS[k]===pth){found=k;break;}}S.view=found||pth.replace(/^\//,"");}
 window.addEventListener("popstate",function(){routeFromPath();render();window.scrollTo(0,0);});
-restoreSession();routeFromPath();render();
+let QUOTE_SEL=new Set(),Q_CLIENT="",Q_DATE="";restoreSession();routeFromPath();render();
 
-let QUOTE_SEL=new Set(),Q_CLIENT="",Q_DATE="";
+
 function qToggle(id){if(QUOTE_SEL.has(id))QUOTE_SEL.delete(id);else QUOTE_SEL.add(id);render();}
 function qClient(v){Q_CLIENT=v;}
 function qDate(v){Q_DATE=v;}
