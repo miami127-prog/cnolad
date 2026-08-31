@@ -166,7 +166,7 @@ function fbCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.sty
 
 function go(v,keep){if(v==="cust-channels"&&!keep)S._pickFrom=null;S.view=v;render();window.scrollTo(0,0);syncUrl(v);logEvent("visit",v,(VIEW_TITLE[v]||v));}
 function goHome(){S.view="home";render();window.scrollTo(0,0);syncUrl("home");}
-function newApply(){if(S.role==="customer"){S.form={name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:(S.cust&&S.cust.brand)||""};SEL=new Set();PROD={};QSEL={};go("cust-apply");}else{S.form={};SEL=new Set();PROD={};QSEL={};go("apply");}}
+function newApply(){if(S.role==="customer"){var _br=(S.cust&&S.cust.brand)||"";if(_br==="와이트라이브"||(S.cust&&String(S.cust.email||"").toLowerCase()==="y-tribe@cnolad.com"))_br="";S.form={name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:_br};SEL=new Set();PROD={};QSEL={};go("cust-apply");}else{S.form={};SEL=new Set();PROD={};QSEL={};go("apply");}}
 function logout(){S.role=null;S.cust=null;S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.removeItem("knollad_sess");}catch(_e){}go("home");}
 function render(){
   const v=S.view;let h;
