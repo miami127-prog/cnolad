@@ -397,58 +397,66 @@ return `<div class="min-h-screen bg-g50 flex items-center justify-center px-6 py
 
 /* ===== 로그인 ===== */
 function lgxPw(el){var i=document.getElementById("loginPw");if(!i)return;var on=i.type==="password";i.type=on?"text":"password";el.textContent=on?"숨김":"표시";i.focus();}
-function lgxErr(m){var e=document.getElementById("lgxErr");if(!e)return;if(!m){e.style.display="none";e.textContent="";return;}e.textContent=m;e.style.display="flex";}
-function viewLogin(){var icUser='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4s6.3 1.8 7.5 5.4"/></svg>';
-var icLock='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4.6" y="10.2" width="14.8" height="9.6" rx="3"/><path d="M8.4 10.2V7.6a3.6 3.6 0 0 1 7.2 0v2.6"/></svg>';
-return `<div class="lgx">
+function lgxErr(m){var e=document.getElementById("lgxErr");if(!e)return;if(!m){e.style.display="none";e.textContent="";return;}e.textContent=m;e.style.display="block";}
+function lgxSavedId(){try{return localStorage.getItem("knollad_saveid")||"";}catch(e){return "";}}
+function lgxKeepId(email){try{var sv=document.getElementById("loginSave");if(!sv)return;if(sv.checked&&email)localStorage.setItem("knollad_saveid",email);else localStorage.removeItem("knollad_saveid");}catch(e){}}
+function viewLogin(){var sid=lgxSavedId();return `<div class="lgx">
 <style>
-.lgx{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow:hidden;background:radial-gradient(90% 62% at 50% -14%,rgba(49,130,246,.34),transparent 62%),linear-gradient(168deg,#0a1020 0%,#070b16 56%,#04060d 100%)}
-.lgx::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:76px 76px;-webkit-mask-image:radial-gradient(58% 52% at 50% 40%,#000,transparent 82%);mask-image:radial-gradient(58% 52% at 50% 40%,#000,transparent 82%)}
-.lgx-wrap{position:relative;z-index:2;width:100%;max-width:400px}
-.lgx-home{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.7);font-size:13.5px;font-weight:600;margin-bottom:14px;transition:color .2s}
-.lgx-home:hover{color:rgba(255,255,255,.85)}
-.lgx-card{position:relative;border-radius:24px;padding:38px 34px 30px;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.10);box-shadow:0 40px 90px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.09);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
-.lgx-badge{width:50px;height:50px;border-radius:15px;margin:0 auto 15px;display:grid;place-items:center;background:rgba(255,255,255,.94);box-shadow:0 8px 22px rgba(0,0,0,.35)}
-.lgx-t{text-align:center;font-size:24px;font-weight:800;color:#fff;letter-spacing:-.6px;margin:0}
-.lgx-s{text-align:center;color:rgba(255,255,255,.72);font-size:13.5px;margin:9px 0 30px}
-.lgx-f{margin-bottom:14px}
-.lgx-l{display:block;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.86);letter-spacing:.02em;margin-bottom:8px}
+.lgx{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:44px 20px;overflow:hidden;background:#F7FAFF}
+.lgx-o{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none}
+.lgx-o1{width:520px;height:520px;left:-120px;top:-160px;background:rgba(63,131,248,.30)}
+.lgx-o2{width:460px;height:460px;right:-110px;bottom:-170px;background:rgba(139,92,246,.22)}
+.lgx-o3{width:330px;height:330px;right:180px;top:-120px;background:rgba(236,61,139,.14)}
+.lgx-w{position:relative;z-index:5;width:100%;max-width:440px}
+.lgx-home{display:inline-flex;align-items:center;gap:6px;color:#7C8794;font-size:13.5px;font-weight:600;margin-bottom:14px;transition:color .2s}
+.lgx-home:hover{color:#191F28}
+.lgx-card{background:#fff;border-radius:20px;padding:38px 34px 32px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 24px 60px -30px rgba(16,24,40,.3)}
+.lgx-hd{text-align:center;margin-bottom:28px}
+.lgx-badge{width:50px;height:50px;border-radius:15px;margin:0 auto 14px;display:grid;place-items:center;background:#F3F7FF;border:1px solid #E3ECFB}
+.lgx-t{font-size:23px;font-weight:800;color:#191F28;letter-spacing:-.5px;margin:0}
+.lgx-s{font-size:13.5px;color:#8b95a1;margin:8px 0 0}
+.lgx-f{margin-bottom:16px}
+.lgx-l{display:block;font-size:13px;font-weight:700;color:#333D4B;margin-bottom:8px}
 .lgx-ctl{position:relative;display:block}
-.lgx-ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:#97A1AE;pointer-events:none}
-.lgx-i{display:block;width:100%;height:52px;padding:0 16px 0 44px;border:1px solid rgba(255,255,255,.55);border-radius:14px;background:#F4F7FB;font-size:15px;font-weight:500;color:#16181D;transition:border-color .16s,box-shadow .16s,background .16s}
-.lgx-i::placeholder{color:#A9B2BD;font-weight:400}
-.lgx-i:focus{outline:none;border-color:#5b9bff;background:#fff;box-shadow:0 0 0 3px rgba(49,130,246,.28)}
-.lgx-ctl:focus-within .lgx-ic{color:#3182F6}\n.lgx-i:-webkit-autofill,.lgx-i:-webkit-autofill:hover,.lgx-i:-webkit-autofill:focus{-webkit-text-fill-color:#16181D;caret-color:#16181D;-webkit-box-shadow:0 0 0 1000px #F4F7FB inset;transition:background-color 9999s ease-in-out 0s}
-.lgx-pw .lgx-i{padding-right:60px}
-.lgx-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);height:38px;padding:0 11px;border-radius:10px;font-size:12px;font-weight:700;color:#7B8593;transition:background .15s,color .15s}
-.lgx-eye:hover{background:#E9EEF5;color:#3E4652}
-.lgx-err{display:none;align-items:center;gap:6px;margin:-2px 0 12px;font-size:12.5px;font-weight:600;color:#ff8a8a}
-.lgx-btn{display:block;width:100%;height:52px;border-radius:14px;margin-top:18px;color:#fff;font-size:15.5px;font-weight:700;letter-spacing:-.2px;background:#1B64DA;box-shadow:none;transition:background .15s,transform .06s}
-.lgx-btn:hover{background:#2570E8}
+.lgx-i{display:block;width:100%;height:46px;padding:0 15px;border:1px solid #DDE1E6;border-radius:10px;background:#fff;font-size:14.5px;font-weight:500;color:#191F28;transition:border-color .15s,box-shadow .15s}
+.lgx-i::placeholder{color:#B0B8C1;font-weight:400}
+.lgx-i:focus{outline:none;border-color:#2C5CE6;box-shadow:0 0 0 3px rgba(44,92,230,.13)}
+.lgx-i.pw{background:#EEF2F9;border-color:transparent;padding-right:56px}
+.lgx-i.pw:focus{background:#fff;border-color:#2C5CE6}
+.lgx-i:-webkit-autofill,.lgx-i:-webkit-autofill:hover,.lgx-i:-webkit-autofill:focus{-webkit-text-fill-color:#191F28;caret-color:#191F28;-webkit-box-shadow:0 0 0 1000px #fff inset;transition:background-color 9999s ease-in-out 0s}
+.lgx-eye{position:absolute;right:7px;top:50%;transform:translateY(-50%);height:34px;padding:0 10px;border-radius:8px;font-size:12px;font-weight:700;color:#7B8593;transition:background .15s,color .15s}
+.lgx-eye:hover{background:#E7ECF3;color:#4E5968}
+.lgx-row{display:flex;align-items:center;gap:8px;margin:14px 0 16px;white-space:nowrap}
+.lgx-row input[type=checkbox]{width:18px;height:18px;accent-color:#2C5CE6;flex:0 0 auto;cursor:pointer;margin:0}
+.lgx-rl{font-size:13.5px;font-weight:700;color:#191F28;cursor:pointer}
+.lgx-rh{font-size:11.5px;color:#8b95a1;overflow:hidden;text-overflow:ellipsis}
+.lgx-err{display:none;margin:-4px 0 12px;font-size:12.8px;font-weight:600;color:#E5484D}
+.lgx-btn{display:block;width:100%;height:48px;border-radius:10px;background:#2C5CE6;color:#fff;font-size:15.5px;font-weight:700;transition:background .15s,transform .06s}
+.lgx-btn:hover{background:#2450d0}
 .lgx-btn:active{transform:scale(.99)}
-.lgx-hint{margin:14px 0 0;text-align:center;font-size:13px;line-height:1.6;color:rgba(255,255,255,.8)}
-.lgx-bot{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.16);text-align:center;font-size:13.5px;color:rgba(255,255,255,.85)}
-.lgx-bot button{color:#bcd7ff;font-weight:800}
-.lgx-legal{margin:16px 0 0;text-align:center;color:rgba(255,255,255,.5);font-size:11.5px;line-height:1.7}
-@media(max-width:520px){.lgx{padding:30px 16px}.lgx-card{padding:32px 22px 26px;border-radius:20px}.lgx-t{font-size:22px}}
+.lgx-hint{margin:16px 0 0;text-align:center;font-size:12.8px;line-height:1.6;color:#7A838F}
+.lgx-bot{margin:14px 0 0;text-align:center;font-size:13.5px;color:#6b7684}
+.lgx-bot button{color:#2C5CE6;font-weight:800}
+.lgx-legal{margin:20px 0 0;text-align:center;color:#A3AAB4;font-size:11.5px;line-height:1.7}
+@media(max-width:520px){.lgx{padding:32px 16px}.lgx-card{padding:32px 22px 26px;border-radius:18px}.lgx-t{font-size:21px}.lgx-rh{display:none}}
 </style>
-<div class="lgx-wrap fade-up">
+<div class="lgx-o lgx-o1"></div><div class="lgx-o lgx-o2"></div><div class="lgx-o lgx-o3"></div>
+<div class="lgx-w fade-up">
 <button onclick="goHome()" class="lgx-home">← 홈으로</button>
 <div class="lgx-card">
-<div class="lgx-badge">${logoMark('w-8 h-8')}</div>
-<h1 class="lgx-t">크놀AD 로그인</h1>
-<p class="lgx-s">승인된 고객 · 관리자 전용 공간입니다</p>
-<div class="lgx-f"><label class="lgx-l" for="loginEmail">아이디 (이메일)</label><span class="lgx-ctl"><span class="lgx-ic">${icUser}</span><input id="loginEmail" class="lgx-i" type="text" autocomplete="username" placeholder="name@company.com" oninput="lgxErr('')"></span></div>
-<div class="lgx-f lgx-pw"><label class="lgx-l" for="loginPw">비밀번호</label><span class="lgx-ctl"><span class="lgx-ic">${icLock}</span><input id="loginPw" class="lgx-i" type="password" autocomplete="current-password" placeholder="발급받은 비밀번호" oninput="lgxErr('')" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()"><button type="button" class="lgx-eye" onclick="lgxPw(this)">표시</button></span></div>
+<div class="lgx-hd"><div class="lgx-badge">${logoMark('w-8 h-8')}</div><h1 class="lgx-t">크놀AD 로그인</h1><p class="lgx-s">승인된 고객 · 관리자 전용 공간입니다</p></div>
+<div class="lgx-f"><label class="lgx-l" for="loginEmail">아이디 (이메일)</label><input id="loginEmail" class="lgx-i" type="text" autocomplete="username" placeholder="name@company.com" value="${esc(sid)}" oninput="lgxErr('')"></div>
+<div class="lgx-f"><label class="lgx-l" for="loginPw">비밀번호</label><span class="lgx-ctl"><input id="loginPw" class="lgx-i pw" type="password" autocomplete="current-password" placeholder="발급받은 비밀번호" oninput="lgxErr('')" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()"><button type="button" class="lgx-eye" onclick="lgxPw(this)">표시</button></span></div>
+<div class="lgx-row"><input type="checkbox" id="loginSave" ${sid?'checked':''}><label class="lgx-rl" for="loginSave">아이디 저장</label><span class="lgx-rh">· 비밀번호는 브라우저의 저장 기능을 이용하세요</span></div>
 <p class="lgx-err" id="lgxErr"></p>
 <button onclick="doLogin()" id="loginBtn" class="lgx-btn">로그인</button>
 <p class="lgx-hint">관리자 승인 후 발급받은 계정으로 로그인하실 수 있습니다.</p>
-<div class="lgx-bot">아직 신청 전이신가요? <button onclick="newApply()">캠페인 신청하기 →</button></div>
+<p class="lgx-bot">아직 신청 전이신가요? <button onclick="newApply()">캠페인 신청하기 →</button></p>
 </div>
 <p class="lgx-legal">(주)크놀애드 · 사업자등록번호 601-86-03541</p>
 </div>
 </div>`;}
-function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";
+function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";lgxKeepId(e);
   if(e==="admin"){if(pw==="admin123"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else{toast("관리자 비밀번호가 올바르지 않습니다");lgxErr("비밀번호가 올바르지 않습니다");}return;}
   if(e==="cnolcs1"){if(pw==="cnolcs123"){S.role="cs";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"cs"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else{toast("CS 비밀번호가 올바르지 않습니다");lgxErr("비밀번호가 올바르지 않습니다");}return;}
   if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");lgxErr("아이디와 비밀번호를 입력해주세요");return;}
