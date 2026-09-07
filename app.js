@@ -423,8 +423,8 @@ return `<div class="lgx">
 .lgx-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);height:38px;padding:0 11px;border-radius:10px;font-size:12px;font-weight:700;color:#7B8593;transition:background .15s,color .15s}
 .lgx-eye:hover{background:#E9EEF5;color:#3E4652}
 .lgx-err{display:none;align-items:center;gap:6px;margin:-2px 0 12px;font-size:12.5px;font-weight:600;color:#ff8a8a}
-.lgx-btn{display:block;width:100%;height:52px;border-radius:14px;margin-top:18px;color:#fff;font-size:15.5px;font-weight:700;letter-spacing:-.2px;background:linear-gradient(180deg,#4d92ff,#1f6ae0);box-shadow:0 10px 26px rgba(31,106,224,.42),inset 0 1px 0 rgba(255,255,255,.28);transition:filter .15s,transform .06s}
-.lgx-btn:hover{filter:brightness(1.07)}
+.lgx-btn{display:block;width:100%;height:52px;border-radius:14px;margin-top:18px;color:#fff;font-size:15.5px;font-weight:700;letter-spacing:-.2px;background:#1B64DA;box-shadow:none;transition:background .15s,transform .06s}
+.lgx-btn:hover{background:#2570E8}
 .lgx-btn:active{transform:scale(.99)}
 .lgx-hint{margin:14px 0 0;text-align:center;font-size:13px;line-height:1.6;color:rgba(255,255,255,.8)}
 .lgx-bot{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.16);text-align:center;font-size:13.5px;color:rgba(255,255,255,.85)}
