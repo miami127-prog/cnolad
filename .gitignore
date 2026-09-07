@@ -3,3 +3,4 @@ _gitlock_trash/
 *.py
 portfolio100.json
 Claude outputs/
+supabase/_run_me.sql
