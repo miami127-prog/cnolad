@@ -397,36 +397,40 @@ return `<div class="min-h-screen bg-g50 flex items-center justify-center px-6 py
 
 /* ===== 로그인 ===== */
 function lgxPw(el){var i=document.getElementById("loginPw");if(!i)return;var on=i.type==="password";i.type=on?"text":"password";el.textContent=on?"숨김":"표시";i.focus();}
-function lgxErr(m){var e=document.getElementById("lgxErr");if(!e)return;if(!m){e.style.display="none";e.textContent="";return;}e.textContent=m;e.style.display="block";}
-function viewLogin(){return `<div class="lgx">
+function lgxErr(m){var e=document.getElementById("lgxErr");if(!e)return;if(!m){e.style.display="none";e.textContent="";return;}e.textContent=m;e.style.display="flex";}
+function viewLogin(){var icUser='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4s6.3 1.8 7.5 5.4"/></svg>';
+var icLock='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4.6" y="10.2" width="14.8" height="9.6" rx="3"/><path d="M8.4 10.2V7.6a3.6 3.6 0 0 1 7.2 0v2.6"/></svg>';
+return `<div class="lgx">
 <style>
-.lgx{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow:hidden;background:radial-gradient(95% 70% at 50% -12%,rgba(49,130,246,.30),transparent 62%),linear-gradient(168deg,#0b1226 0%,#070b16 58%,#05070f 100%)}
-.lgx::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:72px 72px;-webkit-mask-image:radial-gradient(60% 55% at 50% 42%,#000,transparent 80%);mask-image:radial-gradient(60% 55% at 50% 42%,#000,transparent 80%)}
-.lgx-wrap{position:relative;z-index:2;width:100%;max-width:412px}
-.lgx-home{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.5);font-size:14px;font-weight:600;margin-bottom:13px;transition:color .2s}
-.lgx-home:hover{color:rgba(255,255,255,.9)}
-.lgx-card{position:relative;background:#fff;border-radius:24px;padding:38px 34px 28px;box-shadow:0 40px 80px -24px rgba(3,7,18,.62)}
-.lgx-badge{width:52px;height:52px;border-radius:16px;margin:0 auto 14px;display:grid;place-items:center;background:#F3F7FF;border:1px solid #E3ECFB}
-.lgx-t{text-align:center;font-size:25px;font-weight:800;color:#191F28;letter-spacing:-.7px;margin:0}
-.lgx-s{text-align:center;color:#8b95a1;font-size:14px;margin:8px 0 28px}
-.lgx-f{margin-bottom:16px}
-.lgx-l{display:block;font-size:13px;font-weight:700;color:#4E5968;margin-bottom:7px}
-.lgx-i{display:block;width:100%;height:52px;padding:0 16px;border:1px solid #E0E5EC;border-radius:14px;background:#fff;font-size:15.5px;color:#191F28;transition:border-color .15s,box-shadow .15s}
-.lgx-i::placeholder{color:#B0B8C1}
-.lgx-i:focus{outline:none;border-color:#3182F6;box-shadow:0 0 0 3px rgba(49,130,246,.14)}
-.lgx-pwwrap{position:relative}
-.lgx-pwwrap .lgx-i{padding-right:62px}
-.lgx-eye{position:absolute;right:7px;top:50%;transform:translateY(-50%);height:38px;padding:0 11px;border-radius:10px;font-size:12.5px;font-weight:700;color:#8b95a1;transition:background .15s,color .15s}
-.lgx-eye:hover{background:#F2F4F6;color:#4E5968}
-.lgx-err{display:none;margin:-4px 0 12px;font-size:13px;font-weight:600;color:#E5484D}
-.lgx-btn{display:block;width:100%;height:52px;border-radius:14px;background:#3182F6;color:#fff;font-size:16px;font-weight:700;margin-top:4px;box-shadow:0 8px 18px rgba(49,130,246,.26);transition:filter .15s,transform .06s}
-.lgx-btn:hover{filter:brightness(1.06)}
+.lgx{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow:hidden;background:radial-gradient(90% 62% at 50% -14%,rgba(49,130,246,.34),transparent 62%),linear-gradient(168deg,#0a1020 0%,#070b16 56%,#04060d 100%)}
+.lgx::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:76px 76px;-webkit-mask-image:radial-gradient(58% 52% at 50% 40%,#000,transparent 82%);mask-image:radial-gradient(58% 52% at 50% 40%,#000,transparent 82%)}
+.lgx-wrap{position:relative;z-index:2;width:100%;max-width:400px}
+.lgx-home{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.42);font-size:13.5px;font-weight:600;margin-bottom:14px;transition:color .2s}
+.lgx-home:hover{color:rgba(255,255,255,.85)}
+.lgx-card{position:relative;border-radius:24px;padding:38px 34px 30px;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.10);box-shadow:0 40px 90px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.09);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.lgx-badge{width:50px;height:50px;border-radius:15px;margin:0 auto 15px;display:grid;place-items:center;background:rgba(255,255,255,.94);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.lgx-t{text-align:center;font-size:24px;font-weight:800;color:#fff;letter-spacing:-.6px;margin:0}
+.lgx-s{text-align:center;color:rgba(255,255,255,.42);font-size:13.5px;margin:9px 0 30px}
+.lgx-f{margin-bottom:14px}
+.lgx-l{display:block;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.02em;margin-bottom:8px}
+.lgx-ctl{position:relative;display:block}
+.lgx-ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:rgba(255,255,255,.34);pointer-events:none}
+.lgx-i{display:block;width:100%;height:52px;padding:0 16px 0 44px;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:rgba(255,255,255,.05);font-size:15px;color:#fff;transition:border-color .16s,box-shadow .16s,background .16s}
+.lgx-i::placeholder{color:rgba(255,255,255,.28)}
+.lgx-i:focus{outline:none;border-color:rgba(91,155,255,.85);background:rgba(255,255,255,.08);box-shadow:0 0 0 3px rgba(49,130,246,.20)}
+.lgx-ctl:focus-within .lgx-ic{color:#8fbaff}\n.lgx-i:-webkit-autofill,.lgx-i:-webkit-autofill:hover,.lgx-i:-webkit-autofill:focus{-webkit-text-fill-color:#fff;caret-color:#fff;-webkit-box-shadow:0 0 0 1000px rgba(255,255,255,.06) inset;transition:background-color 9999s ease-in-out 0s}
+.lgx-pw .lgx-i{padding-right:60px}
+.lgx-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);height:38px;padding:0 11px;border-radius:10px;font-size:12px;font-weight:700;color:rgba(255,255,255,.45);transition:background .15s,color .15s}
+.lgx-eye:hover{background:rgba(255,255,255,.09);color:#fff}
+.lgx-err{display:none;align-items:center;gap:6px;margin:-2px 0 12px;font-size:12.5px;font-weight:600;color:#ff8a8a}
+.lgx-btn{display:block;width:100%;height:52px;border-radius:14px;margin-top:18px;color:#fff;font-size:15.5px;font-weight:700;letter-spacing:-.2px;background:linear-gradient(180deg,#4d92ff,#1f6ae0);box-shadow:0 10px 26px rgba(31,106,224,.42),inset 0 1px 0 rgba(255,255,255,.28);transition:filter .15s,transform .06s}
+.lgx-btn:hover{filter:brightness(1.07)}
 .lgx-btn:active{transform:scale(.99)}
-.lgx-note{margin-top:18px;padding:12px 14px;border-radius:12px;background:#F7F9FC;border:1px solid #EDF1F7}
-.lgx-note p{margin:0;font-size:12.5px;line-height:1.6;color:#6b7684}
-.lgx-bot{margin-top:18px;padding-top:16px;border-top:1px solid #F1F4F9;text-align:center;font-size:13.5px;color:#8b95a1}
-.lgx-legal{margin:16px 0 0;text-align:center;color:rgba(255,255,255,.3);font-size:12px;line-height:1.7}
-@media(max-width:520px){.lgx{padding:32px 16px}.lgx-card{padding:32px 22px 24px;border-radius:20px}.lgx-t{font-size:23px}}
+.lgx-hint{margin:14px 0 0;text-align:center;font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.34)}
+.lgx-bot{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.09);text-align:center;font-size:13.5px;color:rgba(255,255,255,.4)}
+.lgx-bot button{color:#8fbaff;font-weight:700}
+.lgx-legal{margin:16px 0 0;text-align:center;color:rgba(255,255,255,.22);font-size:11.5px;line-height:1.7}
+@media(max-width:520px){.lgx{padding:30px 16px}.lgx-card{padding:32px 22px 26px;border-radius:20px}.lgx-t{font-size:22px}}
 </style>
 <div class="lgx-wrap fade-up">
 <button onclick="goHome()" class="lgx-home">← 홈으로</button>
@@ -434,12 +438,12 @@ function viewLogin(){return `<div class="lgx">
 <div class="lgx-badge">${logoMark('w-8 h-8')}</div>
 <h1 class="lgx-t">크놀AD 로그인</h1>
 <p class="lgx-s">승인된 고객 · 관리자 전용 공간입니다</p>
-<div class="lgx-f"><label class="lgx-l" for="loginEmail">아이디 (이메일)</label><input id="loginEmail" class="lgx-i" type="text" autocomplete="username" placeholder="name@company.com" oninput="lgxErr('')"></div>
-<div class="lgx-f"><label class="lgx-l" for="loginPw">비밀번호</label><div class="lgx-pwwrap"><input id="loginPw" class="lgx-i" type="password" autocomplete="current-password" placeholder="발급받은 비밀번호" oninput="lgxErr('')" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()"><button type="button" class="lgx-eye" onclick="lgxPw(this)">표시</button></div></div>
+<div class="lgx-f"><label class="lgx-l" for="loginEmail">아이디 (이메일)</label><span class="lgx-ctl"><span class="lgx-ic">${icUser}</span><input id="loginEmail" class="lgx-i" type="text" autocomplete="username" placeholder="name@company.com" oninput="lgxErr('')"></span></div>
+<div class="lgx-f lgx-pw"><label class="lgx-l" for="loginPw">비밀번호</label><span class="lgx-ctl"><span class="lgx-ic">${icLock}</span><input id="loginPw" class="lgx-i" type="password" autocomplete="current-password" placeholder="발급받은 비밀번호" oninput="lgxErr('')" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()"><button type="button" class="lgx-eye" onclick="lgxPw(this)">표시</button></span></div>
 <p class="lgx-err" id="lgxErr"></p>
 <button onclick="doLogin()" id="loginBtn" class="lgx-btn">로그인</button>
-<div class="lgx-note"><p>관리자 승인 후 발급받은 이메일·비밀번호로 로그인하세요. 승인 전에는 로그인할 수 없습니다.</p></div>
-<div class="lgx-bot">아직 신청 전이신가요? <button onclick="newApply()" class="text-blue" style="font-weight:700">캠페인 신청하기 →</button></div>
+<p class="lgx-hint">관리자 승인 후 발급받은 계정으로 로그인하실 수 있습니다.</p>
+<div class="lgx-bot">아직 신청 전이신가요? <button onclick="newApply()">캠페인 신청하기 →</button></div>
 </div>
 <p class="lgx-legal">(주)크놀애드 · 사업자등록번호 601-86-03541</p>
 </div>
