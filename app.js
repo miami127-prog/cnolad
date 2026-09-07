@@ -426,9 +426,9 @@ return `<div class="lgx">
 .lgx-btn{display:block;width:100%;height:52px;border-radius:14px;margin-top:18px;color:#fff;font-size:15.5px;font-weight:700;letter-spacing:-.2px;background:linear-gradient(180deg,#4d92ff,#1f6ae0);box-shadow:0 10px 26px rgba(31,106,224,.42),inset 0 1px 0 rgba(255,255,255,.28);transition:filter .15s,transform .06s}
 .lgx-btn:hover{filter:brightness(1.07)}
 .lgx-btn:active{transform:scale(.99)}
-.lgx-hint{margin:14px 0 0;text-align:center;font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.34)}
-.lgx-bot{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.09);text-align:center;font-size:13.5px;color:rgba(255,255,255,.4)}
-.lgx-bot button{color:#8fbaff;font-weight:700}
+.lgx-hint{margin:14px 0 0;text-align:center;font-size:13px;line-height:1.6;color:rgba(255,255,255,.62)}
+.lgx-bot{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.10);text-align:center;font-size:13.5px;color:rgba(255,255,255,.7)}
+.lgx-bot button{color:#a9caff;font-weight:700}
 .lgx-legal{margin:16px 0 0;text-align:center;color:rgba(255,255,255,.22);font-size:11.5px;line-height:1.7}
 @media(max-width:520px){.lgx{padding:30px 16px}.lgx-card{padding:32px 22px 26px;border-radius:20px}.lgx-t{font-size:22px}}
 </style>
