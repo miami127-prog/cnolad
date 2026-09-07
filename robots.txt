@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /$
+Allow: /portfolio
+Allow: /personal-branding
+Allow: /campaign
+Disallow: /login
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /channels
+Disallow: /workflow
+Disallow: /report
+Disallow: /payment
+Disallow: /mypage
+Disallow: /messenger
+Disallow: /guide
+Disallow: /todo
+Disallow: /calendar

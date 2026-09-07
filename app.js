@@ -405,6 +405,7 @@ function render(){
   else if(S.role==="cs")h=adminShell(v);
   else h=viewApply();
   document.getElementById("root").innerHTML=h;
+  try{var _pub=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding"||v==="apply");var _mr=document.querySelector('meta[name="robots"]');if(!_mr){_mr=document.createElement("meta");_mr.setAttribute("name","robots");document.head.appendChild(_mr);}_mr.setAttribute("content",_pub?"index,follow":"noindex,nofollow,noarchive");}catch(_re){}
   if(window.lucide)lucide.createIcons();
   var _cr=document.getElementById("consultRoot");if(!_cr){_cr=document.createElement("div");_cr.id="consultRoot";document.body.appendChild(_cr);_cr.innerHTML=consultWidget();}var _tip=document.getElementById("consultTip");if(_tip)_tip.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";var _fab=document.getElementById("consultFab");if(_fab)_fab.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";
   if(S.view==="home"){setTimeout(function(){upgradeWall();wallVis();initReveal();armCounters();},120);}
