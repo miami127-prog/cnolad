@@ -396,34 +396,48 @@ return `<div class="min-h-screen bg-g50 flex items-center justify-center px-6 py
 <button onclick="goHome()" class="${BTN_GHOST} w-full mt-5">홈으로 돌아가기</button></div></div></div>`;}
 
 /* ===== 로그인 ===== */
+function lgxPw(el){var i=document.getElementById("loginPw");if(!i)return;var on=i.type==="password";i.type=on?"text":"password";el.textContent=on?"숨김":"표시";i.focus();}
+function lgxErr(m){var e=document.getElementById("lgxErr");if(!e)return;if(!m){e.style.display="none";e.textContent="";return;}e.textContent=m;e.style.display="block";}
 function viewLogin(){return `<div class="lgx">
 <style>
-.lgx{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow:hidden;background:radial-gradient(95% 70% at 50% -12%,rgba(49,130,246,.32),transparent 62%),linear-gradient(168deg,#0b1226 0%,#070b16 58%,#05070f 100%)}
-.lgx::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(46% 38% at 50% 108%,rgba(91,155,255,.16),transparent 66%)}
-.lgx::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.14;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:72px 72px;-webkit-mask-image:radial-gradient(62% 55% at 50% 42%,#000,transparent 80%);mask-image:radial-gradient(62% 55% at 50% 42%,#000,transparent 80%)}
-.lgx-wrap{position:relative;z-index:2;width:100%;max-width:452px}
+.lgx{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow:hidden;background:radial-gradient(95% 70% at 50% -12%,rgba(49,130,246,.30),transparent 62%),linear-gradient(168deg,#0b1226 0%,#070b16 58%,#05070f 100%)}
+.lgx::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:72px 72px;-webkit-mask-image:radial-gradient(60% 55% at 50% 42%,#000,transparent 80%);mask-image:radial-gradient(60% 55% at 50% 42%,#000,transparent 80%)}
+.lgx-wrap{position:relative;z-index:2;width:100%;max-width:412px}
 .lgx-home{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.5);font-size:14px;font-weight:600;margin-bottom:13px;transition:color .2s}
 .lgx-home:hover{color:rgba(255,255,255,.9)}
-.lgx-card{position:relative;background:#fff;border-radius:28px;padding:38px 36px 30px;box-shadow:0 44px 90px -24px rgba(3,7,18,.66),0 2px 0 0 rgba(255,255,255,.05)}
-.lgx-card::before{content:"";position:absolute;left:30px;right:30px;top:0;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,#8fbaff,#3182F6,#1B64DA)}
-.lgx-badge{width:54px;height:54px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;background:linear-gradient(180deg,#F2F7FF,#E8F1FF);border:1px solid #DCE8FA}
-.lgx-brand{text-align:center;font-size:13px;font-weight:800;letter-spacing:.2em;color:#8b95a1;margin:0 0 10px}
-.lgx-t{text-align:center;font-size:27px;font-weight:800;color:#191F28;letter-spacing:-.8px;margin:0}
-.lgx-s{text-align:center;color:#8b95a1;font-size:14.5px;margin:8px 0 24px}
-.lgx-note{margin-top:16px;padding:12px 15px;border-radius:16px;background:#F7F9FC;border:1px solid #EDF1F7}
-.lgx-note p{margin:0;font-size:12.8px;line-height:1.65;color:#6b7684}
-.lgx-bot{margin-top:18px;padding-top:16px;border-top:1px solid #F1F4F9;text-align:center;font-size:14px;color:#8b95a1}
+.lgx-card{position:relative;background:#fff;border-radius:24px;padding:38px 34px 28px;box-shadow:0 40px 80px -24px rgba(3,7,18,.62)}
+.lgx-badge{width:52px;height:52px;border-radius:16px;margin:0 auto 14px;display:grid;place-items:center;background:#F3F7FF;border:1px solid #E3ECFB}
+.lgx-t{text-align:center;font-size:25px;font-weight:800;color:#191F28;letter-spacing:-.7px;margin:0}
+.lgx-s{text-align:center;color:#8b95a1;font-size:14px;margin:8px 0 28px}
+.lgx-f{margin-bottom:16px}
+.lgx-l{display:block;font-size:13px;font-weight:700;color:#4E5968;margin-bottom:7px}
+.lgx-i{display:block;width:100%;height:52px;padding:0 16px;border:1px solid #E0E5EC;border-radius:14px;background:#fff;font-size:15.5px;color:#191F28;transition:border-color .15s,box-shadow .15s}
+.lgx-i::placeholder{color:#B0B8C1}
+.lgx-i:focus{outline:none;border-color:#3182F6;box-shadow:0 0 0 3px rgba(49,130,246,.14)}
+.lgx-pwwrap{position:relative}
+.lgx-pwwrap .lgx-i{padding-right:62px}
+.lgx-eye{position:absolute;right:7px;top:50%;transform:translateY(-50%);height:38px;padding:0 11px;border-radius:10px;font-size:12.5px;font-weight:700;color:#8b95a1;transition:background .15s,color .15s}
+.lgx-eye:hover{background:#F2F4F6;color:#4E5968}
+.lgx-err{display:none;margin:-4px 0 12px;font-size:13px;font-weight:600;color:#E5484D}
+.lgx-btn{display:block;width:100%;height:52px;border-radius:14px;background:#3182F6;color:#fff;font-size:16px;font-weight:700;margin-top:4px;box-shadow:0 8px 18px rgba(49,130,246,.26);transition:filter .15s,transform .06s}
+.lgx-btn:hover{filter:brightness(1.06)}
+.lgx-btn:active{transform:scale(.99)}
+.lgx-note{margin-top:18px;padding:12px 14px;border-radius:12px;background:#F7F9FC;border:1px solid #EDF1F7}
+.lgx-note p{margin:0;font-size:12.5px;line-height:1.6;color:#6b7684}
+.lgx-bot{margin-top:18px;padding-top:16px;border-top:1px solid #F1F4F9;text-align:center;font-size:13.5px;color:#8b95a1}
 .lgx-legal{margin:16px 0 0;text-align:center;color:rgba(255,255,255,.3);font-size:12px;line-height:1.7}
-@media(max-width:520px){.lgx{padding:36px 16px}.lgx-card{padding:36px 24px 28px;border-radius:24px}.lgx-t{font-size:24px}}
+@media(max-width:520px){.lgx{padding:32px 16px}.lgx-card{padding:32px 22px 24px;border-radius:20px}.lgx-t{font-size:23px}}
 </style>
 <div class="lgx-wrap fade-up">
 <button onclick="goHome()" class="lgx-home">← 홈으로</button>
 <div class="lgx-card">
-<div class="lgx-badge">${logoMark('w-9 h-9')}</div>
-<p class="lgx-brand">크놀AD</p>
-<h1 class="lgx-t">로그인</h1>
+<div class="lgx-badge">${logoMark('w-8 h-8')}</div>
+<h1 class="lgx-t">크놀AD 로그인</h1>
 <p class="lgx-s">승인된 고객 · 관리자 전용 공간입니다</p>
-<div class="space-y-4">${field('아이디 (이메일)',`<input id="loginEmail" type="text" placeholder="name@company.com" class="${INPUT}">`)}${field('비밀번호',`<input id="loginPw" type="password" placeholder="발급받은 비밀번호" class="${INPUT}" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()">`)}<button onclick="doLogin()" id="loginBtn" class="${BTN} w-full cta-lift" style="margin-top:6px">로그인 →</button></div>
+<div class="lgx-f"><label class="lgx-l" for="loginEmail">아이디 (이메일)</label><input id="loginEmail" class="lgx-i" type="text" autocomplete="username" placeholder="name@company.com" oninput="lgxErr('')"></div>
+<div class="lgx-f"><label class="lgx-l" for="loginPw">비밀번호</label><div class="lgx-pwwrap"><input id="loginPw" class="lgx-i" type="password" autocomplete="current-password" placeholder="발급받은 비밀번호" oninput="lgxErr('')" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()"><button type="button" class="lgx-eye" onclick="lgxPw(this)">표시</button></div></div>
+<p class="lgx-err" id="lgxErr"></p>
+<button onclick="doLogin()" id="loginBtn" class="lgx-btn">로그인</button>
 <div class="lgx-note"><p>관리자 승인 후 발급받은 이메일·비밀번호로 로그인하세요. 승인 전에는 로그인할 수 없습니다.</p></div>
 <div class="lgx-bot">아직 신청 전이신가요? <button onclick="newApply()" class="text-blue" style="font-weight:700">캠페인 신청하기 →</button></div>
 </div>
@@ -431,13 +445,13 @@ function viewLogin(){return `<div class="lgx">
 </div>
 </div>`;}
 function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";
-  if(e==="admin"){if(pw==="admin123"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else toast("관리자 비밀번호가 올바르지 않습니다");return;}
-  if(e==="cnolcs1"){if(pw==="cnolcs123"){S.role="cs";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"cs"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else toast("CS 비밀번호가 올바르지 않습니다");return;}
-  if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");return;}
+  if(e==="admin"){if(pw==="admin123"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else{toast("관리자 비밀번호가 올바르지 않습니다");lgxErr("비밀번호가 올바르지 않습니다");}return;}
+  if(e==="cnolcs1"){if(pw==="cnolcs123"){S.role="cs";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"cs"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else{toast("CS 비밀번호가 올바르지 않습니다");lgxErr("비밀번호가 올바르지 않습니다");}return;}
+  if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");lgxErr("아이디와 비밀번호를 입력해주세요");return;}
   const btn=document.getElementById("loginBtn");if(btn)btn.textContent="확인 중…";
   fetch(SUPA_URL+"/rest/v1/rpc/knollad_login",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},SH),body:JSON.stringify({p_email:e,p_password:pw})})
-  .then(r=>r.json()).then(rows=>{if(Array.isArray(rows)&&rows.length){if((rows[0].role||"")==="관리자"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");return;}S.role="customer";S.cust={email:e,brand:rows[0].brand_name,name:rows[0].contact_name,role:rows[0].role||"일반회원"};S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.setItem("knollad_sess",JSON.stringify({role:"customer",cust:S.cust}));}catch(_e){}logEvent("login");go("customer-dashboard");}else{if(btn)btn.textContent="로그인";toast("승인된 계정이 아니거나 정보가 일치하지 않습니다");}})
-  .catch(()=>{if(btn)btn.textContent="로그인";toast("로그인 오류. 잠시 후 다시 시도해주세요");});}
+  .then(r=>r.json()).then(rows=>{if(Array.isArray(rows)&&rows.length){if((rows[0].role||"")==="관리자"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");return;}S.role="customer";S.cust={email:e,brand:rows[0].brand_name,name:rows[0].contact_name,role:rows[0].role||"일반회원"};S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.setItem("knollad_sess",JSON.stringify({role:"customer",cust:S.cust}));}catch(_e){}logEvent("login");go("customer-dashboard");}else{if(btn)btn.textContent="로그인";toast("승인된 계정이 아니거나 정보가 일치하지 않습니다");lgxErr("승인된 계정이 아니거나 아이디·비밀번호가 일치하지 않습니다");}})
+  .catch(()=>{if(btn)btn.textContent="로그인";toast("로그인 오류. 잠시 후 다시 시도해주세요");lgxErr("로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요");});}
 
 /* ===== SHELLS ===== */
 function sidebar(items,cur,badge,bell,bellT){return `<aside class="w-56 border-r border-g100 flex flex-col fixed top-0 bottom-0 z-20 bg-white"><div class="px-5 py-5"><div class="flex items-center justify-between">${brandLogo(true,true)}${bellT?`<button onclick="openTodo()" class="flex items-center gap-1.5 pl-2.5 pr-3 h-10 rounded-full ${bell>0?"bg-red-50":"bg-g100"} hover:opacity-90"><i data-lucide="bell" class="w-[20px] h-[20px] ${bell>0?"text-red-500":"text-g600"}"></i>${bell>0?`<span class="text-[14px] font-bold" style="color:#EF4444">${bell>99?"99+":bell}</span>`:""}</button>`:""}</div>${badge?`<span class="mt-2 inline-flex px-2 py-0.5 rounded-md bg-blue-tint text-blue text-[11px] font-bold">${badge}</span>`:""}</div><nav class="flex-1 px-3 space-y-1 overflow-y-auto">${items.map(it=>{const a=cur===it.id;return `<button onclick="${it.act||("go('"+it.id+"')")}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold ${a?'bg-blue-tint text-blue':'text-g500 hover:text-g800 hover:bg-g100'}"><i data-lucide="${it.icon}" class="w-[16px] h-[16px]"></i><span class="flex-1 text-left">${it.label}</span>${it.dot?'<span class="inline-flex items-center justify-center text-[10px] font-bold rounded-full w-4 h-4" style="background:#EF4444;color:#fff">N</span>':''}</button>`;}).join("")}</nav><div class="px-3 py-3 border-t border-g100"><button onclick="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="log-out" class="w-[16px] h-[16px]"></i>로그아웃</button></div></aside>`;}
