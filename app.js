@@ -396,54 +396,39 @@ return `<div class="min-h-screen bg-g50 flex items-center justify-center px-6 py
 <button onclick="goHome()" class="${BTN_GHOST} w-full mt-5">홈으로 돌아가기</button></div></div></div>`;}
 
 /* ===== 로그인 ===== */
-function viewLogin(){return `<div class="lg-wrap">
+function viewLogin(){return `<div class="lgx">
 <style>
-.lg-wrap{min-height:100vh;display:grid;grid-template-columns:1.04fr 1fr;background:#fff}
-.lg-side{position:relative;overflow:hidden;color:#fff;padding:66px 70px;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(120% 92% at 10% -6%,rgba(49,130,246,.30),transparent 56%),linear-gradient(158deg,#0b1226 0%,#070a15 56%,#05070f 100%)}
-.lg-side::before{content:"";position:absolute;inset:0;background:radial-gradient(58% 44% at 88% 92%,rgba(91,155,255,.20),transparent 62%);pointer-events:none}
-.lg-side::after{content:"";position:absolute;inset:0;opacity:.16;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(70% 60% at 30% 25%,#000,transparent 78%);mask-image:radial-gradient(70% 60% at 30% 25%,#000,transparent 78%)}
-.lg-in{position:relative;z-index:2}
-.lg-brand{display:flex;align-items:center;gap:12px;font-size:21px;font-weight:800;letter-spacing:-.4px}
-.lg-h1{font-size:clamp(30px,3.2vw,44px);font-weight:800;line-height:1.24;letter-spacing:-1.4px;margin:38px 0 18px}
-.lg-h1 span{color:#5b9bff}
-.lg-p{color:rgba(255,255,255,.6);font-size:16.5px;line-height:1.7;max-width:430px;margin:0}
-.lg-pts{margin-top:38px;display:flex;flex-direction:column;gap:14px}
-.lg-pt{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.86);font-size:15.5px;font-weight:600}
-.lg-dot{width:26px;height:26px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;background:rgba(91,155,255,.16);border:1px solid rgba(91,155,255,.32);color:#8fbaff;font-size:13px;font-weight:800}
-.lg-foot{position:relative;z-index:2;color:rgba(255,255,255,.4);font-size:12.5px;line-height:1.7}
-.lg-main{display:flex;align-items:center;justify-content:center;padding:56px 44px;background:#fff}
-.lg-card{width:100%;max-width:404px}
-.lg-back{display:inline-flex;align-items:center;gap:6px;color:#8b95a1;font-size:14px;font-weight:600;margin-bottom:34px}
-.lg-back:hover{color:#191F28}
-.lg-t{font-size:31px;font-weight:800;color:#191F28;letter-spacing:-1px;margin:0}
-.lg-s{color:#8b95a1;font-size:15px;margin:9px 0 32px}
-.lg-note{margin-top:22px;padding:15px 17px;border-radius:16px;background:#F7F9FC;border:1px solid #EAEFF6}
-.lg-note p{margin:0;font-size:13px;line-height:1.65;color:#6b7684}
-.lg-bot{margin-top:26px;padding-top:22px;border-top:1px solid #F0F3F8;text-align:center;font-size:14px;color:#8b95a1}
-@media(max-width:980px){.lg-wrap{grid-template-columns:1fr}.lg-side{padding:44px 32px 40px;min-height:auto}.lg-h1{font-size:29px;margin:24px 0 14px}.lg-p{font-size:15px}.lg-pts{margin-top:26px;gap:11px}.lg-main{padding:40px 26px 56px}}
-@media(max-width:980px){.lg-foot{margin-top:30px}}
+.lgx{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow:hidden;background:radial-gradient(95% 70% at 50% -12%,rgba(49,130,246,.32),transparent 62%),linear-gradient(168deg,#0b1226 0%,#070b16 58%,#05070f 100%)}
+.lgx::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(46% 38% at 50% 108%,rgba(91,155,255,.16),transparent 66%)}
+.lgx::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.14;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:72px 72px;-webkit-mask-image:radial-gradient(62% 55% at 50% 42%,#000,transparent 80%);mask-image:radial-gradient(62% 55% at 50% 42%,#000,transparent 80%)}
+.lgx-wrap{position:relative;z-index:2;width:100%;max-width:452px}
+.lgx-home{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.5);font-size:14px;font-weight:600;margin-bottom:13px;transition:color .2s}
+.lgx-home:hover{color:rgba(255,255,255,.9)}
+.lgx-card{position:relative;background:#fff;border-radius:28px;padding:38px 36px 30px;box-shadow:0 44px 90px -24px rgba(3,7,18,.66),0 2px 0 0 rgba(255,255,255,.05)}
+.lgx-card::before{content:"";position:absolute;left:30px;right:30px;top:0;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,#8fbaff,#3182F6,#1B64DA)}
+.lgx-badge{width:54px;height:54px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;background:linear-gradient(180deg,#F2F7FF,#E8F1FF);border:1px solid #DCE8FA}
+.lgx-brand{text-align:center;font-size:13px;font-weight:800;letter-spacing:.2em;color:#8b95a1;margin:0 0 10px}
+.lgx-t{text-align:center;font-size:27px;font-weight:800;color:#191F28;letter-spacing:-.8px;margin:0}
+.lgx-s{text-align:center;color:#8b95a1;font-size:14.5px;margin:8px 0 24px}
+.lgx-note{margin-top:16px;padding:12px 15px;border-radius:16px;background:#F7F9FC;border:1px solid #EDF1F7}
+.lgx-note p{margin:0;font-size:12.8px;line-height:1.65;color:#6b7684}
+.lgx-bot{margin-top:18px;padding-top:16px;border-top:1px solid #F1F4F9;text-align:center;font-size:14px;color:#8b95a1}
+.lgx-legal{margin:16px 0 0;text-align:center;color:rgba(255,255,255,.3);font-size:12px;line-height:1.7}
+@media(max-width:520px){.lgx{padding:36px 16px}.lgx-card{padding:36px 24px 28px;border-radius:24px}.lgx-t{font-size:24px}}
 </style>
-<div class="lg-side">
-<div class="lg-in">
-<div class="lg-brand">${logoMark('w-10 h-10')}<span>크놀AD</span></div>
-<h1 class="lg-h1">자체 채널로 <span>직접 실행하는</span><br>숏폼 마케팅 플랫폼</h1>
-<p class="lg-p">캠페인 신청부터 콘티 컨펌, 업로드, 인사이트 리포트까지 한 곳에서 관리하실 수 있습니다.</p>
-<div class="lg-pts">
-<div class="lg-pt"><span class="lg-dot">1</span>진행 단계와 일정을 실시간으로 확인</div>
-<div class="lg-pt"><span class="lg-dot">2</span>자료 업로드 · 컨펌을 한 화면에서</div>
-<div class="lg-pt"><span class="lg-dot">3</span>업로드 성과를 인사이트 리포트로 제공</div>
-</div>
-</div>
-<div class="lg-foot">(주)크놀애드 · 사업자등록번호 601-86-03541<br>대전광역시 유성구 대덕대로 480 첨단과학관 남관, 대전콘텐츠코리아랩 211호</div>
-</div>
-<div class="lg-main"><div class="lg-card fade-up">
-<button onclick="goHome()" class="lg-back">← 홈으로</button>
-<h1 class="lg-t">로그인</h1>
-<p class="lg-s">승인된 고객 · 관리자 전용 공간입니다</p>
+<div class="lgx-wrap fade-up">
+<button onclick="goHome()" class="lgx-home">← 홈으로</button>
+<div class="lgx-card">
+<div class="lgx-badge">${logoMark('w-9 h-9')}</div>
+<p class="lgx-brand">크놀AD</p>
+<h1 class="lgx-t">로그인</h1>
+<p class="lgx-s">승인된 고객 · 관리자 전용 공간입니다</p>
 <div class="space-y-4">${field('아이디 (이메일)',`<input id="loginEmail" type="text" placeholder="name@company.com" class="${INPUT}">`)}${field('비밀번호',`<input id="loginPw" type="password" placeholder="발급받은 비밀번호" class="${INPUT}" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()">`)}<button onclick="doLogin()" id="loginBtn" class="${BTN} w-full cta-lift" style="margin-top:6px">로그인 →</button></div>
-<div class="lg-note"><p>관리자 승인 후 발급받은 이메일·비밀번호로 로그인하세요. 승인 전에는 로그인할 수 없습니다.</p></div>
-<div class="lg-bot">아직 신청 전이신가요? <button onclick="newApply()" class="text-blue" style="font-weight:700">캠페인 신청하기 →</button></div>
-</div></div>
+<div class="lgx-note"><p>관리자 승인 후 발급받은 이메일·비밀번호로 로그인하세요. 승인 전에는 로그인할 수 없습니다.</p></div>
+<div class="lgx-bot">아직 신청 전이신가요? <button onclick="newApply()" class="text-blue" style="font-weight:700">캠페인 신청하기 →</button></div>
+</div>
+<p class="lgx-legal">(주)크놀애드 · 사업자등록번호 601-86-03541</p>
+</div>
 </div>`;}
 function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";
   if(e==="admin"){if(pw==="admin123"){S.role="admin";try{localStorage.setItem("knollad_sess",JSON.stringify({role:"admin"}));}catch(_e){}logEvent("login");go("admin-dashboard");}else toast("관리자 비밀번호가 올바르지 않습니다");return;}
