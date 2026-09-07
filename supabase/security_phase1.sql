@@ -23,6 +23,7 @@ begin;
 create extension if not exists pgcrypto;
 
 alter table public.knollad_members add column if not exists user_id uuid;
+alter table public.knollad_members alter column password drop not null;
 alter table public.knollad_members add column if not exists role text;
 alter table public.knollad_members add column if not exists created_at timestamptz default now();
 
@@ -39,7 +40,7 @@ $$;
 
 create or replace function public.knollad_is_admin() returns boolean
 language sql stable security definer set search_path=public as $$
-  select coalesce(public.knollad_my_role() in ('관리자','CS'), false)
+  select coalesce(public.knollad_my_role() in ('관리자','CS','CS담당자'), false)
 $$;
 
 create or replace function public.knollad_is_superadmin() returns boolean
@@ -54,7 +55,7 @@ language sql stable as $$
 $$;
 
 -- ------------------------------------------------------------
--- 2. Auth 사용자 생성 함수 (비밀번호는 bcrypt 로 암호화 저장)
+-- 2. Auth 사용자 생성 함수 (비밀번호는 bcrypt 로 암호화 저장 · 이미 bcrypt 해시($2…)면 그대로 이전)
 -- ------------------------------------------------------------
 create or replace function public.knollad_create_auth_user(p_email text, p_password text, p_meta jsonb default '{}'::jsonb)
 returns uuid language plpgsql security definer set search_path=public,auth,extensions as $$
@@ -66,7 +67,7 @@ begin
   uid := gen_random_uuid();
   insert into auth.users (instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,
       raw_app_meta_data,raw_user_meta_data,created_at,updated_at,confirmation_token,recovery_token,email_change_token_new,email_change,is_sso_user)
-  values ('00000000-0000-0000-0000-000000000000',uid,'authenticated','authenticated',e,crypt(p_password, gen_salt('bf')),now(),
+  values ('00000000-0000-0000-0000-000000000000',uid,'authenticated','authenticated',e,(case when p_password like '$2%' then p_password else crypt(p_password, gen_salt('bf')) end),now(),
       '{"provider":"email","providers":["email"]}'::jsonb, coalesce(p_meta,'{}'::jsonb), now(),now(),'','','','',false);
   insert into auth.identities (id,user_id,provider_id,identity_data,provider,last_sign_in_at,created_at,updated_at)
   values (gen_random_uuid(),uid,uid::text,jsonb_build_object('sub',uid::text,'email',e,'email_verified',true),'email',now(),now(),now());
@@ -84,7 +85,7 @@ end $$;
 revoke all on function public.knollad_set_auth_password(text,text) from public, anon, authenticated;
 
 -- ------------------------------------------------------------
--- 3. 기존 회원 → Auth 이전 (비밀번호 그대로), 관리자·CS 계정 생성
+-- 3. 기존 회원 → Auth 이전 (members.password 의 bcrypt 해시를 그대로 복사 → 비밀번호 유지), 관리자·CS 계정 생성
 -- ------------------------------------------------------------
 do $$
 declare r record; uid uuid; n int := 0;
@@ -114,7 +115,7 @@ begin
   if exists (select 1 from public.knollad_members where lower(email)=lower(ae)) then
     update public.knollad_members set role='관리자', user_id=uid where lower(email)=lower(ae);
   else
-    insert into public.knollad_members(email,role,contact_name,brand_name,user_id) values (lower(ae),'관리자','관리자','크놀AD',uid);
+    insert into public.knollad_members(email,password,role,contact_name,brand_name,user_id) values (lower(ae),ap,'관리자','관리자','크놀AD',uid);
   end if;
 
   if cp not like '여기에%' then
@@ -123,7 +124,7 @@ begin
     if exists (select 1 from public.knollad_members where lower(email)=lower(ce)) then
       update public.knollad_members set role='CS', user_id=uid where lower(email)=lower(ce);
     else
-      insert into public.knollad_members(email,role,contact_name,brand_name,user_id) values (lower(ce),'CS','CS','크놀AD',uid);
+      insert into public.knollad_members(email,password,role,contact_name,brand_name,user_id) values (lower(ce),cp,'CS','CS','크놀AD',uid);
     end if;
   end if;
 end $$;
@@ -141,7 +142,7 @@ begin
   if exists (select 1 from public.knollad_members where lower(email)=e) then
     update public.knollad_members set user_id=coalesce(user_id,uid), contact_name=coalesce(contact_name,p_contact), brand_name=coalesce(brand_name,p_brand) where lower(email)=e;
   else
-    insert into public.knollad_members(email,contact_name,brand_name,role,user_id) values (e,p_contact,p_brand,coalesce(p_role,'일반회원'),uid);
+    insert into public.knollad_members(email,password,contact_name,brand_name,role,user_id) values (e,p_password,p_contact,p_brand,coalesce(p_role,'일반회원'),uid);
   end if;
 end $$;
 grant execute on function public.knollad_admin_create_member(text,text,text,text,text) to authenticated;
@@ -153,7 +154,7 @@ begin
   if not public.knollad_is_superadmin() then raise exception 'forbidden'; end if;
   if length(coalesce(p_password,'')) < 4 then raise exception 'password too short'; end if;
   perform public.knollad_set_auth_password(p_email, p_password);
-  update public.knollad_members set password=null where lower(email)=lower(trim(p_email));
+  update public.knollad_members set password=p_password where lower(email)=lower(trim(p_email)); -- 트리거가 bcrypt 로 저장 (롤백 대비)
 end $$;
 grant execute on function public.knollad_admin_set_password(text,text) to authenticated;
 
