@@ -46,8 +46,98 @@ const CH=[
 const REGION_LABEL={KR:"국내",JP:"일본",US:"미국"};
 const STATUS_STYLE={"검토 대기중":"text-amber-700 bg-amber-50","승인 완료":"text-emerald-700 bg-emerald-50","반려":"text-red-700 bg-red-50","수정 요청":"text-orange-700 bg-orange-50","진행중":"text-blue bg-blue-tint","업로드 완료":"text-teal-700 bg-teal-50","리포트 완료":"text-cyan-700 bg-cyan-50","종료":"text-g600 bg-g100","결제 대기중":"text-amber-700 bg-amber-50","결제 완료":"text-emerald-700 bg-emerald-50","입금 확인중":"text-blue bg-blue-tint"};
 const PLATFORM_STYLE={YouTube:"text-red-500 bg-red-50",Instagram:"text-pink-500 bg-pink-50",TikTok:"text-g800 bg-g100"};
+// ── 법적 고지 문서 (버전 관리) ──────────────────────────────────────────
+const LEGAL_CO={name:"(주)크놀애드",brand:"크놀AD",biz:"601-86-03541",addr:"대전광역시 유성구 대덕대로 480 첨단과학관 남관, 대전콘텐츠코리아랩 211호",email:"hrcbrand@outlook.com",email2:"support@whrcompany.com",dpo:"대표이사 (성명은 요청 시 안내)"};
+const LEGAL_NOTICE_DATE="2026-09-08";   // 개정 공고일
+const LEGAL_EFFECTIVE="2026-10-08";     // 시행일 (공고 후 30일)
+const LEGAL_PREV_EFFECTIVE="2026-01-01";
 const LEGAL={
-terms:{t:"이용약관",b:`제1조 (목적)
+terms:{t:"이용약관",ver:[{date:LEGAL_EFFECTIVE,label:"v2 · "+LEGAL_EFFECTIVE+" 시행 (현행)",b:`제1조 (목적)
+본 약관은 ${LEGAL_CO.name}(이하 "회사")가 운영하는 숏폼 콘텐츠 광고 플랫폼 "크놀AD"(이하 "서비스")의 이용과 관련하여 회사와 고객 간의 권리·의무·책임사항 및 거래 조건을 정함을 목적으로 합니다.
+
+제2조 (정의)
+1. "서비스"란 회사가 자체 보유·운영하는 숏폼 채널을 통해 콘텐츠를 기획·제작·발행·집행하고 성과를 리포트하는 일체의 서비스를 말합니다.
+2. "캠페인"이란 고객이 신청하고 회사가 승인하여 진행되는 개별 광고 건을 말합니다.
+3. "제작+발행"이란 회사가 콘티·영상을 제작하여 채널에 발행하는 상품을, "단순발행"이란 고객이 제공한 완성 영상을 검수 후 채널에 발행하는 상품을 말합니다.
+4. "콘티"란 영상 제작 전 구성안을, "발행(업로드)"이란 제작물을 회사 채널에 게시하는 것을 말합니다.
+5. "확정 견적"이란 채널·수량·단가·할인·작업 범위·일정을 특정한 견적서 또는 캠페인 관리 화면의 신청 내용을 말합니다.
+
+제3조 (약관의 효력 및 변경)
+1. 본 약관은 서비스 화면에 게시함으로써 효력이 발생합니다.
+2. 회사는 관련 법령을 위배하지 않는 범위에서 약관을 변경할 수 있으며, 적용일자 및 변경 사유를 명시하여 적용일 7일 전(고객에게 불리한 변경은 30일 전)부터 서비스 화면에 공지합니다. 이전 버전은 서비스 화면에서 열람할 수 있습니다.
+3. 고객이 캠페인 신청 시 동의한 약관의 버전과 동의 시각은 회사가 보관하며, 해당 캠페인에는 동의 당시의 약관이 적용됩니다.
+
+제4조 (서비스의 내용)
+회사는 캠페인 기획, 콘티 작성, 영상 제작, 채널 발행·집행, 진행 현황 대시보드, 자료·메시지 관리, 성과 리포트 제공 등의 서비스를 제공합니다.
+
+제5조 (계약의 성립 및 결제 기한)
+1. 캠페인 계약은 ① 고객이 신청서를 제출하고, ② 회사가 내부 검토 후 승인하며, ③ 고객이 확정 견적(채널·수량·단가·할인·작업 범위·일정)에 동의한 시점에 성립합니다. 고객의 동의는 캠페인 관리 화면에서의 자료 제출·콘티 컨펌 등 다음 단계 진행, 견적서 회신, 이메일 확답 중 어느 하나로 표시할 수 있습니다.
+2. 회사는 콘텐츠 적합성·일정·법령 위반 소지 등을 고려하여 승인을 거부하거나 보류할 수 있으며, 그 사유를 안내합니다.
+3. 대금은 회사가 안내하는 계좌로 입금합니다. 결제 기한은 영상 컨펌 완료 후 7일 이내이며, 세금계산서는 발행 후 입금을 원칙으로 합니다. 개별 견적·계약에 결제 기한을 달리 정한 경우 그에 따릅니다.
+4. 모든 표시 금액은 공급가액이며 부가가치세(10%)는 별도입니다. 청구액은 공급가액에 부가가치세를 더한 금액입니다.
+
+제6조 (특별 조건 및 우선순위)
+1. 회사와 별도 단가·할인율·결제 조건을 합의한 거래처(파트너사)의 경우, 개별 견적·계약서에 기재된 단가·할인율·적용 기간·결제 조건이 본 약관에 우선합니다.
+2. 단가표 또는 회원 구분이 변경되더라도 이미 성립한 캠페인의 확정 금액은 변경되지 않습니다.
+3. 개별 견적·계약에 정함이 없는 사항은 본 약관에 따릅니다.
+
+제7조 (제작 착수 및 일정)
+1. "제작 착수"란 회사가 고객이 제출한 자료를 확인하고 콘티 작성을 시작한 시점(캠페인 관리 화면의 '콘티 작성' 단계 진입)을 말합니다. 단순발행은 회사가 영상 검수를 완료한 시점을 착수로 봅니다.
+2. 고객의 자료 미제출·컨펌 지연·연락 두절로 인한 일정 지연의 책임은 고객에게 있으며, 회사는 지연 기간만큼 일정을 조정할 수 있습니다.
+3. 업로드 희망일은 채널 편성 상황에 따라 조정될 수 있으며, 회사는 변경 시 사전에 안내합니다.
+
+제8조 (수정)
+1. 콘티 및 영상은 각 단계별로 2회까지 무상 수정을 제공합니다. "1회"란 고객이 한 번에 모아서 전달한 수정 요청 일체를 말하며, 나누어 전달된 요청은 각각 1회로 계산합니다.
+2. 무상 수정의 범위는 다음과 같습니다. 콘티: 구성·문구·장면 순서의 조정. 영상: 컷 순서·자막·로고·색보정·BGM 볼륨 등 단순 수정. 컨셉 변경, 재촬영, 출연자·촬영 장소 변경, 러닝타임의 대폭 변경은 수정이 아닌 신규 작업으로 보아 별도 견적으로 진행합니다.
+3. 3회차 이후의 수정 또는 범위를 벗어나는 요청은 추가 비용이 발생하며, 회사는 작업 전에 비용을 안내하고 고객의 승인을 받은 뒤 진행합니다. 승인 없이 진행한 추가 작업의 비용은 청구하지 않습니다.
+4. 오탈자, 합의된 내용의 누락, 고객 가이드 위반 등 회사의 귀책으로 인한 수정은 횟수에 포함하지 않으며 무상으로 처리합니다.
+5. 고객이 콘티 또는 영상을 전달받은 날로부터 5영업일 이내에 컨펌 또는 수정 요청을 하지 않으면 회사는 1회 독촉 후 컨펌된 것으로 보고 다음 단계를 진행할 수 있습니다.
+
+제9조 (취소 및 환불)
+1. 고객은 캠페인 관리 화면 또는 이메일로 취소를 요청할 수 있으며, 회사는 요청 접수 시점의 진행 단계에 따라 아래 기준으로 환불합니다. (금액은 해당 캠페인의 확정 공급가액 기준, 부가가치세는 환불 금액에 비례하여 정산)
+ · 제작 착수 전: 전액 환불
+ · 콘티 작성 착수 후 ~ 콘티 전달 전: 20% 공제 후 환불 (기획·구성 비용)
+ · 콘티 전달 후 ~ 영상 제작 착수 전: 30% 공제 후 환불
+ · 영상 제작 착수(콘티 컨펌) 후 ~ 영상 전달 전: 70% 공제 후 환불 (촬영·편집 비용)
+ · 영상 전달 후 또는 발행 후: 환불 불가
+ · 단순발행: 발행 전 전액 환불, 발행 후 환불 불가
+2. 공제 비율은 각 단계에 실제 투입되는 기획·촬영·편집 인력 비용을 기준으로 정한 것이며, 회사는 요청 시 산정 근거를 안내합니다.
+3. 회사의 귀책(승인 후 제작 불가, 합의된 일정의 현저한 지연 등)으로 계약이 해지되는 경우 회사는 기 수령 금액 전액을 환불합니다.
+4. 환불은 환불 금액 확정일로부터 7영업일 이내에 고객이 지정한 계좌로 입금하며, 세금계산서가 발행된 경우 수정세금계산서를 발행합니다.
+
+제10조 (게시 및 성과 보고)
+1. 발행 채널·건수는 확정 견적에 따르며, 유튜브 발행 시 인스타그램·틱톡에 미러링 발행합니다. 해당 계정을 운영하지 않는 채널의 경우 회사가 보유한 다른 채널을 통해 발행될 수 있습니다.
+2. 회사는 발행된 콘텐츠를 발행일로부터 최소 6개월간 게시 상태로 유지합니다. 다만 플랫폼 정책 위반 판정, 권리 침해 신고, 법령 위반 등 정당한 사유가 있는 경우 삭제하거나 비공개할 수 있으며 고객에게 통지합니다.
+3. 플랫폼 정책 등 회사의 귀책이 아닌 사유로 콘텐츠가 삭제된 경우, 회사는 1회에 한하여 재게시 또는 대체 채널 게시로 대응합니다.
+4. 성과 리포트는 발행 후 7일 및 30일 시점의 조회수·도달·좋아요·댓글 등 플랫폼 제공 지표를 기준으로 캠페인 관리 화면에서 제공합니다. 지표는 플랫폼의 집계 방식과 시점에 따라 달라질 수 있습니다.
+
+제11조 (콘텐츠의 권리 및 사용 조건)
+1. 회사가 제작한 콘티·영상 등 결과물의 저작권은 회사에 귀속됩니다.
+2. 고객은 대금을 완납한 경우 아래 범위에서 결과물을 사용할 수 있습니다.
+ · 고객 SNS·홈페이지 재게시: 허용 (원본 그대로, 회사 채널 출처 표기)
+ · 유료 광고 집행(SNS 광고 소재 등): 별도 협의 및 추가 비용
+ · 재편집·2차 가공: 회사 사전 서면 동의 필요
+ · 원본(프로젝트) 파일 제공: 별도 협의
+ · 사용 기간: 발행일로부터 1년, 연장은 별도 협의
+3. 고객이 "콘텐츠 2차 활용"에 동의한 경우 회사는 결과물을 포트폴리오·성공 사례·제안서에 사용할 수 있으며, 고객은 언제든지 동의를 철회할 수 있습니다.
+4. 고객이 제공한 소재(제품 이미지·영상·로고·문구 등)의 권리 및 적법성에 대한 책임은 고객에게 있습니다.
+
+제12조 (고객의 의무)
+고객은 타인의 권리를 침해하거나 법령·공서양속에 반하는 소재를 제공해서는 안 되며, 광고 관련 법령(표시·광고법, 식품·화장품·의료기기 등 개별 법령)에 따른 표시 의무를 준수해야 합니다. 이를 위반하여 발생한 책임은 고객이 부담합니다.
+
+제13조 (책임의 제한)
+1. 외부 플랫폼(YouTube·Instagram·TikTok 등)의 정책 변경·장애·계정 제재, 천재지변 등 회사의 통제 범위를 벗어난 사유로 인한 손해에 대하여 회사는 책임을 지지 않습니다.
+2. 회사는 조회수·매출 등 특정 성과를 보장하지 않습니다.
+3. 회사의 손해배상 책임은 고의 또는 중과실이 없는 한 해당 캠페인의 확정 공급가액을 한도로 합니다.
+
+제14조 (분쟁 해결 및 준거법)
+1. 본 약관은 대한민국 법률에 따릅니다.
+2. 회사와 고객 간 분쟁은 상호 협의로 해결하도록 노력하며, 협의가 이루어지지 않는 경우 민사소송법에 따른 관할법원에 소를 제기할 수 있습니다.
+
+부칙
+1. 본 약관은 ${LEGAL_EFFECTIVE}부터 시행합니다. (공고일 ${LEGAL_NOTICE_DATE})
+2. 시행일 이전에 성립한 캠페인에는 종전 약관(${LEGAL_PREV_EFFECTIVE} 시행)이 적용됩니다. 다만 고객에게 유리한 조항은 본 약관을 적용합니다.`},
+{date:LEGAL_PREV_EFFECTIVE,label:"v1 · "+LEGAL_PREV_EFFECTIVE+" 시행 (이전)",b:`제1조 (목적)
 본 약관은 (주)크놀애드(이하 "회사")가 운영하는 콘텐츠 숏폼 광고 플랫폼 "크놀AD"(이하 "서비스")의 이용과 관련하여 회사와 고객 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.
 
 제2조 (정의)
@@ -91,8 +181,90 @@ terms:{t:"이용약관",b:`제1조 (목적)
 본 약관은 대한민국 법률에 따르며, 분쟁에 관한 소송은 회사 본사 소재지를 관할하는 법원을 제1심 관할 법원으로 합니다.
 
 부칙
-본 약관은 2026년 1월 1일부터 시행합니다.`},
-privacy:{t:"개인정보 수집 및 이용 동의",b:`(주)크놀애드(이하 "회사")는 「개인정보 보호법」 및 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」을 준수하며, 아래와 같이 개인정보를 수집·이용합니다.
+본 약관은 2026년 1월 1일부터 시행합니다.`}]},
+privacy:{t:"개인정보처리방침",ver:[{date:LEGAL_EFFECTIVE,label:"v2 · "+LEGAL_EFFECTIVE+" 시행 (현행)",b:`${LEGAL_CO.name}(이하 "회사")는 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 다음과 같이 개인정보처리방침을 수립·공개합니다. 본 방침은 회사가 운영하는 크놀AD(cnolad.com)에 적용됩니다.
+
+제1조 (개인정보의 처리 목적)
+회사는 다음 목적을 위하여 개인정보를 처리하며, 목적이 변경되는 경우 별도 동의를 받는 등 필요한 조치를 이행합니다.
+1. 캠페인 신청 접수·검토·승인 및 고객 계정 생성·안내
+2. 캠페인 제작·발행·정산, 자료·메시지 관리, 진행 알림(이메일·카카오톡)
+3. 세금계산서 발행 및 대금 정산
+4. 고객 문의 응대, 부정 이용 방지, 서비스 운영·개선 및 통계
+
+제2조 (처리하는 개인정보의 항목 및 수집 방법)
+1. 캠페인 신청 시 (필수): 담당자명, 이메일(아이디), 연락처, 브랜드/회사명, 희망 채널·수량
+2. 캠페인 신청 시 (선택): 업로드 희망일, 제품 링크, 활용 소재, 광고 고지 방식, 희망 영상 컨셉, 요청사항, 자료 파일(이미지·영상·가이드 등), 카카오톡 알림 수신 여부, 콘텐츠 2차 활용 동의 여부
+3. 법인·사업자 신청 시 (필수): 사업자등록증 사본 (세금계산서 발행 목적)
+4. 파트너사 신청 시 (필수): 담당자명
+5. 계정 발급 시: 아이디(이메일), 비밀번호
+6. 서비스 이용 과정에서 자동 수집: 접속 일시, 서비스 이용 기록(로그인·페이지 방문·캠페인 진행 기록), 브라우저 정보, 쿠키·로컬 저장소(자세한 내용은 쿠키정책 참조)
+7. 실시간 상담 이용 시: 상담 내용 및 상담창 식별값
+수집 방법: 서비스 화면의 신청서·상담창 입력, 이메일 문의, 서비스 이용 과정에서의 자동 생성
+
+제3조 (개인정보의 처리 및 보유 기간)
+1. 회사는 법령에 따른 보유 기간 또는 정보주체로부터 동의받은 기간 내에서 개인정보를 처리·보유합니다.
+2. 항목별 보유 기간
+ · 고객 계정(아이디·비밀번호): 회원 탈퇴 또는 삭제 요청 시까지
+ · 캠페인 신청서·진행 기록·정산 기록: 캠페인 종료 후 5년 (전자상거래 등에서의 소비자보호에 관한 법률 — 계약·대금결제·재화 공급 기록)
+ · 소비자 불만·분쟁 처리 기록: 3년 (전자상거래법)
+ · 첨부 자료 파일·사업자등록증: 캠페인 종료 후 1년 또는 삭제 요청 시까지 (세금계산서 발행 근거 자료는 국세기본법에 따라 5년)
+ · 접속 기록: 3개월 (통신비밀보호법)
+ · 실시간 상담 기록: 상담 종료 후 1년
+
+제4조 (개인정보의 파기 절차 및 방법)
+1. 회사는 보유 기간 경과, 처리 목적 달성 등 개인정보가 불필요하게 되었을 때 지체 없이 파기합니다.
+2. 파기 절차: 파기 사유가 발생한 개인정보를 선정하고, 개인정보 보호책임자의 승인을 받아 파기합니다. 삭제·탈퇴 요청은 접수일로부터 10일 이내에 처리하고 결과를 통지합니다.
+3. 파기 방법: 데이터베이스에 저장된 계정·신청서·진행 기록은 복구할 수 없도록 삭제하고, 첨부 파일(자료 파일·사업자등록증·콘티·영상)은 파일 저장소에서 삭제합니다. 백업 데이터는 백업 보관 주기(30일)가 지나면 자동으로 삭제됩니다. 종이 문서는 분쇄 또는 소각합니다.
+4. 법령에 따라 보존해야 하는 정보는 별도로 분리 보관하고 보존 목적 외로 이용하지 않습니다.
+
+제5조 (개인정보의 제3자 제공)
+회사는 정보주체의 동의 없이 개인정보를 제3자에게 제공하지 않습니다. 다만 법령에 근거가 있거나 수사기관의 적법한 요청이 있는 경우, 정보주체가 별도로 동의한 경우는 예외로 합니다.
+
+제6조 (개인정보 처리의 위탁)
+1. 회사는 서비스 제공을 위해 데이터베이스·파일 저장소 운영, 웹사이트 호스팅, 이메일·카카오톡 진행 알림 발송 업무를 외부 클라우드·메시징 서비스에 위탁하고 있습니다. (카카오톡 알림은 고객이 수신을 선택한 경우에 한함)
+2. 회사는 위탁 계약 시 개인정보 보호 관련 법령 준수, 목적 외 처리 금지, 재위탁 제한, 관리·감독, 손해배상 등을 규정하고 수탁자를 감독합니다.
+3. 수탁자 및 위탁 업무의 구체적 내용은 정보주체가 요청하면 안내하며, 위탁 업무의 내용이나 수탁자가 변경되는 경우 본 방침을 통해 지체 없이 공개합니다.
+
+제7조 (개인정보의 국외 이전)
+회사가 이용하는 클라우드·이메일 서비스의 서버가 국외에 위치하는 경우 제2조의 개인정보가 서비스 이용 과정에서 네트워크를 통해 국외로 전송·보관될 수 있습니다. 이전받는 자는 제6조의 수탁자이며 이용 목적·보유 기간은 제1조·제3조와 같습니다. 정보주체는 국외 이전을 거부할 수 있으며(문의: ${LEGAL_CO.email}), 거부 시 서비스 이용이 제한될 수 있습니다.
+
+제8조 (정보주체와 법정대리인의 권리·의무 및 행사 방법)
+1. 정보주체는 회사에 대해 언제든지 개인정보 열람·정정·삭제·처리정지·동의 철회를 요구할 수 있습니다.
+2. 권리 행사는 이메일(${LEGAL_CO.email}) 또는 서면으로 할 수 있으며, 회사는 요구를 받은 날로부터 10일 이내에 조치하고 결과를 통지합니다. 로그인 후 마이페이지에서 일부 정보를 직접 확인·수정할 수 있습니다.
+3. 권리 행사는 법정대리인 또는 위임을 받은 자를 통해 할 수 있으며, 이 경우 「개인정보 처리 방법에 관한 고시」 별지 서식에 따른 위임장을 제출해야 합니다.
+4. 열람·삭제 요구는 법령에서 보존을 의무화한 정보에 대해서는 제한될 수 있습니다.
+
+제9조 (개인정보 자동 수집 장치의 설치·운영 및 거부)
+회사는 로그인 유지·설정 저장을 위해 브라우저 로컬 저장소를 사용하며, 이용 통계 분석용 쿠키는 사용하지 않습니다. 항목·목적·보관 기간·거부 방법은 별도의 "쿠키정책"에서 안내합니다.
+
+제10조 (개인정보의 안전성 확보 조치)
+1. 관리적 조치: 내부 관리계획 수립, 개인정보 취급 직원 최소화 및 교육
+2. 기술적 조치: 접근 권한 관리(관리자·상담사·고객 권한 분리), 전송 구간 암호화(HTTPS), 접속 기록 보관
+3. 물리적 조치: 클라우드 사업자의 데이터센터 물리 보안, 사무실 내 문서 보관 통제
+
+제11조 (개인정보 보호책임자)
+회사는 개인정보 처리에 관한 업무를 총괄하고 정보주체의 불만 처리 및 피해 구제를 위하여 아래와 같이 개인정보 보호책임자를 지정합니다.
+ · 개인정보 보호책임자: ${LEGAL_CO.dpo}
+ · 담당 부서: 운영팀
+ · 이메일: ${LEGAL_CO.email} (18시 이후 ${LEGAL_CO.email2})
+정보주체는 개인정보 관련 문의·불만·피해 구제를 위 연락처로 요청할 수 있으며, 회사는 지체 없이 답변·처리합니다.
+
+제12조 (권익침해 구제 방법)
+정보주체는 개인정보 침해에 대한 신고·상담을 아래 기관에 문의할 수 있습니다.
+ · 개인정보침해신고센터 (한국인터넷진흥원): 국번 없이 118 / privacy.kisa.or.kr
+ · 개인정보 분쟁조정위원회: 1833-6972 / www.kopico.go.kr
+ · 대검찰청 사이버수사과: 1301 / www.spo.go.kr
+ · 경찰청 사이버수사국: 182 / ecrm.police.go.kr
+
+제13조 (만 14세 미만 아동)
+회사의 서비스는 사업자 및 실무 담당자를 대상으로 하며, 만 14세 미만 아동의 개인정보는 수집하지 않습니다.
+
+제14조 (개인정보처리방침의 변경)
+1. 본 방침은 ${LEGAL_EFFECTIVE}부터 적용됩니다. (공고일 ${LEGAL_NOTICE_DATE})
+2. 이전 방침은 본 화면의 버전 선택에서 열람할 수 있습니다.
+ · v2 (${LEGAL_EFFECTIVE} 시행): 처리 목적·항목 세분화, 파기 절차·방법, 위탁·국외 이전, 권리 행사 방법, 보호책임자 연락처, 권익침해 구제 추가
+ · v1 (${LEGAL_PREV_EFFECTIVE} 시행): 최초 제정 (수집·이용 동의 형식)`},
+{date:LEGAL_PREV_EFFECTIVE,label:"v1 · "+LEGAL_PREV_EFFECTIVE+" 시행 (이전)",b:`(주)크놀애드(이하 "회사")는 「개인정보 보호법」 및 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」을 준수하며, 아래와 같이 개인정보를 수집·이용합니다.
 
 1. 수집하는 개인정보 항목
 [필수] 담당자명, 이메일(아이디), 비밀번호, 연락처, 브랜드/회사명, 캠페인 신청 내용(제품 링크·활용 소재·희망 채널·광고 고지 방식·컨셉·요청사항)
@@ -128,15 +300,61 @@ privacy:{t:"개인정보 수집 및 이용 동의",b:`(주)크놀애드(이하 "
 
 9. 개인정보 보호책임자 및 문의처
 · 사업자: (주)크놀애드 (사업자등록번호 601-86-03541)
-· 문의: hrcbrand@outlook.com (18시 이후 support@whrcompany.com)`},
-cookie:{t:"쿠키정책",b:`크놀AD는 원활한 서비스 제공을 위해 쿠키 및 로컬 저장소를 사용합니다.
+· 문의: hrcbrand@outlook.com (18시 이후 support@whrcompany.com)`}]},
+consent:{t:"개인정보 수집 및 이용 동의",ver:[{date:LEGAL_EFFECTIVE,label:"v2 · "+LEGAL_EFFECTIVE,b:`${LEGAL_CO.name}는 캠페인 신청 처리를 위해 아래와 같이 개인정보를 수집·이용합니다. 자세한 내용은 개인정보처리방침을 참고해 주세요.
+
+1. 수집 항목
+ · 필수: 담당자명, 이메일(아이디), 연락처, 브랜드/회사명, 희망 채널·수량 / 법인·사업자: 사업자등록증 / 파트너사: 담당자명
+ · 선택: 업로드 희망일, 제품 링크, 활용 소재, 광고 고지 방식, 희망 영상 컨셉, 요청사항, 자료 파일, 카카오톡 알림 수신 여부
+
+2. 이용 목적
+캠페인 신청 검토·승인, 고객 계정 생성·안내, 캠페인 제작·발행·정산, 진행 알림, 세금계산서 발행, 문의 응대
+
+3. 보유 기간
+캠페인 종료 후 5년 (전자상거래법상 계약·대금 기록). 첨부 자료 파일은 캠페인 종료 후 1년 또는 삭제 요청 시까지. 계정은 탈퇴·삭제 요청 시 즉시 삭제.
+
+4. 처리 위탁 및 국외 이전
+데이터베이스·파일 저장, 호스팅, 이메일·카카오톡 알림 발송 업무는 개인정보처리방침 제6조·제7조에 따라 외부 서비스에 위탁되며 국외로 이전될 수 있습니다.
+
+5. 동의 거부 권리
+동의를 거부할 수 있으나, 필수 항목에 동의하지 않으면 캠페인 신청이 제한됩니다. 선택 항목은 동의하지 않아도 신청할 수 있습니다.`}]},
+cookie:{t:"쿠키정책",ver:[{date:LEGAL_EFFECTIVE,label:"v2 · "+LEGAL_EFFECTIVE+" 시행 (현행)",b:`크놀AD는 서비스 제공을 위해 브라우저 쿠키 및 로컬 저장소(localStorage)를 사용합니다. 본 정책은 실제 사용 중인 항목을 기준으로 작성되었으며, 항목이 바뀌면 갱신합니다.
+
+1. 필수 항목 (서비스 동작에 반드시 필요 · 동의 대상 아님)
+ · knollad_sess — 로그인 상태 유지 (계정 이메일·권한). 보관: 로그아웃 시까지
+ · knollad_saveid — 로그인 화면 '아이디 저장' 선택 시 이메일 기억. 보관: 체크 해제 시까지
+ · knollad_seen_cust / knollad_seen_adm / knollad_camp_seen — 메시지·캠페인 읽음 표시. 보관: 브라우저 데이터 삭제 시까지
+ · cnol_mgr — 파트너사 담당자별 보기 필터 설정. 보관: 브라우저 데이터 삭제 시까지
+ · knollad_consult_id — 실시간 상담창 식별값(상담 이어보기). 보관: 브라우저 데이터 삭제 시까지
+
+2. 선택 항목 (통계·분석·광고)
+회사는 현재 방문 통계·행태 분석·광고 목적의 쿠키(Google Analytics 등)를 사용하지 않습니다. 따라서 별도의 쿠키 동의 설정 기능을 제공하지 않으며, 추후 도입 시 본 정책을 갱신하고 설정·거부 기능을 함께 제공합니다.
+
+3. 외부 서비스가 설정하는 쿠키
+ · YouTube (Google) — 포트폴리오·성공 사례 영상 재생 시 개인정보 보호 강화 모드(youtube-nocookie.com)로 불러오며, 영상을 재생하는 경우 Google이 자체 정책에 따라 쿠키를 설정할 수 있습니다. (Google 개인정보처리방침: policies.google.com/privacy)
+ · Google 지도 — 회사 위치는 링크로만 제공하며, 링크를 눌러 이동하기 전에는 Google이 정보를 수집하지 않습니다.
+ · 스타일·아이콘 라이브러리(cdn.tailwindcss.com, cdnjs, jsDelivr, unpkg) — 화면 표시용 파일을 불러오며 이 과정에서 해당 CDN 사업자가 접속 IP 등 접속 기록을 처리할 수 있습니다. 쿠키는 설정하지 않습니다.
+
+4. 삭제 및 거부 방법
+ · 로그아웃하면 knollad_sess 가 삭제됩니다.
+ · 브라우저 설정 → 개인정보 및 보안 → 사이트 데이터에서 cnolad.com 항목을 삭제하면 쿠키와 로컬 저장소가 모두 삭제됩니다. (Chrome: 설정 > 개인정보 보호 및 보안 > 사이트 설정 > 모든 사이트 데이터 보기 / Safari: 환경설정 > 개인정보 > 웹사이트 데이터 관리)
+ · 브라우저에서 저장소 사용을 차단하면 로그인 유지 등 필수 기능이 동작하지 않습니다.
+
+5. 시행일
+본 정책은 ${LEGAL_EFFECTIVE}부터 시행합니다. (이전 버전: ${LEGAL_PREV_EFFECTIVE})`},
+{date:LEGAL_PREV_EFFECTIVE,label:"v1 · "+LEGAL_PREV_EFFECTIVE+" (이전)",b:`크놀AD는 원활한 서비스 제공을 위해 쿠키 및 로컬 저장소를 사용합니다.
 
 1. 사용 목적
 · 로그인 상태 유지 및 세션 관리
 · 이용 통계 및 성능 개선, 사용자 설정 저장
 
 2. 거부 방법
-· 브라우저 설정에서 쿠키를 거부·삭제할 수 있으나, 로그인 유지 등 일부 기능이 제한될 수 있습니다.`}};
+· 브라우저 설정에서 쿠키를 거부·삭제할 수 있으나, 로그인 유지 등 일부 기능이 제한될 수 있습니다.`}]}};
+function legalCur(k){var L=LEGAL[k];return L&&L.ver&&L.ver[0];}
+function legalVersionOf(k){var v=legalCur(k);return v?v.date:"";}
+function legalHtml(b){return esc(b).replace(/【확인 필요:([^】]*)】/g,'<mark style="background:#FFF4CC;color:#8a5a00;border-radius:4px;padding:0 4px;font-weight:700">확인 필요:$1</mark>');}
+function openLegal(k,vi){const L=LEGAL[k];if(!L)return;vi=vi||0;const V=L.ver[vi]||L.ver[0];const sel=L.ver.length>1?`<select onchange="openLegal('${k}',parseInt(this.value,10))" class="text-[12.5px] rounded-lg border border-g200 px-2 py-1 bg-white">${L.ver.map(function(v,i){return '<option value="'+i+'"'+(i===vi?" selected":"")+'>'+esc(v.label)+'</option>';}).join("")}</select>`:"";
+modal(`<div class="flex items-center justify-between mb-1 gap-2"><h3 class="text-[19px] font-bold text-g900">${L.t}</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500 flex-shrink-0">✕</button></div><div class="flex items-center justify-between gap-2 mb-3 flex-wrap"><p class="text-[12.5px] text-g500">시행일 ${esc(V.date)}${vi>0?' · <b class="text-amber-600">이전 버전</b>':""}</p>${sel}</div><div class="text-[14px] text-g600 leading-relaxed whitespace-pre-line max-h-[58vh] overflow-y-auto pr-1">${legalHtml(V.b)}</div><button onclick="closeModal()" class="${BTN} w-full mt-5">확인</button>`,"max-w-2xl");}
 
 const fmtSub=n=>n>=1e8?(n/1e8).toFixed(1)+"억":n>=1e4?(n/1e4).toFixed(n>=1e5?1:2)+"만":n.toLocaleString("ko-KR");
 const fmtView=n=>n>=1e8?(n/1e8).toFixed(n>=1e9?1:2)+"억":n>=1e4?Math.round(n/1e4).toLocaleString("ko-KR")+"만":n.toLocaleString("ko-KR");
@@ -166,7 +384,6 @@ function field(l,inner){return `<div><label class="block text-[15px] font-medium
 function pageHeader(e,t,sub){return `<div class="mb-8"><p class="text-[15px] font-bold text-blue mb-2">${e}</p><h1 class="text-[32px] font-bold text-g900 leading-tight tracking-tight">${t}</h1>${sub?`<p class="text-[16px] text-g500 mt-2">${sub}</p>`:""}</div>`;}
 function modal(html,w){document.getElementById("modalRoot").innerHTML=`<div class="fixed inset-0 z-[300] bg-black/40 grid place-items-center p-5 fade-up" onclick="if(event.target===this)closeModal()"><div class="${CARD} p-7 ${w||"max-w-md"} w-full shadow-pop max-h-[92vh] overflow-y-auto">${html}</div></div>`;if(window.lucide)lucide.createIcons();if(S.view==="portfolio"){setTimeout(pfRender,0);}}
 function closeModal(){document.getElementById("modalRoot").innerHTML="";}
-function openLegal(k){const L=LEGAL[k];modal(`<div class="flex items-center justify-between mb-3"><h3 class="text-[19px] font-bold text-g900">${L.t}</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div><div class="text-[14px] text-g600 leading-relaxed whitespace-pre-line max-h-[58vh] overflow-y-auto pr-1">${esc(L.b)}</div><button onclick="closeModal()" class="${BTN} w-full mt-5">확인</button>`);}
 function copyText(t){const ok=()=>toast("복사되었습니다");if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok).catch(()=>fbCopy(t));}else fbCopy(t);}
 function fbCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("복사되었습니다");}catch(e){toast("복사 실패");}document.body.removeChild(ta);}
 
@@ -205,7 +422,7 @@ else nav=`<button onclick="toggleConsult()" class="${lnk} nav-consult">실시간
 var brand=dark?`<button onclick="goHome()" class="flex items-center gap-2.5">${logoMark('w-9 h-9')}<span class="font-display text-[22px] tracking-tight" style="color:#fff;font-weight:800">크놀<span style="color:#5b9bff">AD</span></span></button>`:brandLogo(false,true);
 var head=dark?`<header class="sticky top-0 z-40" style="background:#050507;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08)">`:`<header class="sticky top-0 z-40" style="background:#fff;border-bottom:1px solid #EEF1F4;box-shadow:0 2px 14px rgba(17,24,39,.04)">`;
 return head+`<style>@media(max-width:700px){.nav-consult{display:none!important}.nav-long{display:none!important}}@media(max-width:600px){header .font-display{font-size:17px!important;white-space:nowrap!important}header nav{gap:1px!important;flex-wrap:nowrap!important}header nav button{font-size:11.5px!important;padding:6px 6px!important;margin-left:0!important;white-space:nowrap!important}header nav button:last-child{margin-left:3px!important;padding:6px 10px!important}header>div{padding-left:10px!important;padding-right:10px!important;height:58px!important;gap:4px!important}.ctr{font-size:44px!important}}.pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}@media(max-width:600px){.pf-grid{grid-template-columns:repeat(2,1fr);gap:8px}}.pf-tile{position:relative;display:block;cursor:pointer;aspect-ratio:9/16;border-radius:12px;overflow:hidden;background:#0d1526;box-shadow:0 2px 10px rgba(0,0,0,.35);transition:transform .16s,box-shadow .16s}.pf-tile:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(49,130,246,.35)}.pf-play{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(0,0,0,.55);opacity:0;transition:opacity .16s}.pf-play:before{content:"";position:absolute;left:17px;top:13px;border-left:15px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent}.pf-tile:hover .pf-play{opacity:1}/*PFX*/.pf-h1{background:linear-gradient(180deg,#fff 42%,#8fb8ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.pf-grid{gap:16px}.pf-tile{border-radius:18px;transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s,border-color .28s}.pf-tile img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}.pf-tile:hover{transform:translateY(-6px) scale(1.015);box-shadow:0 22px 52px rgba(49,130,246,.45);border-color:rgba(120,170,255,.7)}.pf-tile:hover img{transform:scale(1.06)}.pf-yt{transition:transform .2s}.pf-tile:hover .pf-yt{transform:scale(1.12)}</style><div class="mx-auto px-6 flex items-center justify-between gap-2" style="max-width:1120px;height:70px">${brand}<nav class="flex items-center gap-0.5 flex-wrap justify-end">${nav}</nav></div></header>`;}
-function siteFooter(){return `<footer style="background:#0a0a0c;border-top:1px solid rgba(255,255,255,.08)"><div class="max-w-6xl mx-auto px-6 py-10"><div class="flex items-center gap-2 mb-3">${logoMark('w-7 h-7')}<span class="font-bold" style="color:#fff">크놀AD</span></div><p style="color:rgba(255,255,255,.5);font-size:14px;line-height:1.7">© 2024 (주)크놀애드. All rights reserved.<br>사업자등록번호 601-86-03541 · 대전광역시 유성구 대덕대로 480 첨단과학관 남관, 대전콘텐츠코리아랩 211호</p><div class="flex items-center gap-3 mt-4" style="font-size:14px"><button onclick="openLegal('terms')" style="color:rgba(255,255,255,.6)" class="hover:text-white font-medium">이용약관</button><span style="color:rgba(255,255,255,.25)">·</span><button onclick="openLegal('privacy')" style="color:rgba(255,255,255,.6)" class="hover:text-white font-medium">개인정보처리방침</button><span style="color:rgba(255,255,255,.25)">·</span><button onclick="openLegal('cookie')" style="color:rgba(255,255,255,.6)" class="hover:text-white font-medium">쿠키정책</button></div></div></footer>`;}
+function siteFooter(){var C=LEGAL_CO;return `<footer style="background:#0a0a0c;border-top:1px solid rgba(255,255,255,.08)"><div class="max-w-6xl mx-auto px-6 py-10"><div class="flex items-center gap-2 mb-4">${logoMark('w-7 h-7')}<span class="font-bold" style="color:#fff">크놀AD</span></div><div style="color:rgba(255,255,255,.6);font-size:13.5px;line-height:1.8"><p><span style="color:rgba(255,255,255,.85);font-weight:600">${C.name}</span></p><p>사업자등록번호 ${C.biz}</p><p>${C.addr}</p><p>문의 ${C.email} (18시 이후 ${C.email2})</p></div><div class="flex items-center gap-3 mt-4 flex-wrap" style="font-size:14px"><button onclick="openLegal('terms')" style="color:rgba(255,255,255,.7)" class="hover:text-white font-medium">이용약관</button><span style="color:rgba(255,255,255,.25)">·</span><button onclick="openLegal('privacy')" style="color:#fff" class="hover:text-white font-bold">개인정보처리방침</button><span style="color:rgba(255,255,255,.25)">·</span><button onclick="openLegal('cookie')" style="color:rgba(255,255,255,.7)" class="hover:text-white font-medium">쿠키정책</button></div><p style="color:rgba(255,255,255,.35);font-size:12.5px;margin-top:14px">© 2024–${new Date().getFullYear()} ${C.name}. All rights reserved.</p></div></footer>`;}
 const PORTFOLIO=["3llZ5RVa38o","sVtAffHwKWM","ehaMPwDGDOE","brEvKHqWgdo","bfa-x2BAEtU","22kv0h8xcTg","HQWldraagwg","9F9kP4Z0DaA","HVwFqwmYeeM","CN_ES_pzGz4","JUWKgAXVxb4","W5rZ1IYK-qY","t0Oi9b89Km4","OJBB49Y4XqA","5TOfTI6UMns","6kP65xV6QYE","nm_z3Odzqh8","E2o8TfcgDYM","GV8jOtE6xfE","tjL7ZHBf1qw","PtxqnSGKcAY","X8is8BklAJY","zMwu7bvZp2g","7b6mxAUTSyw","4dh2QGdUAC8","8hU7b5lO4yQ","Kk5wD7uQ5Fw","JFAkuY8cplI","-kkN_VTvw4Q","UYvFnOXL9uw","JD2E5wTdMgg","CsT1D8-lDc0","0r8_B3xX5k4","evGoBwQ2vzA","hFKjcoUyMpw","KWWmvXnzvl0","YXGReFJR8Ic","rseZYy1SxTg","RZL3uiJ6Wjk","QNA9MGquu8A","h6QD2j7sWB0","PB_wYcBsDFw","RQrvKOjbRuo","RuTb3GB3O6Q","V68ZAyMkaLQ","Tl4J8360PUU","BnXtluFH8VM","yUjeetDrm4M","9icdFvY4fK0","52p66EftXnA","momux5k2VJc","7YVzgo702i8","QnaBf-cDrJ8","kFS_3NkLASo","qrTWAB9ifMU","z26cLTmKFng","cHJ_La8rXv8","Z8iIGuQuqUE","IVEMemhY-vU","W7Ni05tqpfA","Nr03nXlAJug","b1SGnI-tNvo","qw5yqGDQVos","5IzuWOpYPf8","14EReackyKY","1P36lHEmHZ4","nworfU0zGe8","AdOqJIwh8ro","KIZBzSRdCOE","v3yi9LPlv7w","JpWQ_eHsxfs","SpKXzTfyXN4","6GQEz-KFl1o","X-zENIZfqSo","jWSzU_eFnFE","rY7upkoN8DI","nXLgH_OYrjI","SVmMBWV02ew","UuaXGb0oJuI","R6Uzn-W1t7E","kggl5YEwjhs","mUKl330ptKA","W_2kt1jJLBI","-9mjw1juCao","2vlfVSPPz1I","3JFpC_-dy-c","HvCuUy1qO88","AUtOPZOGqK4","WpBHDT-YkOE","zbklBaDB7ww","ULEwwJcU17w","rNXg0YKG2kQ","bgO6p5rtqTc","Tg-WiiRfDQE","GbnD0-9TEOo","Im0y4rJ9M38","kaExxLAdBS8","2BS-NK1QOLM","mw74yQxrrPs","T4r873a2yDs","UauxX7293qY","Q32EQzHMr3o","xXpv7kORZmM","DWdoWrAZLIc","IHuFJpFNGHY","nyFIApJQqho","O8jjBMJeOec","gTGj2nRQ5Qc","4nza8QBeq24","Ac_9l1wqHS0","DT0iFVLnUcc","dXb_qsWkFmc","2Kwl3OFTGQE","oFdwrSg85MA","hzsRbqgVfQ8","57yIrkjMvjg","xzlWRzVdv_0","TSc4UYCT50I","F1waU5GYVvA","pwJ6HcujmRw","Ov_RdcOWBkY","m0V56Kk0aqo","0JGdezF-DbI","SZXXd2h8Q-Q","5Pp4z9O2B_k","HHa6IxRvSno","a2fJX5VcuRI","Ja0i1fzjVBk","E6bkF0uYajw","nFyTw8JDUmE","-fIRVvWrkwY","9qeY1sXRPas","dCbva4rBHoA","PDHVEqhH-2Q","_aNHffvHV64","44jYgeWC14k","uZYVJUTx0cI","QdiTbppBnUo","H3bfzd1Nrj8","LCQSyJhwPZs","yIA6YmDOmUs","lscoW7X3EbU","J9GPGzp1vs0","zTmljBfRDdw","Y22VwNVijlg","fxOb7JLfvmI","3KHejHRH4-4","4T8ca250FOY","A6AnAAyb55o","4ZmhB83Tbfc","EqoDZZVb5UY","y9GT7JtHZYM","csZilu0NMKo","aqgOCbQjSh4","o9vCXETMK_Y","P948WD5Fe-4","xdtjXA2VfD8","8TgDl6UrbfQ","TEtpmcjMWkg","S9LGFIE805U","Us8R6d5zyf0"];
 function pfShuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function wallRows(){var pool=pfShuffle(PORTFOLIO.slice());var _mob=(typeof window!=="undefined"&&window.innerWidth<=820);var _q=_mob?"mqdefault":"hqdefault";var _l=_mob?"lazy":"eager";var dirs=["l","r","l","r","l"],durs=[40,46,34,50,42],per=_mob?4:8,_R=_mob?2:4,out="";for(var r=0;r<_R;r++){var s=pool.slice(r*per,r*per+per);if(s.length<per)s=s.concat(pool.slice(0,per-s.length));var t=s.map(function(v){return '<div class="hw-tile" data-v="'+v+'"><img src="https://i.ytimg.com/vi/'+v+'/'+_q+'.jpg" loading="'+_l+'" onload="if(this.naturalWidth<121){var x=this.parentNode;if(x)x.remove();}" alt=""></div>';}).join("");out+='<div class="hw-row '+dirs[r]+'" style="animation-duration:'+durs[r]+'s">'+t+t+'</div>';}return out;}
@@ -313,7 +530,7 @@ ${field('자료 파일 업로드 (선택)',uploadZone("f_files","제품 이미�
 ${S.cust?"":field('의뢰인 유형',`<div class="flex gap-5 mb-1"><label class="inline-flex items-center gap-2 text-[16px] cursor-pointer"><input type="radio" name="f_btype" value="개인" onchange="bizTypeToggle()" ${(S.form&&S.form.btype)==="개인"?"checked":""}> 개인</label><label class="inline-flex items-center gap-2 text-[16px] cursor-pointer"><input type="radio" name="f_btype" value="법인" onchange="bizTypeToggle()" ${(S.form&&S.form.btype)==="법인"?"checked":""}> 법인·사업자</label></div><div id="f_bizwrap" style="display:${(S.form&&S.form.btype)==="법인"?"block":"none"}"><p class="text-[14px] font-bold text-g700 mt-2 mb-1">사업자등록증 첨부 (필수)</p><input type="file" id="f_bizcert" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-[14px] text-g600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-blue-tint file:text-blue file:font-bold file:cursor-pointer"></div><p class="text-[12px] text-g400 mt-1">법인·사업자는 사업자등록증 첨부가 필수입니다. (개인 의뢰인·기존 회원·파트너사는 첨부 없이 신청 가능)</p>`)}
 <div class="pt-2 border-t border-g100 mt-2"><p class="text-[15px] font-medium text-g900 mb-2.5 mt-3">필수 동의 항목</p>
 <label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree3" ${S.form.agree3?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">콘텐츠 2차 활용 동의 <span class="text-g400 font-bold">(선택)</span></span></label><label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree1" ${S.form.agree1?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">이용약관 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('terms')" class="text-[14px] text-g500 underline">내용 보기</button></label>
-<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree2" ${S.form.agree2?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">개인정보 수집 및 이용 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('privacy')" class="text-[14px] text-g500 underline">내용 보기</button></label></div>
+<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree2" ${S.form.agree2?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">개인정보 수집 및 이용 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('consent')" class="text-[14px] text-g500 underline">내용 보기</button></label></div>
 </div>`;}
 function isLoggedCust(){return !!(S.cust&&S.role==="customer"&&S.cust.role!=="파트너사");}
 function noticeHtml(){var chip=function(n,t){return '<span class="inline-flex items-center gap-1 bg-white rounded-full pl-1 pr-2 py-1 text-[12px] font-bold text-g800 whitespace-nowrap flex-shrink-0" style="box-shadow:0 1px 3px rgba(17,24,39,.07)"><span class="w-[18px] h-[18px] rounded-full bg-blue text-white text-[10.5px] grid place-items-center flex-shrink-0">'+n+'</span>'+t+'</span>';};var ar='<span class="text-blue font-bold text-[12px] flex-shrink-0">→</span>';
@@ -388,7 +605,7 @@ function submitApply(){saveForm();const f=S.form;var _isP=(S.cust&&S.cust.role==
   if(_bt==="법인"&&!_hasBiz&&!S._bizOk){fetch(SUPA_URL+"/rest/v1/knollad_members?email=eq."+encodeURIComponent(f.email.toLowerCase())+"&select=email&limit=1",{headers:SH}).then(function(r){return r.json();}).then(function(rows){if(rows&&rows[0]){S._bizOk=true;submitApply();}else{toast("사업자등록증을 첨부해주세요 (법인·사업자 필수)");}}).catch(function(){toast("사업자등록증을 첨부해주세요 (법인·사업자 필수)");});return;}}
   const chans=[...SEL].map(id=>{const c=CH.find(x=>x.id===id),q=QSEL[id]||{p:1,b:0};return {id:c.id,name:c.name,prodQty:q.p,pubQty:q.b,prod_price:pxOf(c).prod,pub_price:pxOf(c).pub,qty:q.p+q.b,amount:q.p*pxOf(c).prod+q.b*pxOf(c).pub,price:q.p*pxOf(c).prod+q.b*pxOf(c).pub,product:(q.p&&q.b)?('제작+발행×'+q.p+' / 단순발행×'+q.b):(q.p?('제작+발행×'+q.p):('단순발행×'+q.b))};});
   S._submitted={brand:f.brand,email:f.email.toLowerCase(),channels:[...SEL].map(id=>({c:CH.find(x=>x.id===id),q:QSEL[id]||{p:1,b:0}})),total:selTotal()};
-  const send=function(files){const payload={contact_name:f.name,email:f.email.toLowerCase(),phone:f.phone,brand_name:f.brand,preferred_date:f.date||null,product_link:f.link||null,material:f.material||null,ad_disclosure:f.ad||null,concept:f.concept||null,note:f.note||null,manager:f.manager||null,kakao_alert:!!f.kakaoAlert,channels:chans,total_amount:selTotal(),files:(files&&files.length)?files:null,biz_reg:(S._bizUrl||((f.btype==="개인")?"개인(첨부 면제)":null))};try{notifyTelegram("📝 [캠페인 신청] "+((f.brand)||"")+" — "+((f.name||f.manager||f.email)||"고객"));}catch(_te){}
+  const send=function(files){const payload={contact_name:f.name,email:f.email.toLowerCase(),phone:f.phone,brand_name:f.brand,preferred_date:f.date||null,product_link:f.link||null,material:f.material||null,ad_disclosure:f.ad||null,concept:f.concept||null,note:f.note||null,manager:f.manager||null,kakao_alert:!!f.kakaoAlert,channels:chans,total_amount:selTotal(),files:(files&&files.length)?files:null,biz_reg:(S._bizUrl||((f.btype==="개인")?"개인(첨부 면제)":null)),wf:{step:1,consent:{terms:legalVersionOf("terms"),privacy:legalVersionOf("consent"),secondary_use:!!f.agree3,kakao:!!f.kakaoAlert,at:new Date().toISOString()}}};try{notifyTelegram("📝 [캠페인 신청] "+((f.brand)||"")+" — "+((f.name||f.manager||f.email)||"고객"));}catch(_te){}
     fetch(SUPA_URL+"/rest/v1/knollad_applications",{method:"POST",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify(payload)}).then(r=>{if(!r.ok)console.warn("supabase",r.status);}).catch(e=>console.warn(e));
     if(S.role==="customer"){toast("추가 캠페인 신청이 접수되었습니다");SEL=new Set();PROD={};QSEL={};go("customer-dashboard");}else{go("apply-success");}};
   const _fb=document.getElementById("f_files");const fi=_fb?_fb.parentElement.querySelector('input[type="file"]'):null;
