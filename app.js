@@ -414,22 +414,22 @@ function viewLogin(){var sid=lgxSavedId();return `<div class="lgx">
 .lgx-card{background:#fff;border-radius:20px;padding:38px 34px 32px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 24px 60px -30px rgba(16,24,40,.3)}
 .lgx-hd{text-align:center;margin-bottom:28px}
 .lgx-badge{width:50px;height:50px;border-radius:15px;margin:0 auto 14px;display:grid;place-items:center;background:#F3F7FF;border:1px solid #E3ECFB}
-.lgx-t{font-size:23px;font-weight:700;color:#111418;letter-spacing:-.6px;margin:0}
+.lgx-t{font-size:23px;font-weight:700;color:#21262E;letter-spacing:-.6px;margin:0}
 .lgx-s{font-size:13.5px;font-weight:400;color:#5B6470;margin:8px 0 0}
 .lgx-f{margin-bottom:16px}
-.lgx-l{display:block;font-size:13.5px;font-weight:600;color:#16181D;margin-bottom:8px}
+.lgx-l{display:block;font-size:13.5px;font-weight:500;color:#3D4653;margin-bottom:8px}
 .lgx-ctl{position:relative;display:block}
-.lgx-i{display:block;width:100%;height:46px;padding:0 15px;border:1px solid #DDE1E6;border-radius:10px;background:#fff;font-size:15px;font-weight:500;color:#111418;transition:border-color .15s,box-shadow .15s}
+.lgx-i{display:block;width:100%;height:46px;padding:0 15px;border:1px solid #DDE1E6;border-radius:10px;background:#fff;font-size:15px;font-weight:500;color:#2B313A;transition:border-color .15s,box-shadow .15s}
 .lgx-i::placeholder{color:#B0B8C1;font-weight:400}
 .lgx-i:focus{outline:none;border-color:#2C5CE6;box-shadow:0 0 0 3px rgba(44,92,230,.13)}
 .lgx-i.pw{background:#EEF2F9;border-color:transparent;padding-right:56px}
 .lgx-i.pw:focus{background:#fff;border-color:#2C5CE6}
-.lgx-i:-webkit-autofill,.lgx-i:-webkit-autofill:hover,.lgx-i:-webkit-autofill:focus{-webkit-text-fill-color:#0B0D12;caret-color:#0B0D12;-webkit-box-shadow:0 0 0 1000px #fff inset;transition:background-color 9999s ease-in-out 0s}
+.lgx-i:-webkit-autofill,.lgx-i:-webkit-autofill:hover,.lgx-i:-webkit-autofill:focus{-webkit-text-fill-color:#2B313A;caret-color:#2B313A;-webkit-box-shadow:0 0 0 1000px #fff inset;transition:background-color 9999s ease-in-out 0s}
 .lgx-eye{position:absolute;right:7px;top:50%;transform:translateY(-50%);height:34px;padding:0 10px;border-radius:8px;font-size:12.5px;font-weight:600;color:#4E5968;transition:background .15s,color .15s}
 .lgx-eye:hover{background:#E7ECF3;color:#4E5968}
 .lgx-row{display:flex;align-items:center;gap:8px;margin:14px 0 16px;white-space:nowrap}
 .lgx-row input[type=checkbox]{width:18px;height:18px;accent-color:#2C5CE6;flex:0 0 auto;cursor:pointer;margin:0}
-.lgx-rl{font-size:14px;font-weight:600;color:#111418;cursor:pointer}
+.lgx-rl{font-size:14px;font-weight:500;color:#3D4653;cursor:pointer}
 .lgx-rh{font-size:12px;font-weight:400;color:#8b95a1;overflow:hidden;text-overflow:ellipsis}
 .lgx-err{display:none;margin:-4px 0 12px;font-size:12.8px;font-weight:500;color:#E5484D}
 .lgx-btn{display:block;width:100%;height:48px;border-radius:10px;background:#2C5CE6;color:#fff;font-size:16px;font-weight:600;letter-spacing:-.2px;transition:background .15s,transform .06s}
