@@ -1122,7 +1122,8 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
     loud.forEach(function(c){var isNew=!!c._isNew;var title=isNew?"새 캠페인 신청":(side==="knoll"?(c.brand_name||"고객")+" 님의 새 메시지":"크놀AD 새 메시지");var body=isNew?((c.brand_name||"")+" · "+(c.contact_name||c.email||"")):notiLastText(c,side);
       var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
       var jump=function(){if(isNew){go("admin-dashboard");}else if(side==="knoll"){openAdmWf(c.id);}else{var a=(S.myCamps||[]).find(function(x){return String(x.id)===String(c.id);});if(a)S.activeCamp=a;go("notes");}};
-      if(document.hidden){if(canDesk)notiDesktop(title,body,jump,"camp-"+c.id);}
+      var away=document.hidden||!document.hasFocus();
+      if(away){if(canDesk)notiDesktop(title,body,jump,"camp-"+c.id);else notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});}
       else notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});});}
 }catch(e){}}
 /* 실시간 상담 알림 (관리자) */
@@ -1138,7 +1139,8 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
   loud.forEach(function(c){var m=(c.messages||[]).filter(function(x){return x.role==="cust";});var t=m.length?String(m[m.length-1].text||"새 문의"):"새 문의";
     var title="실시간 상담 · "+(c.name||"익명");var body=String(t).replace(/\s+/g," ").slice(0,60);
     var jump=function(){S.consultId=c.id;go("admin-consults");};
-    if(document.hidden){if(canDesk)notiDesktop(title,body,jump,"consult-"+c.id);}
+    var away=document.hidden||!document.hasFocus();
+    if(away){if(canDesk)notiDesktop(title,body,jump,"consult-"+c.id);else notiPopup({title:title,body:body,kind:"consult",go:jump});}
     else notiPopup({title:title,body:body,kind:"consult",go:jump});});}catch(e){}}
 /* 설정 모달 (사이드바 · 알림 설정) */
 function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm==="granted";
@@ -1155,7 +1157,7 @@ function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notific
   +row("desktop","monitor","브라우저 알림","다른 탭을 보고 있어도 화면 구석에 표시",deskOn,permNote)
   +((navigator&&typeof navigator.vibrate==="function")?row("vibrate","smartphone","휴대폰 진동","휴대폰에서 알림이 오면 짧게 진동",p.vibrate!==false,""):"")
   +'</div>'
-  +'<div class="mt-2.5 px-4 py-2.5 rounded-[12px] text-[12.5px] text-g600 leading-relaxed" style="background:#F7F8FA">보고 있는 채팅 화면에서는 알림이 울리지 않습니다.<br>휴대폰은 사이트를 열어둔 동안 울리며, 아이폰은 측면 무음 스위치가 켜져 있으면 소리가 나지 않습니다.<br>설정은 이 브라우저에만 저장돼요.</div>'
+  +'<div class="mt-2.5 px-4 py-2.5 rounded-[12px] text-[12.5px] text-g600 leading-relaxed" style="background:#F7F8FA">보고 있는 채팅 화면에서는 알림이 울리지 않습니다.<br>로그인한 상태로 사이트 탭이 열려 있어야 알림이 도착합니다.<br>휴대폰은 아이폰의 경우 측면 무음 스위치가 켜져 있으면 소리가 나지 않습니다.<br>설정은 이 브라우저에만 저장돼요.</div>'
   +'<div class="flex gap-2 mt-4"><button onclick="notiBeep()" class="px-4 py-3 rounded-[10px] bg-g100 text-g800 font-semibold text-[14.5px] hover:bg-g200 flex items-center gap-2"><i data-lucide="play" class="w-4 h-4"></i>알림음 듣기</button><button onclick="closeModal()" class="flex-1 px-4 py-3 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">확인</button></div>',"max-w-md !rounded-[16px]");
   if(window.lucide)setTimeout(function(){lucide.createIcons();},10);}
 var _notiVolT=null;
@@ -1211,18 +1213,28 @@ function noticeList(keep){var _chg=noticeMarkSeen();var el=document.getElementBy
 /* 작성/수정 (관리자) */
 function noticeEdit(id){if(S.role!=="admin"){toast("관리자만 작성할 수 있습니다");return;}var n=id?(S.notices||[]).find(function(x){return String(x.id)===String(id);}):null;
   var tpl=n?"":'<div class="flex items-center gap-1.5 flex-wrap mb-4"><span class="text-[12.5px] text-g500 font-bold mr-0.5">양식 불러오기</span>'+NOTICE_TPL.map(function(t,i){return '<button onclick="noticeTpl('+i+')" class="px-2.5 py-1.5 rounded-lg bg-g100 text-g700 text-[12.5px] font-bold hover:bg-g200">'+t.k+'</button>';}).join("")+'</div>';
-  modal('<div class="flex items-center justify-between mb-1"><h3 class="text-[21px] font-bold text-g900">'+(n?"공지 수정":"새 공지 작성")+'</h3><button onclick="'+(n?"noticeList()":"closeModal()")+'" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div>'
+  modal('<div class="flex items-center justify-between mb-1"><h3 class="text-[21px] font-bold text-g900">'+(n?"공지 수정":"새 공지 작성")+'</h3><button onclick="noticeCancel(\''+(n?String(n.id):"")+'\')" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div>'
    +'<p class="text-[13.5px] text-g500 mb-4">등록하면 모든 회원 화면 맨 위에 바로 표시됩니다.</p>'+tpl
    +'<label class="block text-[13.5px] font-bold text-g700 mb-1.5">제목</label><input id="ntTitle" value="'+esc(n?n.title:"")+'" placeholder="예) 추석 연휴 운영 안내" class="w-full px-4 py-3.5 rounded-xl text-[16px] font-bold bg-g100 border border-transparent focus:bg-white focus:border-blue/30 focus:outline-none mb-4">'
    +'<label class="block text-[13.5px] font-bold text-g700 mb-1.5">내용</label><textarea id="ntBody" rows="9" placeholder="회원들에게 안내할 내용을 적어주세요.&#10;줄바꿈은 그대로 표시됩니다." class="w-full px-4 py-3.5 rounded-xl text-[15px] leading-relaxed bg-g100 border border-transparent focus:bg-white focus:border-blue/30 focus:outline-none resize-y mb-3">'+esc(n?n.body:"")+'</textarea>'
    +'<label class="flex items-center gap-2.5 text-[14.5px] text-g800 mb-4 cursor-pointer"><input id="ntPin" type="checkbox" '+(n&&n.pinned?"checked":"")+' class="w-4 h-4 accent-[#4577F0]">상단 고정 · 새 공지가 올라와도 항상 맨 위에 표시</label>'
-   +'<div class="flex gap-2"><button onclick="'+(n?"noticeList()":"closeModal()")+'" class="flex-1 px-4 py-3.5 rounded-[10px] bg-g100 text-g800 font-semibold text-[15px]">취소</button><button onclick="noticeSave('+(n?"'"+n.id+"'":"")+')" class="flex-1 px-4 py-3.5 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">'+(n?"저장":"등록하기")+'</button></div>'
+   +'<div class="flex gap-2"><button onclick="noticeCancel(\''+(n?String(n.id):"")+'\')" class="flex-1 px-4 py-3.5 rounded-[10px] bg-g100 text-g800 font-semibold text-[15px]">취소</button><button onclick="noticeSave('+(n?"'"+n.id+"'":"")+')" class="flex-1 px-4 py-3.5 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">'+(n?"저장":"등록하기")+'</button></div>'
    +'<p class="text-[12px] text-g400 mt-3 text-center">Ctrl + Enter 로도 등록할 수 있어요</p>',"max-w-xl !rounded-[16px]");
-  setTimeout(function(){var e=document.getElementById("ntTitle");if(e)e.focus();var box=document.getElementById("modalRoot");if(box)box.onkeydown=function(ev){if((ev.ctrlKey||ev.metaKey)&&ev.key==="Enter"){ev.preventDefault();noticeSave(id||undefined);}};},50);}
+  setTimeout(function(){
+    var ov=document.querySelector("#modalRoot > div");if(ov)ov.onclick=null;
+    var d=S._noticeDraft;if(d&&String(d.id||"")===String(id||"")){var a0=document.getElementById("ntTitle"),b0=document.getElementById("ntBody"),p0=document.getElementById("ntPin");
+      if(a0&&!a0.value)a0.value=d.title||"";if(b0&&!b0.value)b0.value=d.body||"";if(p0)p0.checked=!!d.pin;}
+    var e=document.getElementById("ntTitle");if(e)e.focus();
+    var keep=function(){S._noticeDraft={id:id||"",title:(gv("ntTitle")||""),body:(gv("ntBody")||""),pin:!!(document.getElementById("ntPin")||{}).checked};};
+    ["ntTitle","ntBody","ntPin"].forEach(function(k){var el=document.getElementById(k);if(el){el.oninput=keep;el.onchange=keep;}});
+    var box=document.getElementById("modalRoot");if(box)box.onkeydown=function(ev){if((ev.ctrlKey||ev.metaKey)&&ev.key==="Enter"){ev.preventDefault();noticeSave(id||undefined);}};},50);}
+function noticeCancel(id){var t=(gv("ntTitle")||"").trim(),b=(gv("ntBody")||"").trim();
+  if((t||b)&&!confirm("작성 중인 내용을 지우고 닫을까요?"))return;
+  S._noticeDraft=null;if(id)noticeList(true);else closeModal();}
 function noticeTpl(i){var t=NOTICE_TPL[i];if(!t)return;var a=document.getElementById("ntTitle"),b=document.getElementById("ntBody");if(a&&!a.value.trim())a.value=t.t;else if(a)a.value=t.t;if(b)b.value=t.b;if(b)b.focus();}
 function noticeSave(id){var title=(gv("ntTitle")||"").trim(),body=(gv("ntBody")||"").trim(),pin=!!(document.getElementById("ntPin")&&document.getElementById("ntPin").checked);if(!title){toast("제목을 입력해 주세요");return;}
   var payload={title:title,body:body,pinned:pin,author:"크놀AD"};var url=SUPA_URL+"/rest/v1/knollad_notices"+(id?"?id=eq."+encodeURIComponent(id):"");if(id)payload.updated_at=new Date().toISOString();
-  fetch(url,{method:id?"PATCH":"POST",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify(payload)}).then(function(r){if(!r.ok)throw new Error("save");toast(id?"공지가 수정되었습니다":"공지가 등록되었습니다");return loadNotices(true);}).then(function(){noticeMarkSeen();noticeList();}).catch(function(){toast("저장 실패 · 잠시 후 다시 시도해 주세요");});}
+  fetch(url,{method:id?"PATCH":"POST",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify(payload)}).then(function(r){if(!r.ok)throw new Error("save");S._noticeDraft=null;toast(id?"공지가 수정되었습니다":"공지가 등록되었습니다");return loadNotices(true);}).then(function(){noticeMarkSeen();noticeList();}).catch(function(){toast("저장 실패 · 잠시 후 다시 시도해 주세요");});}
 function noticeDel(id){var n=(S.notices||[]).find(function(x){return String(x.id)===String(id);});if(!n)return;
   modal('<h3 class="text-[18px] font-bold text-g900 mb-2">공지를 삭제할까요?</h3><p class="text-[14px] text-g600 mb-5 break-all">"'+esc(n.title)+'" 공지가 모든 회원 화면에서 사라집니다.</p><div class="flex gap-2"><button onclick="noticeList()" class="flex-1 px-4 py-3 rounded-[10px] bg-g100 text-g800 font-semibold text-[15px]">취소</button><button onclick="noticeDelGo(\''+id+'\')" class="flex-1 px-4 py-3 rounded-[10px] bg-red-500 text-white font-semibold text-[15px]">삭제</button></div>');}
 function noticeDelGo(id){fetch(SUPA_URL+"/rest/v1/knollad_notices?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:SH}).then(function(r){if(!r.ok)throw new Error("del");toast("삭제되었습니다");return loadNotices(true);}).then(function(){noticeList();}).catch(function(){toast("삭제 실패");});}
