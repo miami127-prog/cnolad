@@ -387,11 +387,12 @@ function closeModal(){document.getElementById("modalRoot").innerHTML="";}
 function copyText(t){const ok=()=>toast("복사되었습니다");if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok).catch(()=>fbCopy(t));}else fbCopy(t);}
 function fbCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("복사되었습니다");}catch(e){toast("복사 실패");}document.body.removeChild(ta);}
 
-function go(v,keep){try{if(S.view!==v)S._chatKeep={};}catch(_e){}if(v==="cust-channels"&&!keep)S._pickFrom=null;S.view=v;render();window.scrollTo(0,0);syncUrl(v);logEvent("visit",v,(VIEW_TITLE[v]||v));}
+function go(v,keep){try{if(S.view!==v){S._chatKeep={};S._touched={};}}catch(_e){}if(v==="cust-channels"&&!keep)S._pickFrom=null;S.view=v;render();window.scrollTo(0,0);syncUrl(v);logEvent("visit",v,(VIEW_TITLE[v]||v));}
 function goHome(){S.view="home";render();window.scrollTo(0,0);syncUrl("home");}
 function newApply(){if(S.role==="customer"){var _br=(S.cust&&S.cust.brand)||"";if(_br==="와이트라이브"||(S.cust&&String(S.cust.email||"").toLowerCase()==="y-tribe@cnolad.com"))_br="";S.form={name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:_br};SEL=new Set();PROD={};QSEL={};go("cust-apply");}else{S.form={};SEL=new Set();PROD={};QSEL={};go("apply");}}
 function logout(){authLogout();S._notiLast=null;S._notiMaxCreated=null;S._notiCons=null;S.notices=null;S._noticesAt=0;S._noticeSig=null;S.role=null;S.cust=null;S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.removeItem("knollad_sess");}catch(_e){}go("home");}
 var _scrollKeep=0,_scrollLock=false;
+document.addEventListener("input",function(e){try{var t=e.target;if(t&&t.id&&(t.tagName==="TEXTAREA"||t.tagName==="INPUT")){S._touched=S._touched||{};S._touched[t.id]=1;}}catch(_e){}},true);
 window.addEventListener("scroll",function(){if(!_scrollLock)_scrollKeep=window.scrollY||window.pageYOffset||0;},{passive:true});
 function render(){
   const v=S.view;let h;
@@ -413,7 +414,7 @@ function render(){
   /* 채팅 입력 중 내용·첨부파일이 폴링 렌더로 사라지지 않게 보존 */
   try{S._chatKeep=S._chatKeep||{};
     var _rt0=document.getElementById("root");
-    if(_rt0&&_sameView){_rt0.querySelectorAll("textarea[id],input[id][type='text'],input[id]:not([type])").forEach(function(el){if(el.value)S._chatKeep[el.id]=el.value;});}
+    if(_rt0&&_sameView){_rt0.querySelectorAll("textarea[id],input[id][type='text'],input[id]:not([type])").forEach(function(el){if(S._touched&&S._touched[el.id])S._chatKeep[el.id]=el.value;});}
     ["admMsgInput","wfMsgInput","chatMsg"].forEach(function(id){var el=document.getElementById(id);if(el)S._chatKeep[id]=el.value;});
     ["admMsgFile","wfMsgFile","chatFile"].forEach(function(id){var el=document.getElementById(id);if(el&&el.files&&el.files.length)S._chatKeep[id]=el.files;});}catch(_ck){}
   /* 입력 중이던 칸의 포커스·커서 위치 기억 */
@@ -424,7 +425,7 @@ function render(){
   if(_fx&&_sameView){try{var _nf=document.getElementById(_fx.id);if(_nf){_nf.focus({preventScroll:true});if(typeof _fx.s==="number"){try{_nf.setSelectionRange(_fx.s,_fx.e);}catch(_es){}}}}catch(_ef2){}}
   /* 렌더 후 입력값·첨부파일 복원 */
   try{var kp=S._chatKeep||{};
-    if(_sameView){for(var _k in kp){if(typeof kp[_k]!=="string"||!kp[_k])continue;var _e2=document.getElementById(_k);if(_e2&&!_e2.value)_e2.value=kp[_k];}}
+    if(_sameView){for(var _k in kp){if(typeof kp[_k]!=="string")continue;if(!(S._touched&&S._touched[_k]))continue;var _e2=document.getElementById(_k);if(_e2)_e2.value=kp[_k];}}
     ["admMsgInput","wfMsgInput","chatMsg"].forEach(function(id){var el=document.getElementById(id);if(el&&kp[id])el.value=kp[id];});
     ["admMsgFile","wfMsgFile","chatFile"].forEach(function(id){var el=document.getElementById(id),fl=kp[id];
       if(el&&fl&&fl.length){try{var dt=new DataTransfer();for(var i=0;i<fl.length;i++)dt.items.add(fl[i]);el.files=dt.files;}catch(_e){}
@@ -542,7 +543,7 @@ function initCounters(){document.querySelectorAll(".ctr").forEach(el=>{const to=
 /* ===== 신청폼 ===== */
 function gv(id){const e=document.getElementById(id);return e?e.value:"";}
 function gck(id){const e=document.getElementById(id);return e?e.checked:undefined;}
-const WHITELIVE_EMAIL="y-tribe@cnolad.com";function csCampVisible(a){var e=String(a&&a.email||"").trim().toLowerCase();if(e==="y-tribe@cnolad.com"||e==="branall"||e.indexOf("@branall.co.kr")!==-1)return true;if(String(a&&a.brand_name||"").indexOf("브랜올")>=0)return true;return false;}const WL_PX={"셀럽온":{prod:45,pub:15},"찐예쁨":{prod:35,pub:15},"미모지상주의":{prod:45,pub:15},"쇼잉":{prod:70,pub:25},"쇼숏":{prod:45,pub:15},"슛됐다":{prod:45,pub:15},"밈튜브":{prod:45,pub:15},"숏스커버리":{prod:45,pub:15},"유니랜드":{prod:45,pub:15},"신기+템":{prod:45,pub:15},"숏믈리에":{prod:35,pub:15},"디어랩":{prod:35,pub:15},"숏픽":{prod:35,pub:15},"두근두근":{prod:35,pub:15},"전국댓글자랑":{prod:35,pub:15},"숏플래시":{prod:35,pub:15},"출석체크":{prod:35,pub:15},"한편만":{prod:35,pub:15},"ワクワク":{prod:35,pub:15},"スポログ":{prod:35,pub:15},"笑撃の一秒":{prod:35,pub:15},"おもしろ塾":{prod:35,pub:15},"一瞬劇場":{prod:35,pub:15},"絆タイム":{prod:35,pub:15},"チーズケーキ":{prod:35,pub:15},"オイシイワールド":{prod:35,pub:15},"モグモグ":{prod:35,pub:15},"トレ韓":{prod:35,pub:15},"沼落ちKPOP":{prod:35,pub:15},"スゴっ":{prod:35,pub:15},"一瞬で神":{prod:35,pub:15},"チラ見シネマ":{prod:35,pub:15},"楽しい1分":{prod:35,pub:15},"ぼっち映画":{prod:35,pub:15},"エグエグ":{prod:35,pub:15},"切りぬクッキー":{prod:35,pub:15},"そんなバナナ":{prod:35,pub:15},"PopFlow":{prod:35,pub:15},"KPOPVERSE":{prod:35,pub:15}};function pxOf(c){try{if(S.cust&&(S.cust.role==="파트너사"||["y-tribe@cnolad.com","branall","jc.shin@ytribe.co.kr"].includes(S.cust.email))&&WL_PX[c.name])return WL_PX[c.name];}catch(e){}return {prod:c.prod,pub:c.pub};}function saveForm(){const a1=gck("f_agree1"),a2=gck("f_agree2"),a3=gck("f_agree3"),ak=gck("f_kakao");var _nb=document.getElementById("f_noti");S.form={notiOptIn:_nb?!!_nb.checked:(S.form?S.form.notiOptIn:undefined),name:gv("f_name")||S.form.name||(isLoggedCust()?(S.cust.name||""):""),email:isLoggedCust()?(S.cust.email||S.form.email||""):(gv("f_email")||S.form.email),phone:gv("f_phone")||S.form.phone,brand:gv("f_brand")||S.form.brand,date:gv("f_date")||S.form.date,link:gv("f_link")||S.form.link,material:gv("f_material")||S.form.material,ad:gv("f_ad")||S.form.ad,concept:gv("f_concept")||S.form.concept,note:gv("f_note")||S.form.note,manager:gv("f_manager")||S.form.manager,btype:(((document.querySelector('input[name="f_btype"]:checked')||{}).value)||S.form.btype),agree1:a1===undefined?S.form.agree1:a1,agree2:a2===undefined?S.form.agree2:a2,agree3:a3===undefined?S.form.agree3:a3,kakaoAlert:ak===undefined?S.form.kakaoAlert:ak};}
+const WHITELIVE_EMAIL="y-tribe@cnolad.com";function csCampVisible(a){var e=String(a&&a.email||"").trim().toLowerCase();if(e==="y-tribe@cnolad.com"||e==="branall"||e.indexOf("@branall.co.kr")!==-1)return true;if(String(a&&a.brand_name||"").indexOf("브랜올")>=0)return true;return false;}const WL_PX={"셀럽온":{prod:45,pub:15},"찐예쁨":{prod:35,pub:15},"미모지상주의":{prod:45,pub:15},"쇼잉":{prod:70,pub:25},"쇼숏":{prod:45,pub:15},"슛됐다":{prod:45,pub:15},"밈튜브":{prod:45,pub:15},"숏스커버리":{prod:45,pub:15},"유니랜드":{prod:45,pub:15},"신기+템":{prod:45,pub:15},"숏믈리에":{prod:35,pub:15},"디어랩":{prod:35,pub:15},"숏픽":{prod:35,pub:15},"두근두근":{prod:35,pub:15},"전국댓글자랑":{prod:35,pub:15},"숏플래시":{prod:35,pub:15},"출석체크":{prod:35,pub:15},"한편만":{prod:35,pub:15},"ワクワク":{prod:35,pub:15},"スポログ":{prod:35,pub:15},"笑撃の一秒":{prod:35,pub:15},"おもしろ塾":{prod:35,pub:15},"一瞬劇場":{prod:35,pub:15},"絆タイム":{prod:35,pub:15},"チーズケーキ":{prod:35,pub:15},"オイシイワールド":{prod:35,pub:15},"モグモグ":{prod:35,pub:15},"トレ韓":{prod:35,pub:15},"沼落ちKPOP":{prod:35,pub:15},"スゴっ":{prod:35,pub:15},"一瞬で神":{prod:35,pub:15},"チラ見シネマ":{prod:35,pub:15},"楽しい1分":{prod:35,pub:15},"ぼっち映画":{prod:35,pub:15},"エグエグ":{prod:35,pub:15},"切りぬクッキー":{prod:35,pub:15},"そんなバナナ":{prod:35,pub:15},"PopFlow":{prod:35,pub:15},"KPOPVERSE":{prod:35,pub:15}};function pxOf(c){try{if(S.cust&&(S.cust.role==="파트너사"||["y-tribe@cnolad.com","branall","jc.shin@ytribe.co.kr"].includes(S.cust.email))&&WL_PX[c.name])return WL_PX[c.name];}catch(e){}return {prod:c.prod,pub:c.pub};}function saveForm(){const a1=gck("f_agree1"),a2=gck("f_agree2"),a3=gck("f_agree3"),ak=gck("f_kakao");S.form={name:gv("f_name")||S.form.name||(isLoggedCust()?(S.cust.name||""):""),email:isLoggedCust()?(S.cust.email||S.form.email||""):(gv("f_email")||S.form.email),phone:gv("f_phone")||S.form.phone,brand:gv("f_brand")||S.form.brand,date:gv("f_date")||S.form.date,link:gv("f_link")||S.form.link,material:gv("f_material")||S.form.material,ad:gv("f_ad")||S.form.ad,concept:gv("f_concept")||S.form.concept,note:gv("f_note")||S.form.note,manager:gv("f_manager")||S.form.manager,btype:(((document.querySelector('input[name="f_btype"]:checked')||{}).value)||S.form.btype),agree1:a1===undefined?S.form.agree1:a1,agree2:a2===undefined?S.form.agree2:a2,agree3:a3===undefined?S.form.agree3:a3,kakaoAlert:ak===undefined?S.form.kakaoAlert:ak};}
 function fv(k){return esc((S.form&&S.form[k])||"");}
 function chPreview(){var top=CH.slice(0,5);var more=Math.max(0,CH.length-top.length);var items=top.map(function(c){return '<button type="button" onclick="openPicker()" class="flex flex-col items-center gap-1.5 flex-shrink-0" style="width:76px">'+logoEl(c,"w-[60px] h-[60px] text-lg")+'<span class="text-[12px] font-bold text-g800 leading-tight text-center truncate w-full">'+esc(c.name)+'</span></button>';}).join("");var moreBtn=more>0?'<button type="button" onclick="openPicker()" class="cn-morebtn flex flex-col items-center gap-1.5 flex-shrink-0" style="width:76px"><div class="cn-more w-[60px] h-[60px] flex items-center justify-center font-bold text-[15px]"><span>+'+more+'</span></div><span class="text-[12px] font-bold text-blue leading-tight text-center">더보기</span></button>':"";return '<style>@keyframes cnShine{0%{transform:translateX(-140%)}55%,100%{transform:translateX(240%)}}@keyframes cnHalo{0%,100%{border-color:#d7e3f8;box-shadow:0 0 0 0 rgba(91,155,255,.10)}50%{border-color:#9fc0ff;box-shadow:0 0 10px 1px rgba(91,155,255,.30)}}.cn-more{position:relative;overflow:hidden;border-radius:20px;background:#fff;border:1.5px solid #d7e3f8;animation:cnHalo 2.8s ease-in-out infinite;transition:transform .2s ease}.cn-more::after{content:"";position:absolute;top:0;left:0;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(91,155,255,.18),transparent);transform:translateX(-140%);animation:cnShine 2.8s ease-in-out infinite;z-index:1}.cn-more>span{position:relative;z-index:2;color:#3d7dff}.cn-morebtn:hover .cn-more{border-color:#5b9bff}@media(prefers-reduced-motion:reduce){.cn-more,.cn-more::after{animation:none}}</style><div class="flex gap-2 overflow-x-auto py-2.5 mb-2" style="scrollbar-width:none;-webkit-overflow-scrolling:touch">'+items+moreBtn+'</div>';}
 function chSelectBtn(){return `<button type="button" onclick="openPicker()" class="w-full flex items-center gap-3 px-5 py-4 rounded-[20px] bg-g100 border border-g300 hover:border-blue/40 transition-all text-left"><i data-lucide="layers" class="w-[18px] h-[18px] text-g500"></i><span class="flex-1 text-[17px] text-g500">채널 목록에서 선택하기 (복수 선택 가능)</span><i data-lucide="chevron-right" class="w-[18px] h-[18px] text-g400"></i></button>`;}
@@ -555,7 +556,7 @@ ${field('활용 소재',`<textarea id="f_material" rows="2" placeholder="영상,
 ${field('광고 고지 방식',`<select id="f_ad" class="${INPUT}"><option ${S.form.ad==='광고표기 희망'?'selected':''}>광고표기 희망</option><option ${S.form.ad==='광고 미표기 희망'?'selected':''}>광고 미표기 희망</option><option ${S.form.ad==='별도 협의'?'selected':''}>별도 협의</option></select>`)}
 ${field('희망 영상 컨셉',`<textarea id="f_concept" rows="2" placeholder="분위기, 스타일, 레퍼런스 등을 자유롭게 적어주세요." class="${INPUT} resize-none">${fv('concept')}</textarea>`)}
 ${field('요청사항',`<textarea id="f_note" rows="2" placeholder="기타 요청사항" class="${INPUT} resize-none">${fv('note')}</textarea>`)}
-${applyNotiBox()}
+<label class="flex items-start gap-2.5 cursor-pointer"><input type="checkbox" id="f_kakao" ${S.form.kakaoAlert?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0 mt-0.5"><span class="text-[15px] text-g900 leading-snug">카톡으로 진행 알림 받기 <span class="text-g400 font-bold">(선택)</span><span class="block text-[13px] text-g500 font-normal mt-0.5">콘티·영상·업로드 단계를 연락처의 카카오톡으로 안내합니다.</span></span></label>
 ${field('자료 파일 업로드 (선택)',uploadZone("f_files","제품 이미지·영상·가이드·레퍼런스 등 (여러 개 가능)"))}
 ${S.cust?"":field('의뢰인 유형',`<div class="flex gap-5 mb-1"><label class="inline-flex items-center gap-2 text-[16px] cursor-pointer"><input type="radio" name="f_btype" value="개인" onchange="bizTypeToggle()" ${(S.form&&S.form.btype)==="개인"?"checked":""}> 개인</label><label class="inline-flex items-center gap-2 text-[16px] cursor-pointer"><input type="radio" name="f_btype" value="법인" onchange="bizTypeToggle()" ${(S.form&&S.form.btype)==="법인"?"checked":""}> 법인·사업자</label></div><div id="f_bizwrap" style="display:${(S.form&&S.form.btype)==="법인"?"block":"none"}"><p class="text-[14px] font-bold text-g700 mt-2 mb-1">사업자등록증 첨부 (필수)</p><input type="file" id="f_bizcert" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-[14px] text-g600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-blue-tint file:text-blue file:font-bold file:cursor-pointer"></div><p class="text-[12px] text-g400 mt-1">법인·사업자는 사업자등록증 첨부가 필수입니다. (개인 의뢰인·기존 회원·파트너사는 첨부 없이 신청 가능)</p>`)}
 <div class="pt-2 border-t border-g100 mt-2"><p class="text-[15px] font-medium text-g900 mb-2.5 mt-3">필수 동의 항목</p>
@@ -627,20 +628,7 @@ function finishPicker(){if(S.role==="customer"){var b=S._pickFrom||"customer-das
 function notifyEmail(to,subject,html){try{if(!to)return;fetch(SUPA_URL+"/functions/v1/notify-email",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},SH),body:JSON.stringify({to:to,subject:subject,html:html})}).catch(function(){});}catch(e){}}
 function emailTpl(a,title,body){var brand=(a&&(a.brand_name||a.brand))||"";var nm=(a&&a.name)||"고객";var t2=String(title).replace("[크놀AD] ","");return '<div style="max-width:520px;margin:0 auto;font-family:Apple SD Gothic Neo,Malgun Gothic,sans-serif;color:#191F28"><div style="text-align:center;padding:24px 0"><span style="font-size:22px;font-weight:800;color:#2F80ED">크놀AD</span></div><div style="background:#F7F9FC;border-radius:16px;padding:28px"><h2 style="font-size:18px;margin:0 0 12px">'+t2+'</h2><p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 16px">'+nm+'님, 안녕하세요.<br>'+body+'</p>'+(brand?'<p style="font-size:13px;color:#8B95A1;margin:0">캠페인: '+brand+'</p>':'')+'<div style="margin-top:20px"><a href="https://www.cnolad.com" style="display:inline-block;background:#2F80ED;color:#fff;text-decoration:none;padding:11px 22px;border-radius:10px;font-weight:700;font-size:14px">사이트에서 확인하기</a></div></div><p style="text-align:center;font-size:12px;color:#B0B8C1;margin-top:16px">본 메일은 발신 전용입니다 · 크놀AD</p></div>';}
 function notifyTelegram(t){try{fetch(SUPA_URL+"/functions/v1/notify-telegram",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},SH),body:JSON.stringify({text:t})}).catch(function(){});}catch(e){}}
-/* 캠페인 신청 시 새 메시지 알림 신청 (이미 설정한 사람은 표시하지 않음) */
-function notiAlreadySet(){try{return !!localStorage.getItem(NOTI_KEY);}catch(e){return false;}}
-function applyNotiBox(){
-  if(notiAlreadySet())return '';
-  var checked=(S.form&&S.form.notiOptIn===false)?'':'checked';
-  return '<label class="flex items-start gap-2.5 cursor-pointer rounded-2xl px-4 py-3.5" style="background:#F1F6FF;border:1px solid #DCE7FF">'
-   +'<input type="checkbox" id="f_noti" '+checked+' class="w-5 h-5 rounded accent-blue flex-shrink-0 mt-0.5">'
-   +'<span class="text-[15px] text-g900 leading-snug">새 메시지 알림 받기 <span class="text-g400 font-bold">(권장)</span>'
-   +'<span class="block text-[13px] text-g500 font-normal mt-0.5">크놀AD가 메시지를 보내면 알림음과 브라우저 알림으로 알려드립니다. 로그인 후 언제든 ‘알림 설정’에서 끄실 수 있어요.</span></span></label>';}
-function applyNotiSave(){try{var el=document.getElementById("f_noti");if(!el)return;   /* 이미 설정한 사용자는 건드리지 않음 */
-  var on=!!el.checked;notiSet({sound:on,desktop:on});
-  if(on&&("Notification" in window)&&Notification.permission==="default"){Notification.requestPermission().then(function(pm){if(pm!=="granted")notiSet({desktop:false});}).catch(function(){});}
-}catch(e){}}
-function submitApply(){saveForm();applyNotiSave();const f=S.form;var _isP=(S.cust&&S.cust.role==="파트너사");if(_isP){if(!f.manager||!f.manager.trim()||!f.email||!f.email.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자·이메일·브랜드명을 입력해주세요");return;}if(!f.phone||!f.phone.trim()){toast("연락처를 입력해주세요");return;}f.name=f.manager;}else if(!f.name||!f.name.trim()||!f.email||!f.email.trim()||!f.phone||!f.phone.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자명·이메일·연락처·브랜드명을 모두 입력해주세요");return;}
+function submitApply(){saveForm();const f=S.form;var _isP=(S.cust&&S.cust.role==="파트너사");if(_isP){if(!f.manager||!f.manager.trim()||!f.email||!f.email.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자·이메일·브랜드명을 입력해주세요");return;}if(!f.phone||!f.phone.trim()){toast("연락처를 입력해주세요");return;}f.name=f.manager;}else if(!f.name||!f.name.trim()||!f.email||!f.email.trim()||!f.phone||!f.phone.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자명·이메일·연락처·브랜드명을 모두 입력해주세요");return;}
   if(!f.agree1||!f.agree2){toast("필수 동의 항목(이용약관·개인정보)에 동의해주세요");return;}
   var _bz=document.getElementById("f_bizcert");var _hasBiz=_bz&&_bz.files&&_bz.files.length;
   if(!S.cust&&S.role!=="admin"&&S.role!=="cs"){var _bt=f.btype||(((document.querySelector('input[name="f_btype"]:checked')||{}).value));
@@ -1084,8 +1072,7 @@ ${siteFooter()}</div>`;}
    · 알림음은 Web Audio 로 합성(파일 불필요) · 첫 클릭/키 입력 뒤부터 재생 가능(브라우저 자동재생 정책)
    · 브라우저 알림은 사용자가 켤 때 권한 요청 · 탭이 뒤에 있거나 해당 채팅이 열려있지 않을 때 표시 */
 var NOTI_KEY="knollad_noti";var _notiUnlocked=false;var _notiTitle=null;var _notiTimer=null;var _notiPending=0;
-function notiGet(){var d={sound:true,desktop:true,vol:0.6,tone:"default"};try{var j=JSON.parse(localStorage.getItem(NOTI_KEY)||"null");if(j)for(var k in j)d[k]=j[k];}catch(e){}return notiVolFix(d);}
-function notiVolFix(d){try{if(d._v2){delete d._v2;if(d.vol>0.6)d.vol=0.6;localStorage.setItem(NOTI_KEY,JSON.stringify(d));}}catch(e){}return d;}
+function notiGet(){var d={sound:true,desktop:true,vol:0.6,tone:"default"};try{var j=JSON.parse(localStorage.getItem(NOTI_KEY)||"null");if(j)for(var k in j)d[k]=j[k];}catch(e){}return d;}
 function notiSet(p){var d=notiGet();for(var k in p)d[k]=p[k];try{localStorage.setItem(NOTI_KEY,JSON.stringify(d));}catch(e){}return d;}
 var NOTI_TONES=[
  {id:"default",name:"기본 (나무톡+벨)",src:"/snd/default.mp3"},
@@ -1103,7 +1090,6 @@ function notiUnlock(){try{if(_notiUnlocked)return;_notiUnlocked=true;
   /* 첫 클릭 때 무음 재생으로 잠금 해제 (모바일·자동재생 정책) */
   NOTI_TONES.forEach(function(t){try{var a=notiAudioFor(t);a.volume=0;var pr=a.play();if(pr&&pr.then)pr.then(function(){a.pause();a.currentTime=0;}).catch(function(){});}catch(e){}});}catch(e){}}
 ["pointerdown","touchstart","click","keydown"].forEach(function(ev){window.addEventListener(ev,notiUnlock,{passive:true});});
-function notiVibe(){}
 
 /* 알림음: 나무 톡 + 짧은 벨 여운 (부드럽게 · 음량 조절) */
 /* 알림음: 실제 음원 파일 재생 (/snd/*.mp3) */
@@ -1128,26 +1114,6 @@ function notiDesktop(title,body,onclick,tag,withSound){try{if(!notiGet().desktop
   n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};
   setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
 function notiAskDesktop(){if(!("Notification" in window)){toast("이 브라우저는 알림을 지원하지 않습니다");return Promise.resolve(false);}if(Notification.permission==="granted")return Promise.resolve(true);if(Notification.permission==="denied"){toast("브라우저 설정에서 알림이 차단되어 있어요 · 주소창 자물쇠 아이콘에서 허용해 주세요");return Promise.resolve(false);}return Notification.requestPermission().then(function(p){return p==="granted";});}
-/* 사이트 안에서 뜨는 알림 카드 (우측 상단) */
-function notiPopRoot(){var el=document.getElementById("notiPop");if(!el){el=document.createElement("div");el.id="notiPop";el.style.cssText="position:fixed;bottom:20px;right:20px;z-index:500;display:flex;flex-direction:column-reverse;gap:10px;pointer-events:none";document.body.appendChild(el);
-  var st=document.createElement("style");st.textContent="@keyframes notiIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}@keyframes notiOut{to{opacity:0;transform:translateY(10px) scale(.98)}}";document.head.appendChild(st);}return el;}
-function notiPopup(o){try{var root=notiPopRoot();var card=document.createElement("div");
-  card.style.cssText="pointer-events:auto;width:430px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #E5E8EB;border-radius:18px;box-shadow:0 16px 40px rgba(17,24,39,.20);padding:18px 18px 18px 17px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;animation:notiIn .22s ease-out";
-  var ic=o.kind==="new"?"badge-alert":(o.kind==="consult"?"message-circle":"message-square");
-  var col=o.kind==="new"?"#10B981":"#4577F0";
-  var head=(o.kind==="new")
-    ? '<span style="width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex-shrink:0;background:'+col+';color:#fff"><i data-lucide="'+ic+'" style="width:23px;height:23px"></i></span>'
-    : '<span style="width:46px;height:46px;border-radius:13px;flex-shrink:0;background:#fff;border:1px solid #E5E8EB;display:grid;place-items:center;overflow:hidden"><img src="/notify-icon.png" alt="크놀AD" style="width:38px;height:38px;object-fit:contain;display:block"></span>';
-  card.innerHTML=head
-   +'<span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:6px"><b style="font-size:17px;color:#191F28;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.title||"새 알림")+'</b><span style="font-size:12.5px;color:#8B95A1;margin-left:auto;flex-shrink:0">지금</span></span>'
-   +'<span style="display:block;font-size:15.5px;color:#4E5968;margin-top:5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+esc(o.body||"")+'</span></span>'
-   +'<button style="width:24px;height:24px;border-radius:8px;color:#B0B8C1;flex-shrink:0;font-size:14px;line-height:1">✕</button>';
-  var close=function(){if(!card.parentNode)return;card.style.animation="notiOut .18s ease-in forwards";setTimeout(function(){if(card.parentNode)card.parentNode.removeChild(card);},200);};
-  card.querySelector("button").onclick=function(e){e.stopPropagation();close();};
-  card.onclick=function(){close();try{if(o.go)o.go();}catch(e){}};
-  root.appendChild(card);if(window.lucide)lucide.createIcons();
-  while(root.children.length>3)root.removeChild(root.firstChild);
-  setTimeout(close,7000);}catch(e){}}
 /* 채팅이 지금 열려 있고 화면을 보고 있는지 */
 function notiChatOpen(campId,side){try{if(document.hidden||!document.hasFocus())return false;if(side==="knoll")return S.view==="admin-workflow"&&String(S.admWfId)===String(campId);return (S.view==="notes"||S.view==="workflow")&&S.activeCamp&&String(S.activeCamp.id)===String(campId);}catch(e){return false;}}
 function notiOtherLatest(camp,side){var other=side==="knoll"?"cust":"knoll";var last="";(camp.notes||[]).forEach(function(n){var isOther=(n.role===other)||(other==="knoll"&&n.who==="크놀AD")||(other==="cust"&&(n.who==="고객"||(!n.role&&n.who!=="크놀AD")));if(isOther&&String(n.at||"")>last)last=String(n.at||"");});return last;}
@@ -1157,7 +1123,7 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
   if(side==="knoll"){var mx="";rows.forEach(function(c){if(String(c.created_at||"")>mx)mx=String(c.created_at||"");});if(prev&&S._notiMaxCreated&&mx>S._notiMaxCreated){var nc=rows.filter(function(c){return String(c.created_at||"")>S._notiMaxCreated;});nc.forEach(function(c){fresh.push(Object.assign({},c,{_isNew:true}));});}S._notiMaxCreated=mx;}
   S._notiLast=cur;if(!prev||!fresh.length)return;
   if(S._selfSendUntil&&Date.now()<S._selfSendUntil)return;   /* 내가 방금 보낸 직후엔 알리지 않음 */
-  S._notiDone=S._notiDone||{};
+  S._notiDone=S._notiDone||{};if(Object.keys(S._notiDone).length>300)S._notiDone={};
   fresh=fresh.filter(function(c){var k=String(c.id)+"|"+String(c._isNew?"new":cur[c.id]||"");if(S._notiDone[k])return false;S._notiDone[k]=1;return true;});
   if(!fresh.length)return;
   var pref=notiGet();var loud=fresh.filter(function(c){return c._isNew||!notiChatOpen(c.id,side);});
@@ -1191,14 +1157,14 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
     if(canDesk)notiDesktop(title,body,jump,"consult-"+c.id,pref.sound&&awayAll);
     else if(!awayAll)toast("💬 "+title+(body?" · "+body:""));});}catch(e){}}
 /* 설정 모달 (사이드바 · 알림 설정) */
-function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm!=="denied";
+function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm==="granted";
   function sw(on){return '<span data-notisw="1" class="relative inline-block w-[46px] h-[26px] rounded-full flex-shrink-0 transition-colors" style="background:'+(on?'#4577F0':'#D1D6DB')+'"><span class="absolute top-[3px] w-5 h-5 rounded-full bg-white transition-all" style="left:'+(on?'23px':'3px')+';box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></span>';}
   function row(id,icon,label,desc,on,note){return '<button data-notirow="'+id+'" onclick="notiToggle(\''+id+'\')" class="w-full flex items-center gap-3 text-left px-4 py-3 rounded-[12px] transition-colors" style="background:'+(on?'#F1F6FF':'#F7F8FA')+'">'
     +'<span data-noticon="1" class="w-9 h-9 rounded-[10px] grid place-items-center flex-shrink-0" style="background:'+(on?'#4577F0':'#E5E8EB')+';color:'+(on?'#fff':'#8B95A1')+'"><i data-lucide="'+icon+'" class="w-[18px] h-[18px]"></i></span>'
     +'<span class="flex-1 min-w-0"><span class="block text-[16px] font-bold text-g900">'+label+'</span><span class="block text-[13px] text-g500 mt-0.5">'+desc+'</span><span data-notinote="1" class="block text-[12px] font-bold mt-1">'+(note||"")+'</span></span>'+sw(on)+'</button>';}
-  var permNote=perm==="denied"?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#F59E0B">아직 허용 전 · 스위치를 누르거나 주소창 자물쇠(🔒)/종(🔔) 아이콘에서 알림을 허용해 주세요</span>');
+  var permNote=perm==="denied"?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#F59E0B">스위치를 켜면 브라우저 허용 창이 뜹니다 · 창이 안 보이면 주소창 자물쇠(🔒)/종(🔔) 아이콘에서 허용</span>');
   modal('<div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2.5"><span class="w-9 h-9 rounded-[10px] grid place-items-center" style="background:#EEF4FF;color:#4577F0"><i data-lucide="bell-ring" class="w-[18px] h-[18px]"></i></span><h3 class="text-[20px] font-bold text-g900">알림 설정</h3></div><button onclick="closeModal()" class="w-8 h-8 rounded-[10px] bg-g100 grid place-items-center text-g500 hover:bg-g200">✕</button></div>'
-  +'<p class="text-[13.5px] text-g500 mb-4 mt-1.5">'+(S.role==="customer"?"크놀AD가 보낸 새 메시지가 도착하면 알려드려요.":"고객이 보낸 새 메시지나 새 캠페인 신청이 도착하면 알려드려요.")+'</p>'
+  +'<p class="text-[13.5px] text-g500 mb-4 mt-1.5">'+((S.role==="admin"||S.role==="cs")?"고객이 보낸 새 메시지나 새 캠페인 신청이 도착하면 알려드려요.":"크놀AD가 보낸 새 메시지가 도착하면 알려드려요.")+'</p>'
   +'<div class="space-y-2">'
   +row("sound","volume-2","알림음","새 메시지가 오면 소리로 알려드려요",p.sound,"")
   +row("desktop","monitor","브라우저 알림","다른 탭·다른 프로그램을 보고 있어도 표시",deskOn,permNote)
@@ -1216,13 +1182,13 @@ function notiTest(){try{var p=notiGet();if(p.sound)notiBeep(undefined,undefined,
   else{toast(p.desktop?"브라우저 알림이 아직 허용되지 않았습니다 · 위 스위치를 눌러 허용해 주세요":"브라우저 알림이 꺼져 있어요 · 소리로만 알려드립니다");}}catch(e){}}
 /* 스위치만 즉시 갱신 (모달 전체를 다시 그리지 않아 화면이 번쩍이지 않음) */
 function notiSyncUI(){try{var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";
-  var st={sound:!!p.sound,desktop:!!(p.desktop&&perm!=="denied")};
+  var st={sound:!!p.sound,desktop:!!(p.desktop&&perm==="granted")};
   ["sound","desktop"].forEach(function(k){
     var row=document.querySelector('[data-notirow="'+k+'"]');if(!row)return;var on=st[k];
     row.style.background=on?"#F1F6FF":"#F7F8FA";
     var ic=row.querySelector("[data-noticon]");if(ic){ic.style.background=on?"#4577F0":"#E5E8EB";ic.style.color=on?"#fff":"#8B95A1";}
     var sw=row.querySelector("[data-notisw]");if(sw){sw.style.background=on?"#4577F0":"#D1D6DB";var kn=sw.querySelector("span");if(kn)kn.style.left=on?"23px":"3px";}
-    var nt=row.querySelector("[data-notinote]");if(nt&&k==="desktop"){nt.innerHTML=(perm==="denied")?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#F59E0B">아직 허용 전 · 스위치를 누르거나 주소창 자물쇠(🔒)/종(🔔) 아이콘에서 알림을 허용해 주세요</span>');}
+    var nt=row.querySelector("[data-notinote]");if(nt&&k==="desktop"){nt.innerHTML=(perm==="denied")?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#F59E0B">스위치를 켜면 브라우저 허용 창이 뜹니다 · 창이 안 보이면 주소창 자물쇠(🔒)/종(🔔) 아이콘에서 허용</span>');}
   });
   var vb=document.getElementById("ntVolBox");if(vb)vb.style.display=p.sound?"":"none";
   var tb=document.getElementById("ntToneBox");if(tb)tb.style.display=p.sound?"":"none";
@@ -1251,9 +1217,9 @@ function noticeFmt(at){if(!at)return "";var d=new Date(at);if(isNaN(d.getTime())
 function loadNotices(force){if(!S.role)return Promise.resolve([]);if(!force&&S._noticesAt&&Date.now()-S._noticesAt<60000)return Promise.resolve(S.notices||[]);S._noticesAt=Date.now();
   return fetch(SUPA_URL+"/rest/v1/knollad_notices?select=*&order=pinned.desc,created_at.desc",{headers:SH}).then(function(r){return r.ok?r.json():[];}).then(function(rows){rows=Array.isArray(rows)?rows:[];var sig=JSON.stringify(rows.map(function(n){return [n.id,n.updated_at||n.created_at,n.pinned];}));var changed=sig!==S._noticeSig;S._noticeSig=sig;S.notices=rows;if(changed){var el=document.getElementById("noticeBar");if(el)el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}return rows;}).catch(function(){return S.notices||[];});}
 function noticeLatest(){var l=S.notices||[];return l.length?l[0]:null;}
-function noticeSeenKey(n){return n?String(n.id)+"|"+String(n.updated_at||n.created_at||""):"";}
-function noticeIsNew(n){try{return !!n&&localStorage.getItem(NOTICE_SEEN)!==noticeSeenKey(n);}catch(e){return false;}}
-function noticeMarkSeen(){try{var n=noticeLatest();if(!n)return false;var k=noticeSeenKey(n);if(localStorage.getItem(NOTICE_SEEN)===k)return false;localStorage.setItem(NOTICE_SEEN,k);return true;}catch(e){return false;}}
+function noticeSeenKey(){var l=S.notices||[];var mx="";l.forEach(function(n){var t=String(n.updated_at||n.created_at||"");if(t>mx)mx=t;});return mx?("v2|"+mx):"";}
+function noticeIsNew(n){try{var k=noticeSeenKey();return !!k&&localStorage.getItem(NOTICE_SEEN)!==k;}catch(e){return false;}}
+function noticeMarkSeen(){try{var k=noticeSeenKey();if(!k)return false;if(localStorage.getItem(NOTICE_SEEN)===k)return false;localStorage.setItem(NOTICE_SEEN,k);return true;}catch(e){return false;}}
 /* 화면 상단 배너 */
 function noticeBar(){setTimeout(function(){loadNotices();},20);var n=noticeLatest();var admin=(S.role==="admin");
   if(!n){if(!admin)return '<div id="noticeBar"></div>';return '<div id="noticeBar" class="px-8 md:px-10 pt-6"><button onclick="noticeEdit()" class="w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-2xl border border-dashed border-g300 text-[15px] font-bold text-g500 hover:bg-white hover:text-g800 transition-colors"><i data-lucide="megaphone" class="w-[18px] h-[18px]"></i>공지사항 작성</button></div>';}
