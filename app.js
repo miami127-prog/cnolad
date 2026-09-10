@@ -1083,16 +1083,16 @@ function notiDesktop(title,body,onclick,tag){try{if(!("Notification" in window)|
   setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
 function notiAskDesktop(){if(!("Notification" in window)){toast("이 브라우저는 알림을 지원하지 않습니다");return Promise.resolve(false);}if(Notification.permission==="granted")return Promise.resolve(true);if(Notification.permission==="denied"){toast("브라우저 설정에서 알림이 차단되어 있어요 · 주소창 자물쇠 아이콘에서 허용해 주세요");return Promise.resolve(false);}return Notification.requestPermission().then(function(p){return p==="granted";});}
 /* 사이트 안에서 뜨는 알림 카드 (우측 상단) */
-function notiPopRoot(){var el=document.getElementById("notiPop");if(!el){el=document.createElement("div");el.id="notiPop";el.style.cssText="position:fixed;top:18px;right:18px;z-index:500;display:flex;flex-direction:column;gap:10px;pointer-events:none";document.body.appendChild(el);
-  var st=document.createElement("style");st.textContent="@keyframes notiIn{from{opacity:0;transform:translateX(16px) scale(.98)}to{opacity:1;transform:none}}@keyframes notiOut{to{opacity:0;transform:translateX(16px) scale(.98)}}";document.head.appendChild(st);}return el;}
+function notiPopRoot(){var el=document.getElementById("notiPop");if(!el){el=document.createElement("div");el.id="notiPop";el.style.cssText="position:fixed;bottom:20px;right:20px;z-index:500;display:flex;flex-direction:column-reverse;gap:10px;pointer-events:none";document.body.appendChild(el);
+  var st=document.createElement("style");st.textContent="@keyframes notiIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}@keyframes notiOut{to{opacity:0;transform:translateY(10px) scale(.98)}}";document.head.appendChild(st);}return el;}
 function notiPopup(o){try{var root=notiPopRoot();var card=document.createElement("div");
-  card.style.cssText="pointer-events:auto;width:390px;max-width:calc(100vw - 32px);background:#fff;border:1px solid #E5E8EB;border-radius:16px;box-shadow:0 14px 36px rgba(17,24,39,.18);padding:16px 16px 16px 15px;display:flex;gap:13px;align-items:flex-start;cursor:pointer;animation:notiIn .22s ease-out";
+  card.style.cssText="pointer-events:auto;width:430px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #E5E8EB;border-radius:18px;box-shadow:0 16px 40px rgba(17,24,39,.20);padding:18px 18px 18px 17px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;animation:notiIn .22s ease-out";
   var ic=o.kind==="new"?"badge-alert":(o.kind==="consult"?"message-circle":"message-square");
   var col=o.kind==="new"?"#10B981":"#4577F0";
-  card.innerHTML='<span style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:'+col+';color:#fff"><i data-lucide="'+ic+'" style="width:21px;height:21px"></i></span>'
-   +'<span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:6px"><b style="font-size:16px;color:#191F28;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.title||"새 알림")+'</b><span style="font-size:12px;color:#8B95A1;margin-left:auto;flex-shrink:0">지금</span></span>'
-   +'<span style="display:block;font-size:14.5px;color:#4E5968;margin-top:4px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+esc(o.body||"")+'</span></span>'
-   +'<button style="width:22px;height:22px;border-radius:7px;color:#B0B8C1;flex-shrink:0;font-size:13px;line-height:1">✕</button>';
+  card.innerHTML='<span style="width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex-shrink:0;background:'+col+';color:#fff"><i data-lucide="'+ic+'" style="width:23px;height:23px"></i></span>'
+   +'<span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:6px"><b style="font-size:17px;color:#191F28;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.title||"새 알림")+'</b><span style="font-size:12.5px;color:#8B95A1;margin-left:auto;flex-shrink:0">지금</span></span>'
+   +'<span style="display:block;font-size:15.5px;color:#4E5968;margin-top:5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+esc(o.body||"")+'</span></span>'
+   +'<button style="width:24px;height:24px;border-radius:8px;color:#B0B8C1;flex-shrink:0;font-size:14px;line-height:1">✕</button>';
   var close=function(){if(!card.parentNode)return;card.style.animation="notiOut .18s ease-in forwards";setTimeout(function(){if(card.parentNode)card.parentNode.removeChild(card);},200);};
   card.querySelector("button").onclick=function(e){e.stopPropagation();close();};
   card.onclick=function(){close();try{if(o.go)o.go();}catch(e){}};
@@ -1177,15 +1177,16 @@ function noticeMarkSeen(){try{var n=noticeLatest();if(n)localStorage.setItem(NOT
 /* 화면 상단 배너 */
 function noticeBar(){setTimeout(function(){loadNotices();},20);var n=noticeLatest();var admin=(S.role==="admin");
   if(!n){if(!admin)return '<div id="noticeBar"></div>';return '<div id="noticeBar" class="px-8 md:px-10 pt-6"><button onclick="noticeEdit()" class="w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-2xl border border-dashed border-g300 text-[15px] font-bold text-g500 hover:bg-white hover:text-g800 transition-colors"><i data-lucide="megaphone" class="w-[18px] h-[18px]"></i>공지사항 작성</button></div>';}
-  var isNew=noticeIsNew(n);var body=String(n.body||"").replace(/\s+/g," ").trim();var cnt=(S.notices||[]).length;
+  var isNew=noticeIsNew(n);var body=String(n.body||"").split("\n")[0].replace(/\s+/g," ").trim();if(body.length>52)body=body.slice(0,52)+"…";var cnt=(S.notices||[]).length;
   return '<div id="noticeBar" class="px-8 md:px-10 pt-6"><div class="rounded-2xl px-5 py-3.5 flex items-center gap-3.5 cursor-pointer transition-colors" style="background:#F1F6FF;border:1px solid #DCE7FF" onmouseover="this.style.background=\'#E8F0FF\'" onmouseout="this.style.background=\'#F1F6FF\'" onclick="noticeList()">'
    +'<span class="w-10 h-10 rounded-xl grid place-items-center flex-shrink-0" style="background:#4577F0;color:#fff"><i data-lucide="megaphone" class="w-[20px] h-[20px]"></i></span>'
    +'<div class="flex-1 min-w-0"><div class="flex items-center gap-2 min-w-0"><span class="text-[11.5px] font-bold px-2 py-0.5 rounded-md flex-shrink-0" style="background:#fff;color:#4577F0">공지'+(n.pinned?' · 고정':'')+'</span><p class="text-[15px] font-bold text-g900 truncate">'+esc(n.title)+'</p>'+(isNew?'<span class="text-[11px] font-bold text-white px-1.5 py-0.5 rounded-md flex-shrink-0" style="background:#EF4444">NEW</span>':'')+'</div>'
-   +(body?'<p class="text-[13px] text-g700 truncate mt-0.5">'+esc(body)+'</p>':'')+'</div>'
+   +(body?'<p class="text-[13px] text-g700 truncate mt-0.5" style="max-width:560px">'+esc(body)+'</p>':'')+'</div>'
    +'<div class="flex items-center gap-2.5 flex-shrink-0" onclick="event.stopPropagation()"><span class="text-[12.5px] text-g500 num hidden md:inline">'+noticeFmt(n.created_at)+'</span>'+(admin?'<button onclick="noticeEdit()" class="h-9 px-3.5 rounded-lg bg-white text-g700 text-[13.5px] font-bold hover:bg-g100">공지 작성</button>':'')+'<button onclick="noticeList()" class="h-9 px-3.5 rounded-lg text-[13.5px] font-bold text-white" style="background:#4577F0">전체 보기'+(cnt>1?' '+cnt:'')+'</button></div></div></div>';}
 /* 전체 목록 모달 (제목만 표시 · 클릭하면 내용 펼침) */
 function noticeOpen(id){S.noticeOpenId=(String(S.noticeOpenId||"")===String(id))?null:id;noticeList(true);}
-function noticeList(keep){if(!keep)S.noticeOpenId=null;noticeMarkSeen();var el=document.getElementById("noticeBar");if(el){el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}var l=S.notices||[];var admin=(S.role==="admin");
+function noticeList(keep){noticeMarkSeen();var el=document.getElementById("noticeBar");if(el){el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}var l=S.notices||[];var admin=(S.role==="admin");
+  if(!keep)S.noticeOpenId=(l[0]&&l[0].id)||null;   /* 열면 최신 공지는 펼친 상태 */
   var items=l.length?l.map(function(n){var op=String(S.noticeOpenId||"")===String(n.id);
     return '<div class="border-b border-g100 last:border-0">'
      +'<button onclick="noticeOpen(\''+n.id+'\')" class="w-full text-left py-5 flex items-start gap-3 hover:bg-g50 rounded-xl px-3 -mx-3 transition-colors">'
