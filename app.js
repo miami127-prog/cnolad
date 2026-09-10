@@ -1104,7 +1104,7 @@ function notiTitle(n){if(_notiTitle===null)_notiTitle=document.title;_notiPendin
 document.addEventListener("visibilitychange",function(){if(!document.hidden)notiTitle(0);});window.addEventListener("focus",function(){notiTitle(0);});
 /* 브라우저 알림 */
 function notiDesktop(title,body,onclick,tag,withSound){try{if(!("Notification" in window)||Notification.permission!=="granted")return;
-  var opt={body:body||"",icon:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
+  var opt={body:body||"",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
   var n;try{n=new Notification(title,opt);}catch(e1){try{delete opt.renotify;n=new Notification(title,opt);}catch(e2){console.warn("notification failed",e2);return;}}
   n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};
   setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
