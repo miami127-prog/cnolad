@@ -1066,7 +1066,7 @@ ${siteFooter()}</div>`;}
    · 알림음은 Web Audio 로 합성(파일 불필요) · 첫 클릭/키 입력 뒤부터 재생 가능(브라우저 자동재생 정책)
    · 브라우저 알림은 사용자가 켤 때 권한 요청 · 탭이 뒤에 있거나 해당 채팅이 열려있지 않을 때 표시 */
 var NOTI_KEY="knollad_noti";var _notiAC=null;var _notiUnlocked=false;var _notiTitle=null;var _notiTimer=null;var _notiPending=0;
-function notiGet(){var d={sound:true,desktop:true,vol:0.5};try{var j=JSON.parse(localStorage.getItem(NOTI_KEY)||"null");if(j)for(var k in j)d[k]=j[k];}catch(e){}return d;}
+function notiGet(){var d={sound:true,desktop:true,vol:0.5,tone:"default"};try{var j=JSON.parse(localStorage.getItem(NOTI_KEY)||"null");if(j)for(var k in j)d[k]=j[k];}catch(e){}return d;}
 function notiSet(p){var d=notiGet();for(var k in p)d[k]=p[k];try{localStorage.setItem(NOTI_KEY,JSON.stringify(d));}catch(e){}return d;}
 function notiUnlock(){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;if(ac.state==="suspended")ac.resume();
   if(!_notiUnlocked){try{var b=ac.createBuffer(1,1,22050);var sn=ac.createBufferSource();sn.buffer=b;sn.connect(ac.destination);sn.start(0);}catch(e2){}_notiUnlocked=true;}
@@ -1080,20 +1080,39 @@ var _notiRev=null;
 function notiReverb(ac){if(_notiRev)return _notiRev;var sr=ac.sampleRate,len=Math.floor(sr*0.6),ir=ac.createBuffer(2,len,sr);
   for(var c=0;c<2;c++){var d=ir.getChannelData(c);for(var i=0;i<len;i++){var x=i/len;d[i]=(Math.random()*2-1)*Math.pow(1-x,2.6)*(i<sr*0.012?i/(sr*0.012):1);}}
   var cv=ac.createConvolver();cv.buffer=ir;_notiRev=cv;return cv;}
-function notiBeep(v){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;if(ac.state!=="running"){try{ac.resume();}catch(_r){}var _vv=(typeof v==="number")?v:(notiGet().vol||0.5);setTimeout(function(){if(ac.state!=="running")notiBeepFallback(_vv);},120);}var t=ac.currentTime+0.01;
-  var vol=(typeof v==="number")?v:notiGet().vol;if(typeof vol!=="number")vol=0.5;vol=Math.max(0,Math.min(1,vol));
+/* 알림음 목록 · [주파수, 시작(초), 길이(초), 세기, 종류] */
+var NOTI_TONES=[
+ {id:"default",name:"기본 (나무톡+벨)",lpf:3600,wet:0.12,parts:[[523.25,0,0.13,0.15,"wood"],[1046.5,0.06,0.60,0.10,"s"],[783.99,0.09,0.65,0.06,"s"],[523.25,0.07,0.75,0.03,"s"]]},
+ {id:"t1",name:"트라이톤",lpf:6000,wet:0.3,parts:[[783.99,0,0.35,0.22,"s"],[1046.5,0.09,0.35,0.22,"s"],[1318.5,0.18,0.8,0.22,"s"],[523.25,0.18,0.9,0.05,"s"]]},
+ {id:"t2",name:"노크 두 번",lpf:4500,wet:0.2,parts:[[523.25,0,0.12,0.3,"wood"],[523.25,0.16,0.14,0.3,"wood"],[783.99,0.17,0.5,0.06,"s"]]},
+ {id:"t3",name:"딩동",lpf:6000,wet:0.3,parts:[[1318.5,0,0.45,0.2,"s"],[2637,0,0.2,0.04,"s"],[1046.5,0.18,0.8,0.2,"s"],[523.25,0.19,0.9,0.05,"s"]]},
+ {id:"t4",name:"짧은 핑",lpf:6000,wet:0.25,parts:[[880,0,0.55,0.25,"bend"],[1760,0,0.25,0.06,"s"],[1318.5,0.02,0.5,0.08,"s"]]},
+ {id:"t5",name:"팝 벨",lpf:6000,wet:0.25,parts:[[1567.98,0,0.08,0.3,"pop"],[1174.66,0.06,0.7,0.2,"s"],[783.99,0.07,0.8,0.08,"s"],[1567.98,0.06,0.3,0.05,"s"]]},
+ {id:"t6",name:"마림바",lpf:5000,wet:0.3,parts:[[523.25,0,0.4,0.24,"mar"],[659.25,0.13,0.4,0.24,"mar"],[783.99,0.26,0.8,0.24,"mar"]]},
+ {id:"t7",name:"두 음 상승",lpf:6000,wet:0.3,parts:[[1174.66,0,0.4,0.22,"s"],[880,0,0.4,0.06,"s"],[1479.98,0.14,0.8,0.22,"s"],[587.33,0.15,0.9,0.05,"s"]]},
+ {id:"t8",name:"물방울",lpf:6000,wet:0.2,parts:[[1975.53,0,0.16,0.35,"pop"],[987.77,0.02,0.45,0.15,"s"],[1479.98,0.03,0.4,0.05,"s"]]}
+];
+function notiTone(id){for(var i=0;i<NOTI_TONES.length;i++)if(NOTI_TONES[i].id===id)return NOTI_TONES[i];return NOTI_TONES[0];}
+function notiBeep(v,toneId){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;
+  if(ac.state!=="running"){try{ac.resume();}catch(_r){}var _vv=(typeof v==="number")?v:(notiGet().vol||0.5);setTimeout(function(){if(ac.state!=="running")notiBeepFallback(_vv);},120);}
+  var t=ac.currentTime+0.01;var vol=(typeof v==="number")?v:notiGet().vol;if(typeof vol!=="number")vol=0.5;vol=Math.max(0,Math.min(1,vol));
+  var tone=notiTone(toneId||notiGet().tone);
   var mst=ac.createGain();mst.gain.value=vol;
-  var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=3600;lp.Q.value=0.4;mst.connect(lp);lp.connect(ac.destination);
+  var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=tone.lpf||5000;lp.Q.value=0.4;mst.connect(lp);lp.connect(ac.destination);
   var dry=ac.createGain();dry.gain.value=1.0;dry.connect(mst);
-  var wet=ac.createGain();wet.gain.value=0.12;wet.connect(notiReverb(ac));notiReverb(ac).connect(mst);
-  function part(f,at,dur,amp,wood){var o=ac.createOscillator(),g=ac.createGain();o.type="sine";o.frequency.setValueAtTime(f,at);
-    var atk=wood?0.006:0.014;g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(amp,at+atk);g.gain.exponentialRampToValueAtTime(0.0001,at+dur);
-    o.connect(g);g.connect(dry);g.connect(wet);o.start(at);o.stop(at+dur+0.05);
-    if(wood){var o2=ac.createOscillator();o2.type="sine";o2.frequency.setValueAtTime(f*2.7,at);var g2=ac.createGain();g2.gain.setValueAtTime(0,at);g2.gain.linearRampToValueAtTime(amp*0.22,at+atk);g2.gain.exponentialRampToValueAtTime(0.0001,at+dur*0.8);o2.connect(g2);g2.connect(dry);g2.connect(wet);o2.start(at);o2.stop(at+dur+0.05);}}
-  part(523.25,t,0.13,0.15,true);      /* 나무 톡 (부드럽게) */
-  part(1046.5,t+0.06,0.60,0.10);      /* 벨 본음 */
-  part(783.99,t+0.09,0.65,0.06);      /* 화음 */
-  part(523.25,t+0.07,0.75,0.03);      /* 낮은 여운 */
+  var wet=ac.createGain();wet.gain.value=tone.wet||0.15;wet.connect(notiReverb(ac));notiReverb(ac).connect(mst);
+  function osc(f,at,dur,amp,type,detuneTo,partial){var o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,at);
+    if(detuneTo){o.frequency.exponentialRampToValueAtTime(detuneTo,at+(partial||0.12));}
+    var atk=0.008;g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(amp,at+atk);g.gain.exponentialRampToValueAtTime(0.0001,at+dur);
+    o.connect(g);g.connect(dry);g.connect(wet);o.start(at);o.stop(at+dur+0.05);}
+  tone.parts.forEach(function(p){var f=p[0],at=t+p[1],d=p[2],a=p[3],k=p[4];
+    if(k==="s")osc(f,at,d,a,"sine");
+    else if(k==="tri")osc(f,at,d,a,"triangle");
+    else if(k==="wood"){osc(f,at,d,a,"sine");osc(f*2.7,at,d*0.8,a*0.22,"sine");osc(f*4.1,at,d*0.5,a*0.08,"sine");}
+    else if(k==="pop"){osc(f,at,d,a,"sine",f*0.25,d);}
+    else if(k==="bend"){osc(f*1.15,at,d,a,"sine",f,0.08);}
+    else if(k==="mar"){osc(f,at,d,a,"sine");osc(f*4,at,Math.min(d,0.12),a*0.35,"sine");}
+    else osc(f,at,d,a,"sine");});
 }catch(e){}}
 /* 자리 비웠을 때: 볼륨 최소 0.85로 두 번 울림 */
 function notiBeepLoud(){try{var v=Math.max(0.85,notiGet().vol||0.5);notiBeep(v);setTimeout(function(){notiBeep(v);},700);}catch(e){}}
@@ -1152,8 +1171,7 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
       var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
       var jump=function(){if(isNew){go("admin-dashboard");}else if(side==="knoll"){openAdmWf(c.id);}else{var a=(S.myCamps||[]).find(function(x){return String(x.id)===String(c.id);});if(a)S.activeCamp=a;go("notes");}};
       if(canDesk)notiDesktop(title,body,jump,"camp-"+c.id,pref.sound&&awayAll);
-      if(!awayAll)notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});
-      else if(!canDesk)notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});});}
+      else if(!awayAll)toast((isNew?"🆕 ":"💬 ")+title+(body?" · "+body:""));});}
 }catch(e){}}
 /* 실시간 상담 알림 (관리자) */
 function notiConsultOpen(id){try{return !document.hidden&&document.hasFocus()&&S.view==="admin-consults"&&String(S.consultId)===String(id);}catch(e){return false;}}
@@ -1169,8 +1187,7 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
     var title="실시간 상담 · "+(c.name||"익명");var body=String(t).replace(/\s+/g," ").slice(0,60);
     var jump=function(){S.consultId=c.id;go("admin-consults");};
     if(canDesk)notiDesktop(title,body,jump,"consult-"+c.id,pref.sound&&awayAll);
-    if(!awayAll)notiPopup({title:title,body:body,kind:"consult",go:jump});
-    else if(!canDesk)notiPopup({title:title,body:body,kind:"consult",go:jump});});}catch(e){}}
+    else if(!awayAll)toast("💬 "+title+(body?" · "+body:""));});}catch(e){}}
 /* 설정 모달 (사이드바 · 알림 설정) */
 function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm!=="denied";
   function sw(on){return '<span class="relative inline-block w-[46px] h-[26px] rounded-full flex-shrink-0 transition-colors" style="background:'+(on?'#4577F0':'#D1D6DB')+'"><span class="absolute top-[3px] w-5 h-5 rounded-full bg-white transition-all" style="left:'+(on?'23px':'3px')+';box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></span>';}
@@ -1182,18 +1199,19 @@ function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notific
   +'<p class="text-[13.5px] text-g500 mb-4 mt-1.5">'+(S.role==="customer"?"크놀AD가 보낸 새 메시지가 도착하면 알려드려요.":"고객이 보낸 새 메시지나 새 캠페인 신청이 도착하면 알려드려요.")+'</p>'
   +'<div class="space-y-2">'
   +row("sound","volume-2","알림음","새 메시지가 오면 소리로 알려드려요",p.sound,"")
-  +(p.sound?('<div class="px-4 py-2.5 rounded-[12px]" style="background:#F7F8FA"><div class="flex items-center justify-between mb-1.5"><span class="text-[14.5px] font-bold text-g700">소리 크기</span><span id="ntVolTxt" class="text-[13px] font-bold num" style="color:#4577F0">'+Math.round((p.vol||0.5)*100)+'%</span></div><input id="ntVol" type="range" min="5" max="100" step="5" value="'+Math.round((p.vol||0.5)*100)+'" oninput="notiVol(this.value)" class="w-full accent-[#4577F0] block" style="height:4px;margin:0"></div>'):"")
   +row("desktop","monitor","브라우저 알림","다른 탭·다른 프로그램을 보고 있어도 표시",deskOn,permNote)
+  +(p.sound?('<div class="px-4 py-2.5 rounded-[12px]" style="background:#F7F8FA"><div class="flex items-center justify-between mb-1.5"><span class="text-[14.5px] font-bold text-g700">소리 크기</span><span id="ntVolTxt" class="text-[13px] font-bold num" style="color:#4577F0">'+Math.round((p.vol||0.5)*100)+'%</span></div><input id="ntVol" type="range" min="5" max="100" step="5" value="'+Math.round((p.vol||0.5)*100)+'" oninput="notiVol(this.value)" class="w-full accent-[#4577F0] block" style="height:4px;margin:0"></div>'
+  +'<div class="px-4 py-3 rounded-[12px] mt-2" style="background:#F7F8FA"><div class="text-[14.5px] font-bold text-g700 mb-2">알림음 선택 <span class="text-[12px] font-normal text-g500">· 누르면 미리 들려요</span></div><div class="flex flex-wrap gap-1.5">'+NOTI_TONES.map(function(t){var on=(p.tone||"default")===t.id;return '<button onclick="notiPickTone(\''+t.id+'\')" class="px-3 py-1.5 rounded-lg text-[13px] font-bold transition-colors" style="'+(on?'background:#4577F0;color:#fff':'background:#fff;color:#4E5968;border:1px solid #E5E8EB')+'">'+t.name+'</button>';}).join("")+'</div></div>'):"")
   +'</div>'
   +'<div class="mt-2.5 px-4 py-2.5 rounded-[12px] text-[12.5px] text-g600 leading-relaxed" style="background:#F7F8FA">보고 있는 채팅 화면에서는 알림이 울리지 않습니다.<br>로그인한 상태로 사이트 탭이 열려 있어야 알림이 도착합니다.<br>설정은 이 브라우저에만 저장돼요.</div>'
   +'<div class="flex gap-2 mt-4"><button onclick="notiTest()" class="px-4 py-3 rounded-[10px] bg-g100 text-g800 font-semibold text-[14.5px] hover:bg-g200 flex items-center gap-2"><i data-lucide="play" class="w-4 h-4"></i>알림 테스트</button><button onclick="closeModal()" class="flex-1 px-4 py-3 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">확인</button></div>',"max-w-md !rounded-[16px]");
   if(window.lucide)setTimeout(function(){lucide.createIcons();},10);}
 var _notiVolT=null;
+function notiPickTone(id){notiSet({tone:id});notiBeep(undefined,id);var box=document.getElementById("modalRoot");if(box&&box.innerHTML.indexOf("알림음 선택")>=0)notiModal();}
 function notiVol(v){var val=Math.max(0.05,Math.min(1,(parseInt(v,10)||50)/100));notiSet({vol:val});var t=document.getElementById("ntVolTxt");if(t)t.textContent=Math.round(val*100)+"%";if(_notiVolT)clearTimeout(_notiVolT);_notiVolT=setTimeout(function(){notiBeep(val);},260);}
 function notiTest(){try{var p=notiGet();if(p.sound)notiBeep();
-  notiPopup({title:"알림 테스트",body:"새 메시지가 오면 이렇게 알려드립니다.",kind:"msg",go:function(){}});
-  if(p.desktop&&("Notification" in window)&&Notification.permission==="granted")notiDesktop("알림 테스트","새 메시지가 오면 이렇게 알려드립니다.",null,"knollad-test",false);
-  else if(p.desktop)toast("브라우저 알림이 아직 허용되지 않았습니다 · 위 스위치를 눌러 허용해 주세요");}catch(e){}}
+  if(p.desktop&&("Notification" in window)&&Notification.permission==="granted"){notiDesktop("알림 테스트","새 메시지가 오면 이렇게 알려드립니다.",null,"knollad-test",false);}
+  else{toast(p.desktop?"브라우저 알림이 아직 허용되지 않았습니다 · 위 스위치를 눌러 허용해 주세요":"브라우저 알림이 꺼져 있어요 · 소리로만 알려드립니다");}}catch(e){}}
 function notiToggle(k){var p=notiGet();if(k==="sound"){notiSet({sound:!p.sound});if(!p.sound)notiBeep();notiModal();return;}
   var perm=("Notification" in window)?Notification.permission:"unsupported";
   if(p.desktop&&perm==="granted"){notiSet({desktop:false});notiModal();return;}
