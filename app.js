@@ -1174,36 +1174,50 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
     else if(!awayAll)toast("💬 "+title+(body?" · "+body:""));});}catch(e){}}
 /* 설정 모달 (사이드바 · 알림 설정) */
 function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm!=="denied";
-  function sw(on){return '<span class="relative inline-block w-[46px] h-[26px] rounded-full flex-shrink-0 transition-colors" style="background:'+(on?'#4577F0':'#D1D6DB')+'"><span class="absolute top-[3px] w-5 h-5 rounded-full bg-white transition-all" style="left:'+(on?'23px':'3px')+';box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></span>';}
-  function row(id,icon,label,desc,on,note){return '<button onclick="notiToggle(\''+id+'\')" class="w-full flex items-center gap-3 text-left px-4 py-3 rounded-[12px] transition-colors" style="background:'+(on?'#F1F6FF':'#F7F8FA')+'">'
-    +'<span class="w-9 h-9 rounded-[10px] grid place-items-center flex-shrink-0" style="background:'+(on?'#4577F0':'#E5E8EB')+';color:'+(on?'#fff':'#8B95A1')+'"><i data-lucide="'+icon+'" class="w-[18px] h-[18px]"></i></span>'
-    +'<span class="flex-1 min-w-0"><span class="block text-[16px] font-bold text-g900">'+label+'</span><span class="block text-[13px] text-g500 mt-0.5">'+desc+'</span>'+(note?'<span class="block text-[12px] font-bold mt-1">'+note+'</span>':'')+'</span>'+sw(on)+'</button>';}
+  function sw(on){return '<span data-notisw="1" class="relative inline-block w-[46px] h-[26px] rounded-full flex-shrink-0 transition-colors" style="background:'+(on?'#4577F0':'#D1D6DB')+'"><span class="absolute top-[3px] w-5 h-5 rounded-full bg-white transition-all" style="left:'+(on?'23px':'3px')+';box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></span>';}
+  function row(id,icon,label,desc,on,note){return '<button data-notirow="'+id+'" onclick="notiToggle(\''+id+'\')" class="w-full flex items-center gap-3 text-left px-4 py-3 rounded-[12px] transition-colors" style="background:'+(on?'#F1F6FF':'#F7F8FA')+'">'
+    +'<span data-noticon="1" class="w-9 h-9 rounded-[10px] grid place-items-center flex-shrink-0" style="background:'+(on?'#4577F0':'#E5E8EB')+';color:'+(on?'#fff':'#8B95A1')+'"><i data-lucide="'+icon+'" class="w-[18px] h-[18px]"></i></span>'
+    +'<span class="flex-1 min-w-0"><span class="block text-[16px] font-bold text-g900">'+label+'</span><span class="block text-[13px] text-g500 mt-0.5">'+desc+'</span><span data-notinote="1" class="block text-[12px] font-bold mt-1">'+(note||"")+'</span></span>'+sw(on)+'</button>';}
   var permNote=perm==="denied"?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#F59E0B">아직 허용 전 · 스위치를 누르거나 주소창 자물쇠(🔒)/종(🔔) 아이콘에서 알림을 허용해 주세요</span>');
   modal('<div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2.5"><span class="w-9 h-9 rounded-[10px] grid place-items-center" style="background:#EEF4FF;color:#4577F0"><i data-lucide="bell-ring" class="w-[18px] h-[18px]"></i></span><h3 class="text-[20px] font-bold text-g900">알림 설정</h3></div><button onclick="closeModal()" class="w-8 h-8 rounded-[10px] bg-g100 grid place-items-center text-g500 hover:bg-g200">✕</button></div>'
   +'<p class="text-[13.5px] text-g500 mb-4 mt-1.5">'+(S.role==="customer"?"크놀AD가 보낸 새 메시지가 도착하면 알려드려요.":"고객이 보낸 새 메시지나 새 캠페인 신청이 도착하면 알려드려요.")+'</p>'
   +'<div class="space-y-2">'
   +row("sound","volume-2","알림음","새 메시지가 오면 소리로 알려드려요",p.sound,"")
   +row("desktop","monitor","브라우저 알림","다른 탭·다른 프로그램을 보고 있어도 표시",deskOn,permNote)
-  +(p.sound?('<div class="px-4 py-2.5 rounded-[12px]" style="background:#F7F8FA"><div class="flex items-center justify-between mb-1.5"><span class="text-[14.5px] font-bold text-g700">소리 크기</span><span id="ntVolTxt" class="text-[13px] font-bold num" style="color:#4577F0">'+Math.round((p.vol||0.8)*100)+'%</span></div><input id="ntVol" type="range" min="5" max="100" step="5" value="'+Math.round((p.vol||0.8)*100)+'" oninput="notiVol(this.value)" class="w-full accent-[#4577F0] block" style="height:4px;margin:0"></div>'
-  +'<div class="px-4 py-3 rounded-[12px] mt-2" style="background:#F7F8FA"><div class="text-[14.5px] font-bold text-g700 mb-2">알림음 선택 <span class="text-[12px] font-normal text-g500">· 누르면 미리 들려요</span></div><div class="flex flex-wrap gap-1.5">'+NOTI_TONES.map(function(t){var on=(p.tone||"default")===t.id;return '<button data-tone="'+t.id+'" onclick="notiPickTone(\''+t.id+'\')" class="px-3 py-1.5 rounded-lg text-[13px] font-bold transition-colors" style="'+(on?'background:#4577F0;color:#fff;border:1px solid #4577F0':'background:#fff;color:#4E5968;border:1px solid #E5E8EB')+'">'+t.name+'</button>';}).join("")+'</div></div>'):"")
+  +(('<div id="ntVolBox" class="px-4 py-2.5 rounded-[12px]" style="background:#F7F8FA"><div class="flex items-center justify-between mb-1.5"><span class="text-[14.5px] font-bold text-g700">소리 크기</span><span id="ntVolTxt" class="text-[13px] font-bold num" style="color:#4577F0">'+Math.round((p.vol||0.8)*100)+'%</span></div><input id="ntVol" type="range" min="5" max="100" step="5" value="'+Math.round((p.vol||0.8)*100)+'" oninput="notiVol(this.value)" class="w-full accent-[#4577F0] block" style="height:4px;margin:0"></div>'
+  +'<div id="ntToneBox" class="px-4 py-3 rounded-[12px] mt-2" style="background:#F7F8FA"><div class="text-[14.5px] font-bold text-g700 mb-2">알림음 선택 <span class="text-[12px] font-normal text-g500">· 누르면 미리 들려요</span></div><div class="flex flex-wrap gap-1.5">'+NOTI_TONES.map(function(t){var on=(p.tone||"default")===t.id;return '<button data-tone="'+t.id+'" onclick="notiPickTone(\''+t.id+'\')" class="px-3 py-1.5 rounded-lg text-[13px] font-bold transition-colors" style="'+(on?'background:#4577F0;color:#fff;border:1px solid #4577F0':'background:#fff;color:#4E5968;border:1px solid #E5E8EB')+'">'+t.name+'</button>';}).join("")+'</div></div>'))
   +'</div>'
   +'<div class="mt-2.5 px-4 py-2.5 rounded-[12px] text-[12.5px] text-g600 leading-relaxed" style="background:#F7F8FA">보고 있는 채팅 화면에서는 알림이 울리지 않습니다.<br>로그인한 상태로 사이트 탭이 열려 있어야 알림이 도착합니다.<br>설정은 이 브라우저에만 저장돼요.</div>'
   +'<div class="flex gap-2 mt-4"><button onclick="notiTest()" class="px-4 py-3 rounded-[10px] bg-g100 text-g800 font-semibold text-[14.5px] hover:bg-g200 flex items-center gap-2"><i data-lucide="play" class="w-4 h-4"></i>알림 테스트</button><button onclick="closeModal()" class="flex-1 px-4 py-3 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">확인</button></div>',"max-w-md !rounded-[16px]");
-  if(window.lucide)setTimeout(function(){lucide.createIcons();},10);}
+  if(window.lucide)setTimeout(function(){lucide.createIcons();},10);setTimeout(notiSyncUI,0);}
 var _notiVolT=null;
 function notiPickTone(id){notiSet({tone:id});notiBeep(undefined,id,true);try{document.querySelectorAll("[data-tone]").forEach(function(b){var on=b.getAttribute("data-tone")===id;b.style.background=on?"#4577F0":"#fff";b.style.color=on?"#fff":"#4E5968";b.style.border=on?"1px solid #4577F0":"1px solid #E5E8EB";});}catch(e){}}
 function notiVol(v){var val=Math.max(0.05,Math.min(1,(parseInt(v,10)||80)/100));notiSet({vol:val});var t=document.getElementById("ntVolTxt");if(t)t.textContent=Math.round(val*100)+"%";if(_notiVolT)clearTimeout(_notiVolT);_notiVolT=setTimeout(function(){notiBeep(val,undefined,true);},260);}
 function notiTest(){try{var p=notiGet();if(p.sound)notiBeep(undefined,undefined,true);
   if(p.desktop&&("Notification" in window)&&Notification.permission==="granted"){notiDesktop("알림 테스트","새 메시지가 오면 이렇게 알려드립니다.",null,"knollad-test",false);}
   else{toast(p.desktop?"브라우저 알림이 아직 허용되지 않았습니다 · 위 스위치를 눌러 허용해 주세요":"브라우저 알림이 꺼져 있어요 · 소리로만 알려드립니다");}}catch(e){}}
-function notiToggle(k){var p=notiGet();if(k==="sound"){notiSet({sound:!p.sound});if(!p.sound)notiBeep(undefined,undefined,true);notiModal();return;}
+/* 스위치만 즉시 갱신 (모달 전체를 다시 그리지 않아 화면이 번쩍이지 않음) */
+function notiSyncUI(){try{var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";
+  var st={sound:!!p.sound,desktop:!!(p.desktop&&perm!=="denied")};
+  ["sound","desktop"].forEach(function(k){
+    var row=document.querySelector('[data-notirow="'+k+'"]');if(!row)return;var on=st[k];
+    row.style.background=on?"#F1F6FF":"#F7F8FA";
+    var ic=row.querySelector("[data-noticon]");if(ic){ic.style.background=on?"#4577F0":"#E5E8EB";ic.style.color=on?"#fff":"#8B95A1";}
+    var sw=row.querySelector("[data-notisw]");if(sw){sw.style.background=on?"#4577F0":"#D1D6DB";var kn=sw.querySelector("span");if(kn)kn.style.left=on?"23px":"3px";}
+    var nt=row.querySelector("[data-notinote]");if(nt&&k==="desktop"){nt.innerHTML=(perm==="denied")?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#F59E0B">아직 허용 전 · 스위치를 누르거나 주소창 자물쇠(🔒)/종(🔔) 아이콘에서 알림을 허용해 주세요</span>');}
+  });
+  var vb=document.getElementById("ntVolBox");if(vb)vb.style.display=p.sound?"":"none";
+  var tb=document.getElementById("ntToneBox");if(tb)tb.style.display=p.sound?"":"none";
+}catch(e){}}
+function notiToggle(k){var p=notiGet();
+  if(k==="sound"){notiSet({sound:!p.sound});if(!p.sound)notiBeep(undefined,undefined,true);notiSyncUI();return;}
   var perm=("Notification" in window)?Notification.permission:"unsupported";
-  if(p.desktop&&perm==="granted"){notiSet({desktop:false});notiModal();return;}
+  if(p.desktop&&perm==="granted"){notiSet({desktop:false});notiSyncUI();return;}
   notiAskDesktop().then(function(ok){var perm2=("Notification" in window)?Notification.permission:"unsupported";
     if(ok){notiSet({desktop:true});toast("브라우저 알림이 켜졌어요");notiDesktop("알림 테스트","이렇게 새 메시지를 알려드릴게요",null,"knollad-test");}
     else if(perm2==="denied"){notiSet({desktop:false});toast("브라우저에서 알림이 차단되어 있어요 · 주소창 자물쇠 → 알림 → 허용");}
     else{notiSet({desktop:true});toast("허용 창이 뜨지 않았다면 주소창 오른쪽 종(🔔) 또는 자물쇠 아이콘에서 알림을 허용해 주세요");}
-    notiModal();});}
+    notiSyncUI();});}
 
 /* ===== 공지사항 (knollad_notices · 전 회원 열람, 관리자만 작성) =====
    · 로그인 화면 상단(고객·관리자 공통)에 공지 배너 → 전체 보기 모달
