@@ -1100,8 +1100,8 @@ function notiTitle(n){if(_notiTitle===null)_notiTitle=document.title;_notiPendin
 document.addEventListener("visibilitychange",function(){if(!document.hidden)notiTitle(0);});window.addEventListener("focus",function(){notiTitle(0);});
 /* 브라우저 알림 */
 function notiDesktop(title,body,onclick,tag,withSound){try{if(!("Notification" in window)||Notification.permission!=="granted")return;
-  var opt={body:body||"",icon:"/notify-icon.png",badge:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
-  var n;try{n=new Notification(title,opt);}catch(e1){try{delete opt.renotify;delete opt.badge;n=new Notification(title,opt);}catch(e2){console.warn("notification failed",e2);return;}}
+  var opt={body:body||"",icon:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
+  var n;try{n=new Notification(title,opt);}catch(e1){try{delete opt.renotify;n=new Notification(title,opt);}catch(e2){console.warn("notification failed",e2);return;}}
   n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};
   setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
 function notiAskDesktop(){if(!("Notification" in window)){toast("이 브라우저는 알림을 지원하지 않습니다");return Promise.resolve(false);}if(Notification.permission==="granted")return Promise.resolve(true);if(Notification.permission==="denied"){toast("브라우저 설정에서 알림이 차단되어 있어요 · 주소창 자물쇠 아이콘에서 허용해 주세요");return Promise.resolve(false);}return Notification.requestPermission().then(function(p){return p==="granted";});}
@@ -1134,7 +1134,7 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
   if(side==="knoll"){var mx="";rows.forEach(function(c){if(String(c.created_at||"")>mx)mx=String(c.created_at||"");});if(prev&&S._notiMaxCreated&&mx>S._notiMaxCreated){var nc=rows.filter(function(c){return String(c.created_at||"")>S._notiMaxCreated;});nc.forEach(function(c){fresh.push(Object.assign({},c,{_isNew:true}));});}S._notiMaxCreated=mx;}
   S._notiLast=cur;if(!prev||!fresh.length)return;var pref=notiGet();var loud=fresh.filter(function(c){return c._isNew||!notiChatOpen(c.id,side);});
   var awayAll=document.hidden||!document.hasFocus();var deskOK=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
-  if(pref.sound&&loud.length&&!(awayAll&&deskOK))notiBeep();
+  if(pref.sound&&loud.length)notiBeep();
   if(loud.length){if(awayAll)notiTitle((_notiPending||0)+loud.length);
     loud.forEach(function(c){var isNew=!!c._isNew;var title=isNew?"새 캠페인 신청":(side==="knoll"?(c.brand_name||"고객")+" 님의 새 메시지":"크놀AD 새 메시지");var body=isNew?((c.brand_name||"")+" · "+(c.contact_name||c.email||"")):notiLastText(c,side);
       var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
@@ -1151,7 +1151,7 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
   var loud=fresh.filter(function(c){return !notiConsultOpen(c.id);});if(!loud.length)return;
   var awayAll=document.hidden||!document.hasFocus();
   var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
-  if(pref.sound&&!(awayAll&&canDesk))notiBeep();
+  if(pref.sound)notiBeep();
   if(awayAll)notiTitle((_notiPending||0)+loud.length);
   loud.forEach(function(c){var m=(c.messages||[]).filter(function(x){return x.role==="cust";});var t=m.length?String(m[m.length-1].text||"새 문의"):"새 문의";
     var title="실시간 상담 · "+(c.name||"익명");var body=String(t).replace(/\s+/g," ").slice(0,60);
