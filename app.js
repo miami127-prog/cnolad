@@ -1080,7 +1080,7 @@ var _notiRev=null;
 function notiReverb(ac){if(_notiRev)return _notiRev;var sr=ac.sampleRate,len=Math.floor(sr*0.6),ir=ac.createBuffer(2,len,sr);
   for(var c=0;c<2;c++){var d=ir.getChannelData(c);for(var i=0;i<len;i++){var x=i/len;d[i]=(Math.random()*2-1)*Math.pow(1-x,2.6)*(i<sr*0.012?i/(sr*0.012):1);}}
   var cv=ac.createConvolver();cv.buffer=ir;_notiRev=cv;return cv;}
-function notiBeep(v){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;if(ac.state==="suspended")ac.resume();var t=ac.currentTime+0.01;
+function notiBeep(v){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;if(ac.state!=="running"){try{ac.resume();}catch(_r){}var _vv=(typeof v==="number")?v:(notiGet().vol||0.5);setTimeout(function(){if(ac.state!=="running")notiBeepFallback(_vv);},120);}var t=ac.currentTime+0.01;
   var vol=(typeof v==="number")?v:notiGet().vol;if(typeof vol!=="number")vol=0.5;vol=Math.max(0,Math.min(1,vol));
   var mst=ac.createGain();mst.gain.value=vol;
   var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=3600;lp.Q.value=0.4;mst.connect(lp);lp.connect(ac.destination);
@@ -1095,6 +1095,18 @@ function notiBeep(v){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.we
   part(783.99,t+0.09,0.65,0.06);      /* 화음 */
   part(523.25,t+0.07,0.75,0.03);      /* 낮은 여운 */
 }catch(e){}}
+/* 자리 비웠을 때: 볼륨 최소 0.85로 두 번 울림 */
+function notiBeepLoud(){try{var v=Math.max(0.85,notiGet().vol||0.5);notiBeep(v);setTimeout(function(){notiBeep(v);},700);}catch(e){}}
+/* 오디오 컨텍스트가 시작되지 못한 경우(클릭 전) <audio> 태그로 대신 재생 */
+var _notiWav=null;
+function notiWavUrl(){if(_notiWav)return _notiWav;try{var sr=22050,dur=0.9,n=Math.floor(sr*dur),buf=new Float32Array(n);
+  function add(f,at,d,amp){var i0=Math.floor(at*sr);for(var i=i0;i<n;i++){var t=(i-i0)/sr;if(t>d)break;var env=Math.min(1,t/0.01)*Math.exp(-4.5*t/d);buf[i]+=Math.sin(2*Math.PI*f*t)*env*amp;}}
+  add(523.25,0,0.13,0.3);add(1046.5,0.06,0.6,0.22);add(783.99,0.09,0.65,0.14);add(523.25,0.07,0.75,0.07);
+  var pcm=new DataView(new ArrayBuffer(44+n*2));function w(o,str){for(var i=0;i<str.length;i++)pcm.setUint8(o+i,str.charCodeAt(i));}
+  w(0,"RIFF");pcm.setUint32(4,36+n*2,true);w(8,"WAVE");w(12,"fmt ");pcm.setUint32(16,16,true);pcm.setUint16(20,1,true);pcm.setUint16(22,1,true);pcm.setUint32(24,sr,true);pcm.setUint32(28,sr*2,true);pcm.setUint16(32,2,true);pcm.setUint16(34,16,true);w(36,"data");pcm.setUint32(40,n*2,true);
+  for(var k=0;k<n;k++){var x=Math.max(-1,Math.min(1,buf[k]));pcm.setInt16(44+k*2,x<0?x*32768:x*32767,true);}
+  _notiWav=URL.createObjectURL(new Blob([pcm.buffer],{type:"audio/wav"}));return _notiWav;}catch(e){return null;}}
+function notiBeepFallback(vol){try{var u=notiWavUrl();if(!u)return;var a=new Audio(u);a.volume=Math.max(0,Math.min(1,vol));var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});}catch(e){}}
 /* 탭 제목 깜빡임 */
 function notiTitle(n){if(_notiTitle===null)_notiTitle=document.title;_notiPending=n;if(_notiTimer){clearInterval(_notiTimer);_notiTimer=null;}if(!n){document.title=_notiTitle;return;}var on=false;document.title="("+n+") 새 메시지 · 크놀AD";_notiTimer=setInterval(function(){on=!on;document.title=on?_notiTitle:"("+_notiPending+") 새 메시지 · 크놀AD";},1400);}
 document.addEventListener("visibilitychange",function(){if(!document.hidden)notiTitle(0);});window.addEventListener("focus",function(){notiTitle(0);});
@@ -1134,7 +1146,7 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
   if(side==="knoll"){var mx="";rows.forEach(function(c){if(String(c.created_at||"")>mx)mx=String(c.created_at||"");});if(prev&&S._notiMaxCreated&&mx>S._notiMaxCreated){var nc=rows.filter(function(c){return String(c.created_at||"")>S._notiMaxCreated;});nc.forEach(function(c){fresh.push(Object.assign({},c,{_isNew:true}));});}S._notiMaxCreated=mx;}
   S._notiLast=cur;if(!prev||!fresh.length)return;var pref=notiGet();var loud=fresh.filter(function(c){return c._isNew||!notiChatOpen(c.id,side);});
   var awayAll=document.hidden||!document.hasFocus();var deskOK=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
-  if(pref.sound&&loud.length)notiBeep();
+  if(pref.sound&&loud.length){if(awayAll)notiBeepLoud();else notiBeep();}
   if(loud.length){if(awayAll)notiTitle((_notiPending||0)+loud.length);
     loud.forEach(function(c){var isNew=!!c._isNew;var title=isNew?"새 캠페인 신청":(side==="knoll"?(c.brand_name||"고객")+" 님의 새 메시지":"크놀AD 새 메시지");var body=isNew?((c.brand_name||"")+" · "+(c.contact_name||c.email||"")):notiLastText(c,side);
       var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
@@ -1151,7 +1163,7 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
   var loud=fresh.filter(function(c){return !notiConsultOpen(c.id);});if(!loud.length)return;
   var awayAll=document.hidden||!document.hasFocus();
   var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
-  if(pref.sound)notiBeep();
+  if(pref.sound){if(awayAll)notiBeepLoud();else notiBeep();}
   if(awayAll)notiTitle((_notiPending||0)+loud.length);
   loud.forEach(function(c){var m=(c.messages||[]).filter(function(x){return x.role==="cust";});var t=m.length?String(m[m.length-1].text||"새 문의"):"새 문의";
     var title="실시간 상담 · "+(c.name||"익명");var body=String(t).replace(/\s+/g," ").slice(0,60);
