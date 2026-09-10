@@ -1098,7 +1098,10 @@ function notiPopup(o){try{var root=notiPopRoot();var card=document.createElement
   card.style.cssText="pointer-events:auto;width:430px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #E5E8EB;border-radius:18px;box-shadow:0 16px 40px rgba(17,24,39,.20);padding:18px 18px 18px 17px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;animation:notiIn .22s ease-out";
   var ic=o.kind==="new"?"badge-alert":(o.kind==="consult"?"message-circle":"message-square");
   var col=o.kind==="new"?"#10B981":"#4577F0";
-  card.innerHTML='<span style="width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex-shrink:0;background:'+col+';color:#fff"><i data-lucide="'+ic+'" style="width:23px;height:23px"></i></span>'
+  var head=(o.kind==="new")
+    ? '<span style="width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex-shrink:0;background:'+col+';color:#fff"><i data-lucide="'+ic+'" style="width:23px;height:23px"></i></span>'
+    : '<span style="width:46px;height:46px;border-radius:13px;flex-shrink:0;background:#fff;border:1px solid #E5E8EB;display:grid;place-items:center;overflow:hidden"><img src="/notify-icon.png" alt="크놀AD" style="width:38px;height:38px;object-fit:contain;display:block"></span>';
+  card.innerHTML=head
    +'<span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:6px"><b style="font-size:17px;color:#191F28;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.title||"새 알림")+'</b><span style="font-size:12.5px;color:#8B95A1;margin-left:auto;flex-shrink:0">지금</span></span>'
    +'<span style="display:block;font-size:15.5px;color:#4E5968;margin-top:5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+esc(o.body||"")+'</span></span>'
    +'<button style="width:24px;height:24px;border-radius:8px;color:#B0B8C1;flex-shrink:0;font-size:14px;line-height:1">✕</button>';
@@ -1122,9 +1125,9 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
     loud.forEach(function(c){var isNew=!!c._isNew;var title=isNew?"새 캠페인 신청":(side==="knoll"?(c.brand_name||"고객")+" 님의 새 메시지":"크놀AD 새 메시지");var body=isNew?((c.brand_name||"")+" · "+(c.contact_name||c.email||"")):notiLastText(c,side);
       var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
       var jump=function(){if(isNew){go("admin-dashboard");}else if(side==="knoll"){openAdmWf(c.id);}else{var a=(S.myCamps||[]).find(function(x){return String(x.id)===String(c.id);});if(a)S.activeCamp=a;go("notes");}};
-      var away=document.hidden||!document.hasFocus();
-      if(away){if(canDesk)notiDesktop(title,body,jump,"camp-"+c.id);else notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});}
-      else notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});});}
+      if(canDesk)notiDesktop(title,body,jump,"camp-"+c.id);
+      if(!document.hidden&&document.hasFocus())notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});
+      else if(!canDesk)notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});});}
 }catch(e){}}
 /* 실시간 상담 알림 (관리자) */
 function notiConsultOpen(id){try{return !document.hidden&&document.hasFocus()&&S.view==="admin-consults"&&String(S.consultId)===String(id);}catch(e){return false;}}
@@ -1139,9 +1142,9 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
   loud.forEach(function(c){var m=(c.messages||[]).filter(function(x){return x.role==="cust";});var t=m.length?String(m[m.length-1].text||"새 문의"):"새 문의";
     var title="실시간 상담 · "+(c.name||"익명");var body=String(t).replace(/\s+/g," ").slice(0,60);
     var jump=function(){S.consultId=c.id;go("admin-consults");};
-    var away=document.hidden||!document.hasFocus();
-    if(away){if(canDesk)notiDesktop(title,body,jump,"consult-"+c.id);else notiPopup({title:title,body:body,kind:"consult",go:jump});}
-    else notiPopup({title:title,body:body,kind:"consult",go:jump});});}catch(e){}}
+    if(canDesk)notiDesktop(title,body,jump,"consult-"+c.id);
+    if(!document.hidden&&document.hasFocus())notiPopup({title:title,body:body,kind:"consult",go:jump});
+    else if(!canDesk)notiPopup({title:title,body:body,kind:"consult",go:jump});});}catch(e){}}
 /* 설정 모달 (사이드바 · 알림 설정) */
 function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm==="granted";
   function sw(on){return '<span class="relative inline-block w-[46px] h-[26px] rounded-full flex-shrink-0 transition-colors" style="background:'+(on?'#4577F0':'#D1D6DB')+'"><span class="absolute top-[3px] w-5 h-5 rounded-full bg-white transition-all" style="left:'+(on?'23px':'3px')+';box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></span>';}
@@ -1154,7 +1157,7 @@ function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notific
   +'<div class="space-y-2">'
   +row("sound","volume-2","알림음","새 메시지가 오면 소리로 알려드려요",p.sound,"")
   +(p.sound?('<div class="px-4 py-2.5 rounded-[12px]" style="background:#F7F8FA"><div class="flex items-center justify-between mb-1.5"><span class="text-[14.5px] font-bold text-g700">소리 크기</span><span id="ntVolTxt" class="text-[13px] font-bold num" style="color:#4577F0">'+Math.round((p.vol||0.5)*100)+'%</span></div><input id="ntVol" type="range" min="5" max="100" step="5" value="'+Math.round((p.vol||0.5)*100)+'" oninput="notiVol(this.value)" class="w-full accent-[#4577F0] block" style="height:4px;margin:0"></div>'):"")
-  +row("desktop","monitor","브라우저 알림","다른 탭을 보고 있어도 화면 구석에 표시",deskOn,permNote)
+  +row("desktop","monitor","브라우저 알림","다른 탭·다른 프로그램을 보고 있어도 표시",deskOn,permNote)
   +((navigator&&typeof navigator.vibrate==="function")?row("vibrate","smartphone","휴대폰 진동","휴대폰에서 알림이 오면 짧게 진동",p.vibrate!==false,""):"")
   +'</div>'
   +'<div class="mt-2.5 px-4 py-2.5 rounded-[12px] text-[12.5px] text-g600 leading-relaxed" style="background:#F7F8FA">보고 있는 채팅 화면에서는 알림이 울리지 않습니다.<br>로그인한 상태로 사이트 탭이 열려 있어야 알림이 도착합니다.<br>휴대폰은 아이폰의 경우 측면 무음 스위치가 켜져 있으면 소리가 나지 않습니다.<br>설정은 이 브라우저에만 저장돼요.</div>'
