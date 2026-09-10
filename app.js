@@ -391,6 +391,8 @@ function go(v,keep){if(v==="cust-channels"&&!keep)S._pickFrom=null;S.view=v;rend
 function goHome(){S.view="home";render();window.scrollTo(0,0);syncUrl("home");}
 function newApply(){if(S.role==="customer"){var _br=(S.cust&&S.cust.brand)||"";if(_br==="와이트라이브"||(S.cust&&String(S.cust.email||"").toLowerCase()==="y-tribe@cnolad.com"))_br="";S.form={name:(S.cust&&S.cust.name)||"",email:(S.cust&&S.cust.email)||"",brand:_br};SEL=new Set();PROD={};QSEL={};go("cust-apply");}else{S.form={};SEL=new Set();PROD={};QSEL={};go("apply");}}
 function logout(){authLogout();S._notiLast=null;S._notiMaxCreated=null;S._notiCons=null;S.notices=null;S._noticesAt=0;S._noticeSig=null;S.role=null;S.cust=null;S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];try{localStorage.removeItem("knollad_sess");}catch(_e){}go("home");}
+var _scrollKeep=0,_scrollLock=false;
+window.addEventListener("scroll",function(){if(!_scrollLock)_scrollKeep=window.scrollY||window.pageYOffset||0;},{passive:true});
 function render(){
   const v=S.view;let h;
   if(v==="home"){h=viewHome();}
@@ -404,7 +406,14 @@ function render(){
   else if(S.role==="admin")h=adminShell(v);
   else if(S.role==="cs")h=adminShell(v);
   else h=viewApply();
+  /* 폴링으로 다시 그릴 때 화면이 튀지 않도록 스크롤 위치 보존 */
+  var _sameView=(S._lastRenderView===S.view);var _wy=(typeof _scrollKeep==="number"&&_scrollKeep>0)?_scrollKeep:(window.scrollY||window.pageYOffset||0);
+  var _chatPos=[];try{document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll').forEach(function(el,i){_chatPos.push([el.id||("k"+i),el.scrollTop,el.scrollHeight-el.clientHeight-el.scrollTop<40]);});}catch(_e0){}
+  S._lastRenderView=S.view;
   document.getElementById("root").innerHTML=h;
+  if(_sameView&&_wy>0){_scrollLock=true;try{window.scrollTo(0,_wy);}catch(_e1){}
+    (window.requestAnimationFrame||setTimeout)(function(){try{window.scrollTo(0,_wy);}catch(_e){}setTimeout(function(){try{window.scrollTo(0,_wy);}catch(_e){}_scrollLock=false;},60);});}
+  try{var _els=document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll');_els.forEach(function(el,i){var p=_chatPos[i];if(!p)return;el.scrollTop=p[2]?el.scrollHeight:p[1];});}catch(_e2){}
   try{var _pub=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding"||v==="apply");var _mr=document.querySelector('meta[name="robots"]');if(!_mr){_mr=document.createElement("meta");_mr.setAttribute("name","robots");document.head.appendChild(_mr);}_mr.setAttribute("content",_pub?"index,follow":"noindex,nofollow,noarchive");}catch(_re){}
   if(window.lucide)lucide.createIcons();
   var _cr=document.getElementById("consultRoot");if(!_cr){_cr=document.createElement("div");_cr.id="consultRoot";document.body.appendChild(_cr);_cr.innerHTML=consultWidget();}var _tip=document.getElementById("consultTip");if(_tip)_tip.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";var _fab=document.getElementById("consultFab");if(_fab)_fab.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";
@@ -1173,7 +1182,7 @@ function loadNotices(force){if(!S.role)return Promise.resolve([]);if(!force&&S._
 function noticeLatest(){var l=S.notices||[];return l.length?l[0]:null;}
 function noticeSeenKey(n){return n?String(n.id)+"|"+String(n.updated_at||n.created_at||""):"";}
 function noticeIsNew(n){try{return !!n&&localStorage.getItem(NOTICE_SEEN)!==noticeSeenKey(n);}catch(e){return false;}}
-function noticeMarkSeen(){try{var n=noticeLatest();if(n)localStorage.setItem(NOTICE_SEEN,noticeSeenKey(n));}catch(e){}}
+function noticeMarkSeen(){try{var n=noticeLatest();if(!n)return false;var k=noticeSeenKey(n);if(localStorage.getItem(NOTICE_SEEN)===k)return false;localStorage.setItem(NOTICE_SEEN,k);return true;}catch(e){return false;}}
 /* 화면 상단 배너 */
 function noticeBar(){setTimeout(function(){loadNotices();},20);var n=noticeLatest();var admin=(S.role==="admin");
   if(!n){if(!admin)return '<div id="noticeBar"></div>';return '<div id="noticeBar" class="px-8 md:px-10 pt-6"><button onclick="noticeEdit()" class="w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-2xl border border-dashed border-g300 text-[15px] font-bold text-g500 hover:bg-white hover:text-g800 transition-colors"><i data-lucide="megaphone" class="w-[18px] h-[18px]"></i>공지사항 작성</button></div>';}
@@ -1185,7 +1194,8 @@ function noticeBar(){setTimeout(function(){loadNotices();},20);var n=noticeLates
    +'<div class="flex items-center gap-2.5 flex-shrink-0" onclick="event.stopPropagation()"><span class="text-[12.5px] text-g500 num hidden md:inline">'+noticeFmt(n.created_at)+'</span>'+(admin?'<button onclick="noticeEdit()" class="h-9 px-3.5 rounded-lg bg-white text-g700 text-[13.5px] font-bold hover:bg-g100">공지 작성</button>':'')+'<button onclick="noticeList()" class="h-9 px-3.5 rounded-lg text-[13.5px] font-bold text-white" style="background:#4577F0">전체 보기'+(cnt>1?' '+cnt:'')+'</button></div></div></div>';}
 /* 전체 목록 모달 (제목만 표시 · 클릭하면 내용 펼침) */
 function noticeOpen(id){S.noticeOpenId=(String(S.noticeOpenId||"")===String(id))?null:id;noticeList(true);}
-function noticeList(keep){noticeMarkSeen();var el=document.getElementById("noticeBar");if(el){el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}var l=S.notices||[];var admin=(S.role==="admin");
+function noticeList(keep){var _chg=noticeMarkSeen();var el=document.getElementById("noticeBar");if(el){el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}
+  if(_chg)setTimeout(function(){try{render();}catch(e){}},0);   /* 사이드바 N 뱃지 즉시 제거 */var l=S.notices||[];var admin=(S.role==="admin");
   if(!keep)S.noticeOpenId=(l[0]&&l[0].id)||null;   /* 열면 최신 공지는 펼친 상태 */
   var items=l.length?l.map(function(n){var op=String(S.noticeOpenId||"")===String(n.id);
     return '<div class="border-b border-g100 last:border-0">'
