@@ -1101,8 +1101,8 @@ function notiTitle(n){if(_notiTitle===null)_notiTitle=document.title;_notiPendin
 document.addEventListener("visibilitychange",function(){if(!document.hidden)notiTitle(0);});window.addEventListener("focus",function(){notiTitle(0);});
 /* 브라우저 알림 */
 function notiDesktop(title,body,onclick,tag){try{if(!("Notification" in window)||Notification.permission!=="granted")return;
-  var opt={body:body||"",icon:"/notify-icon.png",badge:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:true,requireInteraction:false,vibrate:[16,70,16],data:{t:Date.now()}};
-  var n=new Notification("크놀AD · "+title,opt);
+  var opt={body:body||"",icon:"/notify-icon.png",badge:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:true,requireInteraction:false,data:{t:Date.now()}};
+  var n;try{n=new Notification("크놀AD · "+title,opt);}catch(e1){try{delete opt.renotify;delete opt.badge;n=new Notification("크놀AD · "+title,opt);}catch(e2){console.warn("notification failed",e2);return;}}
   n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};
   setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
 function notiAskDesktop(){if(!("Notification" in window)){toast("이 브라우저는 알림을 지원하지 않습니다");return Promise.resolve(false);}if(Notification.permission==="granted")return Promise.resolve(true);if(Notification.permission==="denied"){toast("브라우저 설정에서 알림이 차단되어 있어요 · 주소창 자물쇠 아이콘에서 허용해 주세요");return Promise.resolve(false);}return Notification.requestPermission().then(function(p){return p==="granted";});}
