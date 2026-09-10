@@ -413,8 +413,12 @@ function render(){
   /* 채팅 입력 중 내용·첨부파일이 폴링 렌더로 사라지지 않게 보존 */
   try{S._chatKeep=S._chatKeep||{};["admMsgInput","wfMsgInput","chatMsg"].forEach(function(id){var el=document.getElementById(id);if(el)S._chatKeep[id]=el.value;});
     ["admMsgFile","wfMsgFile","chatFile"].forEach(function(id){var el=document.getElementById(id);if(el&&el.files&&el.files.length)S._chatKeep[id]=el.files;});}catch(_ck){}
+  /* 입력 중이던 칸의 포커스·커서 위치 기억 */
+  var _fx=null;try{var _ae=document.activeElement;if(_ae&&_ae.id&&(_ae.tagName==="TEXTAREA"||_ae.tagName==="INPUT"))_fx={id:_ae.id,s:_ae.selectionStart,e:_ae.selectionEnd};}catch(_ef){}
   try{if(_sameView){var _rt=document.getElementById("root");if(_rt)_rt.style.minHeight=_rt.offsetHeight+"px";}}catch(_eh){}
   document.getElementById("root").innerHTML=h;
+  /* 다시 그린 뒤 같은 칸으로 포커스 복원 → 채팅 입력이 끊기지 않음 */
+  if(_fx&&_sameView){try{var _nf=document.getElementById(_fx.id);if(_nf){_nf.focus({preventScroll:true});if(typeof _fx.s==="number"){try{_nf.setSelectionRange(_fx.s,_fx.e);}catch(_es){}}}}catch(_ef2){}}
   /* 렌더 후 입력값·첨부파일 복원 */
   try{var kp=S._chatKeep||{};["admMsgInput","wfMsgInput","chatMsg"].forEach(function(id){var el=document.getElementById(id);if(el&&kp[id])el.value=kp[id];});
     ["admMsgFile","wfMsgFile","chatFile"].forEach(function(id){var el=document.getElementById(id),fl=kp[id];
@@ -1157,12 +1161,12 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
     if(!document.hidden&&document.hasFocus())notiPopup({title:title,body:body,kind:"consult",go:jump});
     else if(!canDesk)notiPopup({title:title,body:body,kind:"consult",go:jump});});}catch(e){}}
 /* 설정 모달 (사이드바 · 알림 설정) */
-function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm==="granted";
+function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm!=="denied";
   function sw(on){return '<span class="relative inline-block w-[46px] h-[26px] rounded-full flex-shrink-0 transition-colors" style="background:'+(on?'#4577F0':'#D1D6DB')+'"><span class="absolute top-[3px] w-5 h-5 rounded-full bg-white transition-all" style="left:'+(on?'23px':'3px')+';box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></span>';}
   function row(id,icon,label,desc,on,note){return '<button onclick="notiToggle(\''+id+'\')" class="w-full flex items-center gap-3 text-left px-4 py-3 rounded-[12px] transition-colors" style="background:'+(on?'#F1F6FF':'#F7F8FA')+'">'
     +'<span class="w-9 h-9 rounded-[10px] grid place-items-center flex-shrink-0" style="background:'+(on?'#4577F0':'#E5E8EB')+';color:'+(on?'#fff':'#8B95A1')+'"><i data-lucide="'+icon+'" class="w-[18px] h-[18px]"></i></span>'
     +'<span class="flex-1 min-w-0"><span class="block text-[16px] font-bold text-g900">'+label+'</span><span class="block text-[13px] text-g500 mt-0.5">'+desc+'</span>'+(note?'<span class="block text-[12px] font-bold mt-1">'+note+'</span>':'')+'</span>'+sw(on)+'</button>';}
-  var permNote=perm==="denied"?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#4577F0">켜기를 누른 뒤 브라우저 팝업에서 \'허용\'을 눌러주세요</span>');
+  var permNote=perm==="denied"?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#F59E0B">아직 허용 전 · 스위치를 누르거나 주소창 자물쇠(🔒)/종(🔔) 아이콘에서 알림을 허용해 주세요</span>');
   modal('<div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2.5"><span class="w-9 h-9 rounded-[10px] grid place-items-center" style="background:#EEF4FF;color:#4577F0"><i data-lucide="bell-ring" class="w-[18px] h-[18px]"></i></span><h3 class="text-[20px] font-bold text-g900">알림 설정</h3></div><button onclick="closeModal()" class="w-8 h-8 rounded-[10px] bg-g100 grid place-items-center text-g500 hover:bg-g200">✕</button></div>'
   +'<p class="text-[13.5px] text-g500 mb-4 mt-1.5">'+(S.role==="customer"?"크놀AD가 보낸 새 메시지가 도착하면 알려드려요.":"고객이 보낸 새 메시지나 새 캠페인 신청이 도착하면 알려드려요.")+'</p>'
   +'<div class="space-y-2">'
@@ -1184,7 +1188,11 @@ function notiToggle(k){var p=notiGet();if(k==="sound"){notiSet({sound:!p.sound})
   if(k==="vibrate"){var nv=(p.vibrate===false);notiSet({vibrate:nv});if(nv)notiVibe();notiModal();return;}
   var perm=("Notification" in window)?Notification.permission:"unsupported";
   if(p.desktop&&perm==="granted"){notiSet({desktop:false});notiModal();return;}
-  notiAskDesktop().then(function(ok){notiSet({desktop:ok});if(ok){toast("브라우저 알림이 켜졌어요");notiDesktop("알림 테스트","이렇게 새 메시지를 알려드릴게요",null,"knollad-test");}notiModal();});}
+  notiAskDesktop().then(function(ok){var perm2=("Notification" in window)?Notification.permission:"unsupported";
+    if(ok){notiSet({desktop:true});toast("브라우저 알림이 켜졌어요");notiDesktop("알림 테스트","이렇게 새 메시지를 알려드릴게요",null,"knollad-test");}
+    else if(perm2==="denied"){notiSet({desktop:false});toast("브라우저에서 알림이 차단되어 있어요 · 주소창 자물쇠 → 알림 → 허용");}
+    else{notiSet({desktop:true});toast("허용 창이 뜨지 않았다면 주소창 오른쪽 종(🔔) 또는 자물쇠 아이콘에서 알림을 허용해 주세요");}
+    notiModal();});}
 
 /* ===== 공지사항 (knollad_notices · 전 회원 열람, 관리자만 작성) =====
    · 로그인 화면 상단(고객·관리자 공통)에 공지 배너 → 전체 보기 모달
