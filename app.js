@@ -1076,18 +1076,22 @@ function notiBeep(v){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.we
 function notiTitle(n){if(_notiTitle===null)_notiTitle=document.title;_notiPending=n;if(_notiTimer){clearInterval(_notiTimer);_notiTimer=null;}if(!n){document.title=_notiTitle;return;}var on=false;document.title="("+n+") 새 메시지 · 크놀AD";_notiTimer=setInterval(function(){on=!on;document.title=on?_notiTitle:"("+_notiPending+") 새 메시지 · 크놀AD";},1400);}
 document.addEventListener("visibilitychange",function(){if(!document.hidden)notiTitle(0);});window.addEventListener("focus",function(){notiTitle(0);});
 /* 브라우저 알림 */
-function notiDesktop(title,body,onclick){try{if(!("Notification" in window)||Notification.permission!=="granted")return;var n=new Notification(title,{body:body,icon:"/favicon.png",tag:"knollad-msg",renotify:true});n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};setTimeout(function(){try{n.close();}catch(e){}},8000);}catch(e){}}
+function notiDesktop(title,body,onclick,tag){try{if(!("Notification" in window)||Notification.permission!=="granted")return;
+  var opt={body:body||"",icon:"/notify-icon.png",badge:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:true,requireInteraction:false,vibrate:[16,70,16],data:{t:Date.now()}};
+  var n=new Notification("크놀AD · "+title,opt);
+  n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};
+  setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
 function notiAskDesktop(){if(!("Notification" in window)){toast("이 브라우저는 알림을 지원하지 않습니다");return Promise.resolve(false);}if(Notification.permission==="granted")return Promise.resolve(true);if(Notification.permission==="denied"){toast("브라우저 설정에서 알림이 차단되어 있어요 · 주소창 자물쇠 아이콘에서 허용해 주세요");return Promise.resolve(false);}return Notification.requestPermission().then(function(p){return p==="granted";});}
 /* 사이트 안에서 뜨는 알림 카드 (우측 상단) */
 function notiPopRoot(){var el=document.getElementById("notiPop");if(!el){el=document.createElement("div");el.id="notiPop";el.style.cssText="position:fixed;top:18px;right:18px;z-index:500;display:flex;flex-direction:column;gap:10px;pointer-events:none";document.body.appendChild(el);
   var st=document.createElement("style");st.textContent="@keyframes notiIn{from{opacity:0;transform:translateX(16px) scale(.98)}to{opacity:1;transform:none}}@keyframes notiOut{to{opacity:0;transform:translateX(16px) scale(.98)}}";document.head.appendChild(st);}return el;}
 function notiPopup(o){try{var root=notiPopRoot();var card=document.createElement("div");
-  card.style.cssText="pointer-events:auto;width:344px;max-width:calc(100vw - 36px);background:#fff;border:1px solid #E5E8EB;border-radius:14px;box-shadow:0 12px 32px rgba(17,24,39,.16);padding:14px 14px 14px 13px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;animation:notiIn .22s ease-out";
+  card.style.cssText="pointer-events:auto;width:390px;max-width:calc(100vw - 32px);background:#fff;border:1px solid #E5E8EB;border-radius:16px;box-shadow:0 14px 36px rgba(17,24,39,.18);padding:16px 16px 16px 15px;display:flex;gap:13px;align-items:flex-start;cursor:pointer;animation:notiIn .22s ease-out";
   var ic=o.kind==="new"?"badge-alert":(o.kind==="consult"?"message-circle":"message-square");
   var col=o.kind==="new"?"#10B981":"#4577F0";
-  card.innerHTML='<span style="width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;background:'+col+';color:#fff"><i data-lucide="'+ic+'" style="width:18px;height:18px"></i></span>'
-   +'<span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:6px"><b style="font-size:14.5px;color:#191F28;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.title||"새 알림")+'</b><span style="font-size:11px;color:#8B95A1;margin-left:auto;flex-shrink:0">지금</span></span>'
-   +'<span style="display:block;font-size:13px;color:#4E5968;margin-top:3px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+esc(o.body||"")+'</span></span>'
+  card.innerHTML='<span style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:'+col+';color:#fff"><i data-lucide="'+ic+'" style="width:21px;height:21px"></i></span>'
+   +'<span style="flex:1;min-width:0"><span style="display:flex;align-items:center;gap:6px"><b style="font-size:16px;color:#191F28;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.title||"새 알림")+'</b><span style="font-size:12px;color:#8B95A1;margin-left:auto;flex-shrink:0">지금</span></span>'
+   +'<span style="display:block;font-size:14.5px;color:#4E5968;margin-top:4px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+esc(o.body||"")+'</span></span>'
    +'<button style="width:22px;height:22px;border-radius:7px;color:#B0B8C1;flex-shrink:0;font-size:13px;line-height:1">✕</button>';
   var close=function(){if(!card.parentNode)return;card.style.animation="notiOut .18s ease-in forwards";setTimeout(function(){if(card.parentNode)card.parentNode.removeChild(card);},200);};
   card.querySelector("button").onclick=function(e){e.stopPropagation();close();};
@@ -1109,7 +1113,7 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
     loud.forEach(function(c){var isNew=!!c._isNew;var title=isNew?"새 캠페인 신청":(side==="knoll"?(c.brand_name||"고객")+" 님의 새 메시지":"크놀AD 새 메시지");var body=isNew?((c.brand_name||"")+" · "+(c.contact_name||c.email||"")):notiLastText(c,side);
       var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
       var jump=function(){if(isNew){go("admin-dashboard");}else if(side==="knoll"){openAdmWf(c.id);}else{var a=(S.myCamps||[]).find(function(x){return String(x.id)===String(c.id);});if(a)S.activeCamp=a;go("notes");}};
-      if(document.hidden){if(canDesk)notiDesktop(title,body,jump);}
+      if(document.hidden){if(canDesk)notiDesktop(title,body,jump,"camp-"+c.id);}
       else notiPopup({title:title,body:body,kind:isNew?"new":"msg",go:jump});});}
 }catch(e){}}
 /* 실시간 상담 알림 (관리자) */
@@ -1125,20 +1129,20 @@ function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=r
   loud.forEach(function(c){var m=(c.messages||[]).filter(function(x){return x.role==="cust";});var t=m.length?String(m[m.length-1].text||"새 문의"):"새 문의";
     var title="실시간 상담 · "+(c.name||"익명");var body=String(t).replace(/\s+/g," ").slice(0,60);
     var jump=function(){S.consultId=c.id;go("admin-consults");};
-    if(document.hidden){if(canDesk)notiDesktop(title,body,jump);}
+    if(document.hidden){if(canDesk)notiDesktop(title,body,jump,"consult-"+c.id);}
     else notiPopup({title:title,body:body,kind:"consult",go:jump});});}catch(e){}}
 /* 설정 모달 (사이드바 · 알림 설정) */
 function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";var deskOn=p.desktop&&perm==="granted";
   function sw(on){return '<span class="relative inline-block w-[46px] h-[26px] rounded-full flex-shrink-0 transition-colors" style="background:'+(on?'#4577F0':'#D1D6DB')+'"><span class="absolute top-[3px] w-5 h-5 rounded-full bg-white transition-all" style="left:'+(on?'23px':'3px')+';box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></span>';}
   function row(id,icon,label,desc,on,note){return '<button onclick="notiToggle(\''+id+'\')" class="w-full flex items-center gap-3 text-left px-4 py-3 rounded-[12px] transition-colors" style="background:'+(on?'#F1F6FF':'#F7F8FA')+'">'
     +'<span class="w-9 h-9 rounded-[10px] grid place-items-center flex-shrink-0" style="background:'+(on?'#4577F0':'#E5E8EB')+';color:'+(on?'#fff':'#8B95A1')+'"><i data-lucide="'+icon+'" class="w-[18px] h-[18px]"></i></span>'
-    +'<span class="flex-1 min-w-0"><span class="block text-[15px] font-bold text-g900">'+label+'</span><span class="block text-[12.5px] text-g500 mt-0.5">'+desc+'</span>'+(note?'<span class="block text-[12px] font-bold mt-1">'+note+'</span>':'')+'</span>'+sw(on)+'</button>';}
+    +'<span class="flex-1 min-w-0"><span class="block text-[16px] font-bold text-g900">'+label+'</span><span class="block text-[13px] text-g500 mt-0.5">'+desc+'</span>'+(note?'<span class="block text-[12px] font-bold mt-1">'+note+'</span>':'')+'</span>'+sw(on)+'</button>';}
   var permNote=perm==="denied"?'<span style="color:#EF4444">브라우저에서 차단됨 · 주소창 자물쇠 아이콘에서 허용해 주세요</span>':(perm==="granted"?'<span style="color:#10B981">허용됨</span>':'<span style="color:#4577F0">켜기를 누른 뒤 브라우저 팝업에서 \'허용\'을 눌러주세요</span>');
-  modal('<div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2.5"><span class="w-9 h-9 rounded-[10px] grid place-items-center" style="background:#EEF4FF;color:#4577F0"><i data-lucide="bell-ring" class="w-[18px] h-[18px]"></i></span><h3 class="text-[19px] font-bold text-g900">알림 설정</h3></div><button onclick="closeModal()" class="w-8 h-8 rounded-[10px] bg-g100 grid place-items-center text-g500 hover:bg-g200">✕</button></div>'
+  modal('<div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2.5"><span class="w-9 h-9 rounded-[10px] grid place-items-center" style="background:#EEF4FF;color:#4577F0"><i data-lucide="bell-ring" class="w-[18px] h-[18px]"></i></span><h3 class="text-[20px] font-bold text-g900">알림 설정</h3></div><button onclick="closeModal()" class="w-8 h-8 rounded-[10px] bg-g100 grid place-items-center text-g500 hover:bg-g200">✕</button></div>'
   +'<p class="text-[13.5px] text-g500 mb-4 mt-1.5">'+(S.role==="customer"?"크놀AD가 보낸 새 메시지가 도착하면 알려드려요.":"고객이 보낸 새 메시지나 새 캠페인 신청이 도착하면 알려드려요.")+'</p>'
   +'<div class="space-y-2">'
   +row("sound","volume-2","알림음","새 메시지가 오면 소리로 알려드려요",p.sound,"")
-  +(p.sound?('<div class="px-4 py-2.5 rounded-[12px]" style="background:#F7F8FA"><div class="flex items-center justify-between mb-1.5"><span class="text-[13.5px] font-bold text-g700">소리 크기</span><span id="ntVolTxt" class="text-[13px] font-bold num" style="color:#4577F0">'+Math.round((p.vol||0.5)*100)+'%</span></div><input id="ntVol" type="range" min="5" max="100" step="5" value="'+Math.round((p.vol||0.5)*100)+'" oninput="notiVol(this.value)" class="w-full accent-[#4577F0] block" style="height:4px;margin:0"></div>'):"")
+  +(p.sound?('<div class="px-4 py-2.5 rounded-[12px]" style="background:#F7F8FA"><div class="flex items-center justify-between mb-1.5"><span class="text-[14.5px] font-bold text-g700">소리 크기</span><span id="ntVolTxt" class="text-[13px] font-bold num" style="color:#4577F0">'+Math.round((p.vol||0.5)*100)+'%</span></div><input id="ntVol" type="range" min="5" max="100" step="5" value="'+Math.round((p.vol||0.5)*100)+'" oninput="notiVol(this.value)" class="w-full accent-[#4577F0] block" style="height:4px;margin:0"></div>'):"")
   +row("desktop","monitor","브라우저 알림","다른 탭을 보고 있어도 화면 구석에 표시",deskOn,permNote)
   +((navigator&&typeof navigator.vibrate==="function")?row("vibrate","smartphone","휴대폰 진동","휴대폰에서 알림이 오면 짧게 진동",p.vibrate!==false,""):"")
   +'</div>'
@@ -1151,7 +1155,7 @@ function notiToggle(k){var p=notiGet();if(k==="sound"){notiSet({sound:!p.sound})
   if(k==="vibrate"){var nv=(p.vibrate===false);notiSet({vibrate:nv});if(nv)notiVibe();notiModal();return;}
   var perm=("Notification" in window)?Notification.permission:"unsupported";
   if(p.desktop&&perm==="granted"){notiSet({desktop:false});notiModal();return;}
-  notiAskDesktop().then(function(ok){notiSet({desktop:ok});if(ok){toast("브라우저 알림이 켜졌어요");notiDesktop("크놀AD 알림","이렇게 새 메시지를 알려드릴게요");}notiModal();});}
+  notiAskDesktop().then(function(ok){notiSet({desktop:ok});if(ok){toast("브라우저 알림이 켜졌어요");notiDesktop("알림 테스트","이렇게 새 메시지를 알려드릴게요",null,"knollad-test");}notiModal();});}
 
 /* ===== 공지사항 (knollad_notices · 전 회원 열람, 관리자만 작성) =====
    · 로그인 화면 상단(고객·관리자 공통)에 공지 배너 → 전체 보기 모달
@@ -1161,7 +1165,7 @@ var NOTICE_TPL=[
  {k:"연휴 안내",t:"연휴 운영 안내",b:"연휴 기간에는 메신저 답변과 영상 제작 일정이 평소보다 지연될 수 있습니다.\n연휴 전 업로드를 원하시는 캠페인은 미리 자료를 공유해 주세요.\n급한 문의는 hrcbrand@outlook.com 으로 보내주시면 확인 후 회신드리겠습니다."},
  {k:"정산 안내",t:"세금계산서 발행 및 정산 안내",b:"정산 금액은 공급가액(VAT 별도) 기준이며, VAT는 세금계산서로 별도 발행됩니다.\n'정산' 메뉴에서 캠페인별 청구액과 입금 현황을 확인하실 수 있습니다.\n계산서 발행 정보 변경이 필요하시면 메신저로 알려주세요."},
  {k:"신규 채널",t:"신규 채널 추가 안내",b:"새로운 채널이 추가되었습니다. '채널 리스트'에서 구독자 수와 단가를 확인하실 수 있습니다.\n관심 있는 채널은 '캠페인 추가 신청'에서 바로 선택해 신청해 주세요."},
- {k:"기능 안내",t:"새 기능 안내",b:"사이트에 새로운 기능이 추가되었습니다.\n자세한 이용 방법은 아래 내용을 확인해 주세요."}
+ {k:"업데이트",t:"사이트 업데이트 안내",b:"사이트가 업데이트되었습니다.\n자세한 이용 방법은 아래 내용을 확인해 주세요."}
 ];
 function noticeFmt(at){if(!at)return "";var d=new Date(at);if(isNaN(d.getTime()))return "";var p=function(n){return (n<10?"0":"")+n;};return d.getFullYear()+"."+p(d.getMonth()+1)+"."+p(d.getDate());}
 function loadNotices(force){if(!S.role)return Promise.resolve([]);if(!force&&S._noticesAt&&Date.now()-S._noticesAt<60000)return Promise.resolve(S.notices||[]);S._noticesAt=Date.now();
@@ -1179,10 +1183,20 @@ function noticeBar(){setTimeout(function(){loadNotices();},20);var n=noticeLates
    +'<div class="flex-1 min-w-0"><div class="flex items-center gap-2 min-w-0"><span class="text-[11.5px] font-bold px-2 py-0.5 rounded-md flex-shrink-0" style="background:#fff;color:#4577F0">공지'+(n.pinned?' · 고정':'')+'</span><p class="text-[15px] font-bold text-g900 truncate">'+esc(n.title)+'</p>'+(isNew?'<span class="text-[11px] font-bold text-white px-1.5 py-0.5 rounded-md flex-shrink-0" style="background:#EF4444">NEW</span>':'')+'</div>'
    +(body?'<p class="text-[13px] text-g700 truncate mt-0.5">'+esc(body)+'</p>':'')+'</div>'
    +'<div class="flex items-center gap-2.5 flex-shrink-0" onclick="event.stopPropagation()"><span class="text-[12.5px] text-g500 num hidden md:inline">'+noticeFmt(n.created_at)+'</span>'+(admin?'<button onclick="noticeEdit()" class="h-9 px-3.5 rounded-lg bg-white text-g700 text-[13.5px] font-bold hover:bg-g100">공지 작성</button>':'')+'<button onclick="noticeList()" class="h-9 px-3.5 rounded-lg text-[13.5px] font-bold text-white" style="background:#4577F0">전체 보기'+(cnt>1?' '+cnt:'')+'</button></div></div></div>';}
-/* 전체 목록 모달 */
-function noticeList(){noticeMarkSeen();var el=document.getElementById("noticeBar");if(el){el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}var l=S.notices||[];var admin=(S.role==="admin");
-  var items=l.length?l.map(function(n){return '<div class="py-4 border-b border-g100 last:border-0"><div class="flex items-start gap-2"><div class="flex-1 min-w-0"><div class="flex items-center gap-2 flex-wrap">'+(n.pinned?'<span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md" style="background:#EEF4FF;color:#4577F0">고정</span>':'')+'<p class="text-[16px] font-bold text-g900">'+esc(n.title)+'</p></div><p class="text-[12.5px] text-g500 num mt-0.5">'+noticeFmt(n.created_at)+(n.author?' · '+esc(n.author):'')+'</p></div>'+(admin?'<div class="flex gap-1 flex-shrink-0"><button onclick="noticeEdit(\''+n.id+'\')" class="px-2.5 py-1 rounded-lg bg-g100 text-g700 text-[12.5px] font-bold hover:bg-g200">수정</button><button onclick="noticeDel(\''+n.id+'\')" class="px-2.5 py-1 rounded-lg bg-red-50 text-red-500 text-[12.5px] font-bold hover:bg-red-100">삭제</button></div>':'')+'</div><div class="text-[14.5px] text-g800 whitespace-pre-wrap break-words leading-relaxed mt-2.5">'+esc(n.body||"")+'</div></div>';}).join(""):'<p class="py-10 text-center text-g400 text-[15px]">등록된 공지가 없습니다.</p>';
-  modal('<div class="flex items-center justify-between mb-1"><h3 class="text-[20px] font-bold text-g900">공지사항</h3><div class="flex items-center gap-2">'+(admin?'<button onclick="noticeEdit()" class="px-3.5 py-2 rounded-lg text-white text-[13.5px] font-bold" style="background:#4577F0">+ 새 공지</button>':'')+'<button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div></div><div class="max-h-[70vh] overflow-y-auto pr-1">'+items+'</div>',"max-w-2xl !rounded-[16px]");}
+/* 전체 목록 모달 (제목만 표시 · 클릭하면 내용 펼침) */
+function noticeOpen(id){S.noticeOpenId=(String(S.noticeOpenId||"")===String(id))?null:id;noticeList(true);}
+function noticeList(keep){if(!keep)S.noticeOpenId=null;noticeMarkSeen();var el=document.getElementById("noticeBar");if(el){el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}var l=S.notices||[];var admin=(S.role==="admin");
+  var items=l.length?l.map(function(n){var op=String(S.noticeOpenId||"")===String(n.id);
+    return '<div class="border-b border-g100 last:border-0">'
+     +'<button onclick="noticeOpen(\''+n.id+'\')" class="w-full text-left py-5 flex items-start gap-3 hover:bg-g50 rounded-xl px-3 -mx-3 transition-colors">'
+     +'<span class="flex-1 min-w-0"><span class="flex items-center gap-2 flex-wrap">'+(n.pinned?'<span class="text-[12.5px] font-bold px-2 py-0.5 rounded-md" style="background:#EEF4FF;color:#4577F0">고정</span>':'')+'<span class="text-[18px] font-bold text-g900">'+esc(n.title)+'</span></span>'
+     +'<span class="block text-[13px] text-g500 num mt-1">'+noticeFmt(n.created_at)+(n.author?' · '+esc(n.author):'')+'</span></span>'
+     +'<i data-lucide="'+(op?'chevron-up':'chevron-down')+'" class="w-[18px] h-[18px] text-g400 flex-shrink-0 mt-1"></i></button>'
+     +(op?('<div class="pb-5 px-3 -mx-3"><div class="text-[16.5px] text-g800 whitespace-pre-wrap break-words" style="line-height:1.75">'+esc(n.body||"내용이 없습니다.")+'</div>'
+        +(admin?'<div class="flex gap-1.5 mt-3"><button onclick="noticeEdit(\''+n.id+'\')" class="px-3 py-1.5 rounded-lg bg-g100 text-g700 text-[13px] font-bold hover:bg-g200">수정</button><button onclick="noticeDel(\''+n.id+'\')" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-[13px] font-bold hover:bg-red-100">삭제</button></div>':'')+'</div>'):'')
+     +'</div>';}).join(""):'<p class="py-10 text-center text-g400 text-[15px]">등록된 공지가 없습니다.</p>';
+  modal('<div class="flex items-center justify-between mb-2"><h3 class="text-[20px] font-bold text-g900">공지사항</h3><div class="flex items-center gap-2">'+(admin?'<button onclick="noticeEdit()" class="px-3.5 py-2 rounded-lg text-white text-[13.5px] font-bold" style="background:#4577F0">+ 새 공지</button>':'')+'<button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div></div><div class="max-h-[74vh] overflow-y-auto pr-1">'+items+'</div>',"max-w-3xl !rounded-[18px]");
+  if(window.lucide)setTimeout(function(){lucide.createIcons();},10);}
 /* 작성/수정 (관리자) */
 function noticeEdit(id){if(S.role!=="admin"){toast("관리자만 작성할 수 있습니다");return;}var n=id?(S.notices||[]).find(function(x){return String(x.id)===String(id);}):null;
   var tpl=n?"":'<div class="flex items-center gap-1.5 flex-wrap mb-4"><span class="text-[12.5px] text-g500 font-bold mr-0.5">양식 불러오기</span>'+NOTICE_TPL.map(function(t,i){return '<button onclick="noticeTpl('+i+')" class="px-2.5 py-1.5 rounded-lg bg-g100 text-g700 text-[12.5px] font-bold hover:bg-g200">'+t.k+'</button>';}).join("")+'</div>';
