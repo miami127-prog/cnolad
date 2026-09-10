@@ -1094,14 +1094,17 @@ var NOTI_TONES=[
 ];
 function notiTone(id){for(var i=0;i<NOTI_TONES.length;i++)if(NOTI_TONES[i].id===id)return NOTI_TONES[i];return NOTI_TONES[0];}
 var _notiBeepAt=0;
-function notiBeep(v,toneId){try{var _now=Date.now();if(_now-_notiBeepAt<1200)return;_notiBeepAt=_now;if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;
+function notiBeep(v,toneId,force){try{var _now=Date.now();if(!force&&_now-_notiBeepAt<1200)return;_notiBeepAt=_now;if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;
   if(ac.state!=="running"){try{ac.resume();}catch(_r){}var _vv=(typeof v==="number")?v:(notiGet().vol||0.8);
     /* 엔진이 아직 잠겨 있으면 예약하지 않고(복귀 시 몰아서 울림 방지) 일반 오디오로 한 번만 시도 */
     notiBeepFallback(_vv);return;}
   var t=ac.currentTime+0.01;var vol=(typeof v==="number")?v:notiGet().vol;if(typeof vol!=="number")vol=0.8;vol=Math.max(0,Math.min(1,vol));
   var tone=notiTone(toneId||notiGet().tone);
-  var mst=ac.createGain();mst.gain.value=Math.min(3,vol*3);
-  var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=tone.lpf||5000;lp.Q.value=0.4;mst.connect(lp);lp.connect(ac.destination);
+  var mst=ac.createGain();mst.gain.value=Math.min(7,vol*7);
+  var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=tone.lpf||5000;lp.Q.value=0.4;mst.connect(lp);
+  /* 리미터: 크게 올려도 찌그러지지 않게 */
+  var comp=ac.createDynamicsCompressor();try{comp.threshold.value=-14;comp.knee.value=8;comp.ratio.value=8;comp.attack.value=0.002;comp.release.value=0.18;}catch(_c){}
+  var out=ac.createGain();out.gain.value=3.0;lp.connect(comp);comp.connect(out);out.connect(ac.destination);
   var dry=ac.createGain();dry.gain.value=1.0;dry.connect(mst);
   var wet=ac.createGain();wet.gain.value=tone.wet||0.15;wet.connect(notiReverb(ac));notiReverb(ac).connect(mst);
   function osc(f,at,dur,amp,type,detuneTo,partial){var o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,at);
@@ -1132,7 +1135,7 @@ function notiTitle(n){if(_notiTitle===null)_notiTitle=document.title;_notiPendin
 document.addEventListener("visibilitychange",function(){if(!document.hidden)notiTitle(0);});window.addEventListener("focus",function(){notiTitle(0);});
 /* 브라우저 알림 */
 function notiDesktop(title,body,onclick,tag,withSound){try{if(!("Notification" in window)||Notification.permission!=="granted")return;
-  var opt={body:body||"",icon:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
+  var opt={body:body||"",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
   var n;try{n=new Notification(title,opt);}catch(e1){try{delete opt.renotify;n=new Notification(title,opt);}catch(e2){console.warn("notification failed",e2);return;}}
   n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};
   setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
@@ -1218,12 +1221,12 @@ function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notific
   +'<div class="flex gap-2 mt-4"><button onclick="notiTest()" class="px-4 py-3 rounded-[10px] bg-g100 text-g800 font-semibold text-[14.5px] hover:bg-g200 flex items-center gap-2"><i data-lucide="play" class="w-4 h-4"></i>알림 테스트</button><button onclick="closeModal()" class="flex-1 px-4 py-3 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">확인</button></div>',"max-w-md !rounded-[16px]");
   if(window.lucide)setTimeout(function(){lucide.createIcons();},10);}
 var _notiVolT=null;
-function notiPickTone(id){notiSet({tone:id});notiBeep(undefined,id);try{document.querySelectorAll("[data-tone]").forEach(function(b){var on=b.getAttribute("data-tone")===id;b.style.background=on?"#4577F0":"#fff";b.style.color=on?"#fff":"#4E5968";b.style.border=on?"1px solid #4577F0":"1px solid #E5E8EB";});}catch(e){}}
-function notiVol(v){var val=Math.max(0.05,Math.min(1,(parseInt(v,10)||80)/100));notiSet({vol:val});var t=document.getElementById("ntVolTxt");if(t)t.textContent=Math.round(val*100)+"%";if(_notiVolT)clearTimeout(_notiVolT);_notiVolT=setTimeout(function(){notiBeep(val);},260);}
-function notiTest(){try{var p=notiGet();if(p.sound)notiBeep();
+function notiPickTone(id){notiSet({tone:id});notiBeep(undefined,id,true);try{document.querySelectorAll("[data-tone]").forEach(function(b){var on=b.getAttribute("data-tone")===id;b.style.background=on?"#4577F0":"#fff";b.style.color=on?"#fff":"#4E5968";b.style.border=on?"1px solid #4577F0":"1px solid #E5E8EB";});}catch(e){}}
+function notiVol(v){var val=Math.max(0.05,Math.min(1,(parseInt(v,10)||80)/100));notiSet({vol:val});var t=document.getElementById("ntVolTxt");if(t)t.textContent=Math.round(val*100)+"%";if(_notiVolT)clearTimeout(_notiVolT);_notiVolT=setTimeout(function(){notiBeep(val,undefined,true);},260);}
+function notiTest(){try{var p=notiGet();if(p.sound)notiBeep(undefined,undefined,true);
   if(p.desktop&&("Notification" in window)&&Notification.permission==="granted"){notiDesktop("알림 테스트","새 메시지가 오면 이렇게 알려드립니다.",null,"knollad-test",false);}
   else{toast(p.desktop?"브라우저 알림이 아직 허용되지 않았습니다 · 위 스위치를 눌러 허용해 주세요":"브라우저 알림이 꺼져 있어요 · 소리로만 알려드립니다");}}catch(e){}}
-function notiToggle(k){var p=notiGet();if(k==="sound"){notiSet({sound:!p.sound});if(!p.sound)notiBeep();notiModal();return;}
+function notiToggle(k){var p=notiGet();if(k==="sound"){notiSet({sound:!p.sound});if(!p.sound)notiBeep(undefined,undefined,true);notiModal();return;}
   var perm=("Notification" in window)?Notification.permission:"unsupported";
   if(p.desktop&&perm==="granted"){notiSet({desktop:false});notiModal();return;}
   notiAskDesktop().then(function(ok){var perm2=("Notification" in window)?Notification.permission:"unsupported";
