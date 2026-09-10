@@ -1066,7 +1066,8 @@ ${siteFooter()}</div>`;}
    · 알림음은 Web Audio 로 합성(파일 불필요) · 첫 클릭/키 입력 뒤부터 재생 가능(브라우저 자동재생 정책)
    · 브라우저 알림은 사용자가 켤 때 권한 요청 · 탭이 뒤에 있거나 해당 채팅이 열려있지 않을 때 표시 */
 var NOTI_KEY="knollad_noti";var _notiUnlocked=false;var _notiTitle=null;var _notiTimer=null;var _notiPending=0;
-function notiGet(){var d={sound:true,desktop:true,vol:0.8,tone:"default"};try{var j=JSON.parse(localStorage.getItem(NOTI_KEY)||"null");if(j)for(var k in j)d[k]=j[k];}catch(e){}return d;}
+function notiGet(){var d={sound:true,desktop:true,vol:1,tone:"default"};try{var j=JSON.parse(localStorage.getItem(NOTI_KEY)||"null");if(j)for(var k in j)d[k]=j[k];}catch(e){}return notiVolFix(d);}
+function notiVolFix(d){try{if(!d._v2){d._v2=1;if(!(d.vol>=0.9))d.vol=1;localStorage.setItem(NOTI_KEY,JSON.stringify(d));}}catch(e){}return d;}
 function notiSet(p){var d=notiGet();for(var k in p)d[k]=p[k];try{localStorage.setItem(NOTI_KEY,JSON.stringify(d));}catch(e){}return d;}
 var NOTI_TONES=[
  {id:"default",name:"기본 (나무톡+벨)",src:"/snd/default.mp3"},
@@ -1103,8 +1104,8 @@ function notiBeep(v,toneId,force){try{var _now=Date.now();if(!force&&_now-_notiB
 function notiTitle(n){if(_notiTitle===null)_notiTitle=document.title;_notiPending=n;if(_notiTimer){clearInterval(_notiTimer);_notiTimer=null;}if(!n){document.title=_notiTitle;return;}var on=false;document.title="("+n+") 새 메시지 · 크놀AD";_notiTimer=setInterval(function(){on=!on;document.title=on?_notiTitle:"("+_notiPending+") 새 메시지 · 크놀AD";},1400);}
 document.addEventListener("visibilitychange",function(){if(!document.hidden)notiTitle(0);});window.addEventListener("focus",function(){notiTitle(0);});
 /* 브라우저 알림 */
-function notiDesktop(title,body,onclick,tag,withSound){try{if(!("Notification" in window)||Notification.permission!=="granted")return;
-  var opt={body:body||"",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
+function notiDesktop(title,body,onclick,tag,withSound){try{if(!notiGet().desktop)return;if(!("Notification" in window)||Notification.permission!=="granted")return;
+  var opt={body:body||"",icon:"/notify-icon.png",tag:tag||"knollad-msg",renotify:true,silent:!withSound,requireInteraction:false,data:{t:Date.now()}};
   var n;try{n=new Notification(title,opt);}catch(e1){try{delete opt.renotify;n=new Notification(title,opt);}catch(e2){console.warn("notification failed",e2);return;}}
   n.onclick=function(){try{window.focus();}catch(e){}try{if(onclick)onclick();}catch(e){}n.close();};
   setTimeout(function(){try{n.close();}catch(e){}},9000);}catch(e){}}
