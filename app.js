@@ -1100,11 +1100,8 @@ function notiBeep(v,toneId,force){try{var _now=Date.now();if(!force&&_now-_notiB
     notiBeepFallback(_vv);return;}
   var t=ac.currentTime+0.01;var vol=(typeof v==="number")?v:notiGet().vol;if(typeof vol!=="number")vol=0.8;vol=Math.max(0,Math.min(1,vol));
   var tone=notiTone(toneId||notiGet().tone);
-  var mst=ac.createGain();mst.gain.value=Math.min(7,vol*7);
-  var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=tone.lpf||5000;lp.Q.value=0.4;mst.connect(lp);
-  /* 리미터: 크게 올려도 찌그러지지 않게 */
-  var comp=ac.createDynamicsCompressor();try{comp.threshold.value=-14;comp.knee.value=8;comp.ratio.value=8;comp.attack.value=0.002;comp.release.value=0.18;}catch(_c){}
-  var out=ac.createGain();out.gain.value=1.5;lp.connect(comp);comp.connect(out);out.connect(ac.destination);
+  var mst=ac.createGain();mst.gain.value=Math.min(1,vol*1.6);
+  var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=tone.lpf||5000;lp.Q.value=0.4;mst.connect(lp);lp.connect(ac.destination);
   var dry=ac.createGain();dry.gain.value=1.0;dry.connect(mst);
   var wet=ac.createGain();wet.gain.value=tone.wet||0.15;wet.connect(notiReverb(ac));notiReverb(ac).connect(mst);
   function osc(f,at,dur,amp,type,detuneTo,partial){var o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,at);
