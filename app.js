@@ -410,7 +410,16 @@ function render(){
   var _sameView=(S._lastRenderView===S.view);var _wy=(typeof _scrollKeep==="number"&&_scrollKeep>0)?_scrollKeep:(window.scrollY||window.pageYOffset||0);
   var _chatPos=[];try{document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll').forEach(function(el,i){_chatPos.push([el.id||("k"+i),el.scrollTop,el.scrollHeight-el.clientHeight-el.scrollTop<40]);});}catch(_e0){}
   S._lastRenderView=S.view;
+  /* 채팅 입력 중 내용·첨부파일이 폴링 렌더로 사라지지 않게 보존 */
+  try{S._chatKeep=S._chatKeep||{};["admMsgInput","wfMsgInput","chatMsg"].forEach(function(id){var el=document.getElementById(id);if(el)S._chatKeep[id]=el.value;});
+    ["admMsgFile","wfMsgFile","chatFile"].forEach(function(id){var el=document.getElementById(id);if(el&&el.files&&el.files.length)S._chatKeep[id]=el.files;});}catch(_ck){}
   document.getElementById("root").innerHTML=h;
+  /* 렌더 후 입력값·첨부파일 복원 */
+  try{var kp=S._chatKeep||{};["admMsgInput","wfMsgInput","chatMsg"].forEach(function(id){var el=document.getElementById(id);if(el&&kp[id])el.value=kp[id];});
+    ["admMsgFile","wfMsgFile","chatFile"].forEach(function(id){var el=document.getElementById(id),fl=kp[id];
+      if(el&&fl&&fl.length){try{var dt=new DataTransfer();for(var i=0;i<fl.length;i++)dt.items.add(fl[i]);el.files=dt.files;}catch(_e){}
+        if(typeof chatFileRender==="function")chatFileRender(id);}});}catch(_ck2){}
+
   if(_sameView&&_wy>0){_scrollLock=true;try{window.scrollTo(0,_wy);}catch(_e1){}
     (window.requestAnimationFrame||setTimeout)(function(){try{window.scrollTo(0,_wy);}catch(_e){}setTimeout(function(){try{window.scrollTo(0,_wy);}catch(_e){}_scrollLock=false;},60);});}
   try{var _els=document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll');_els.forEach(function(el,i){var p=_chatPos[i];if(!p)return;el.scrollTop=p[2]?el.scrollHeight:p[1];});}catch(_e2){}
@@ -1161,10 +1170,14 @@ function notiModal(){var p=notiGet();var perm=("Notification" in window)?Notific
   +((navigator&&typeof navigator.vibrate==="function")?row("vibrate","smartphone","휴대폰 진동","휴대폰에서 알림이 오면 짧게 진동",p.vibrate!==false,""):"")
   +'</div>'
   +'<div class="mt-2.5 px-4 py-2.5 rounded-[12px] text-[12.5px] text-g600 leading-relaxed" style="background:#F7F8FA">보고 있는 채팅 화면에서는 알림이 울리지 않습니다.<br>로그인한 상태로 사이트 탭이 열려 있어야 알림이 도착합니다.<br>휴대폰은 아이폰의 경우 측면 무음 스위치가 켜져 있으면 소리가 나지 않습니다.<br>설정은 이 브라우저에만 저장돼요.</div>'
-  +'<div class="flex gap-2 mt-4"><button onclick="notiBeep()" class="px-4 py-3 rounded-[10px] bg-g100 text-g800 font-semibold text-[14.5px] hover:bg-g200 flex items-center gap-2"><i data-lucide="play" class="w-4 h-4"></i>알림음 듣기</button><button onclick="closeModal()" class="flex-1 px-4 py-3 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">확인</button></div>',"max-w-md !rounded-[16px]");
+  +'<div class="flex gap-2 mt-4"><button onclick="notiTest()" class="px-4 py-3 rounded-[10px] bg-g100 text-g800 font-semibold text-[14.5px] hover:bg-g200 flex items-center gap-2"><i data-lucide="play" class="w-4 h-4"></i>알림 테스트</button><button onclick="closeModal()" class="flex-1 px-4 py-3 rounded-[10px] text-white font-semibold text-[15px]" style="background:#4577F0">확인</button></div>',"max-w-md !rounded-[16px]");
   if(window.lucide)setTimeout(function(){lucide.createIcons();},10);}
 var _notiVolT=null;
 function notiVol(v){var val=Math.max(0.05,Math.min(1,(parseInt(v,10)||50)/100));notiSet({vol:val});var t=document.getElementById("ntVolTxt");if(t)t.textContent=Math.round(val*100)+"%";if(_notiVolT)clearTimeout(_notiVolT);_notiVolT=setTimeout(function(){notiBeep(val);},260);}
+function notiTest(){try{var p=notiGet();if(p.sound)notiBeep();notiVibe();
+  notiPopup({title:"알림 테스트",body:"새 메시지가 오면 이렇게 알려드립니다.",kind:"msg",go:function(){}});
+  if(p.desktop&&("Notification" in window)&&Notification.permission==="granted")notiDesktop("알림 테스트","새 메시지가 오면 이렇게 알려드립니다.",null,"knollad-test");
+  else if(p.desktop)toast("브라우저 알림이 아직 허용되지 않았습니다 · 위 스위치를 눌러 허용해 주세요");}catch(e){}}
 function notiToggle(k){var p=notiGet();if(k==="sound"){notiSet({sound:!p.sound});if(!p.sound)notiBeep();notiModal();return;}
   if(k==="vibrate"){var nv=(p.vibrate===false);notiSet({vibrate:nv});if(nv)notiVibe();notiModal();return;}
   var perm=("Notification" in window)?Notification.permission:"unsupported";
