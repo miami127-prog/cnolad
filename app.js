@@ -473,7 +473,7 @@ function consultRenderThread(rec){var body=document.getElementById("consultBody"
 function consultSend(){var id=localStorage.getItem("knollad_consult_id");if(!id)return;var t=(gv("cs_send")||"").trim();if(!t)return;var rec=window._consultRec||{messages:[]};var msgs=(rec.messages||[]).slice();msgs.push({who:rec.name||"고객",role:"cust",text:t,at:new Date().toISOString()});rec.messages=msgs;window._consultRec=rec;consultRenderThread(rec);try{notifyTelegram("💬 [실시간 상담] "+(rec.name||"고객")+": "+t);}catch(_te){}fetch(SUPA_URL+"/rest/v1/knollad_consults?id=eq."+id,{method:"PATCH",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal","X-Consult-Id":String(id)},SH),body:JSON.stringify({messages:msgs,last_at:new Date().toISOString(),status:"진행중"})}).catch(()=>{});}
 function loadConsults(){fetch(SUPA_URL+"/rest/v1/knollad_consults?select=*&order=last_at.desc",{headers:SH}).then(r=>r.json()).then(function(rows){var sig=JSON.stringify((rows||[]).map(c=>[c.id,(c.messages||[]).length,c.status]));if(sig!==_consultSig){_consultSig=sig;S.consults=(S.role==="cs")?[]:(rows||[]);try{notiConsults(S.consults);}catch(_ne){}if(S.view==="admin-consults"||S.role==="admin"||S.role==="cs")render();}}).catch(()=>{});}
 function selAdmConsult(id){S.consultId=id;render();}
-function admConsultSend(id){var c=(S.consults||[]).find(x=>String(x.id)===String(id));if(!c)return;var t=(gv("ac_send")||"").trim();if(!t){toast("답변을 입력하세요");return;}var msgs=(c.messages||[]).slice();msgs.push({who:"크놀AD",role:"knoll",text:t,at:new Date().toISOString()});c.messages=msgs;c.last_at=new Date().toISOString();fetch(SUPA_URL+"/rest/v1/knollad_consults?id=eq."+id,{method:"PATCH",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify({messages:msgs,last_at:c.last_at})}).then(r=>{if(r.ok){_consultSig="";render();}else toast("전송 실패");}).catch(()=>toast("오류"));}
+function admConsultSend(id){S._selfSendUntil=Date.now()+9000;var c=(S.consults||[]).find(x=>String(x.id)===String(id));if(!c)return;var t=(gv("ac_send")||"").trim();if(!t){toast("답변을 입력하세요");return;}var msgs=(c.messages||[]).slice();msgs.push({who:"크놀AD",role:"knoll",text:t,at:new Date().toISOString()});c.messages=msgs;c.last_at=new Date().toISOString();fetch(SUPA_URL+"/rest/v1/knollad_consults?id=eq."+id,{method:"PATCH",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify({messages:msgs,last_at:c.last_at})}).then(r=>{if(r.ok){_consultSig="";render();}else toast("전송 실패");}).catch(()=>toast("오류"));}
 function admConsultDelete(id){if(!confirm("이 상담 내역을 삭제할까요?\n삭제하면 대화 내용이 영구히 사라지며 복구할 수 없습니다."))return;fetch(SUPA_URL+"/rest/v1/knollad_consults?id=eq."+id,{method:"DELETE",headers:Object.assign({"Prefer":"return=minimal"},SH)}).then(function(r){if(r.ok){toast("상담을 삭제했습니다");S.consultId=null;S.consults=(S.consults||[]).filter(function(c){return String(c.id)!==String(id);});_consultSig="";render();}else toast("삭제 실패");}).catch(function(){toast("오류");});}
 function viewAdminConsults(){if(!S.consults)setTimeout(loadConsults,30);var list=S.consults||[];if((!S.consultId||!list.find(c=>String(c.id)===String(S.consultId)))&&list.length)S.consultId=list[0].id;var sel=list.find(c=>String(c.id)===String(S.consultId));if(sel)setTimeout(function(){markConsultRead(sel,"adm");},0);
  var listHtml=list.length?list.map(function(c){var s=String(c.id)===String(S.consultId);var m=c.messages||[];var last=m[m.length-1];var wait=last&&last.role==="cust";return `<button onclick="selAdmConsult('${c.id}')" class="w-full text-left p-3 rounded-2xl mb-1 ${s?'bg-blue-tint':'hover:bg-g50'}"><div class="flex justify-between gap-2 items-center"><span class="font-bold text-g900 text-[14.5px] leading-5 truncate flex items-center gap-1.5">${wait?'<span class="w-[7px] h-[7px] rounded-full bg-red-500 flex-shrink-0"></span>':''}${esc(c.name||'익명')}</span><span class="text-[11.5px] text-g400 leading-5 flex-shrink-0 num">${kstDT(c.last_at,'md')}</span></div><div class="flex items-center gap-1.5 mt-0.5"><span class="text-[10px] font-bold text-blue bg-blue-tint px-1.5 py-0.5 rounded flex-shrink-0">${consultSrc(c)}</span><span class="text-[12px] text-g400 truncate">${esc(c.contact||'')}</span></div><p class="text-[13px] text-g500 truncate mt-0.5">${last?esc(last.text||''):''}</p></button>`;}).join(""):'<p class="text-g400 text-center py-8 text-[14px]">상담 내역이 없습니다.</p>';
@@ -1093,13 +1093,14 @@ var NOTI_TONES=[
  {id:"t8",name:"물방울",lpf:6000,wet:0.2,parts:[[1975.53,0,0.16,0.35,"pop"],[987.77,0.02,0.45,0.15,"s"],[1479.98,0.03,0.4,0.05,"s"]]}
 ];
 function notiTone(id){for(var i=0;i<NOTI_TONES.length;i++)if(NOTI_TONES[i].id===id)return NOTI_TONES[i];return NOTI_TONES[0];}
-function notiBeep(v,toneId){try{if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;
+var _notiBeepAt=0;
+function notiBeep(v,toneId){try{var _now=Date.now();if(_now-_notiBeepAt<1200)return;_notiBeepAt=_now;if(!_notiAC)_notiAC=new (window.AudioContext||window.webkitAudioContext)();var ac=_notiAC;
   if(ac.state!=="running"){try{ac.resume();}catch(_r){}var _vv=(typeof v==="number")?v:(notiGet().vol||0.8);
     /* 엔진이 아직 잠겨 있으면 예약하지 않고(복귀 시 몰아서 울림 방지) 일반 오디오로 한 번만 시도 */
     notiBeepFallback(_vv);return;}
   var t=ac.currentTime+0.01;var vol=(typeof v==="number")?v:notiGet().vol;if(typeof vol!=="number")vol=0.8;vol=Math.max(0,Math.min(1,vol));
   var tone=notiTone(toneId||notiGet().tone);
-  var mst=ac.createGain();mst.gain.value=Math.min(2.1,vol*2.1);
+  var mst=ac.createGain();mst.gain.value=Math.min(3,vol*3);
   var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=tone.lpf||5000;lp.Q.value=0.4;mst.connect(lp);lp.connect(ac.destination);
   var dry=ac.createGain();dry.gain.value=1.0;dry.connect(mst);
   var wet=ac.createGain();wet.gain.value=tone.wet||0.15;wet.connect(notiReverb(ac));notiReverb(ac).connect(mst);
@@ -1163,7 +1164,12 @@ function notiLastText(camp,side){var other=side==="knoll"?"cust":"knoll";var ns=
 /* 폴링마다 호출 · side: "knoll"(관리자 화면) / "cust"(고객 화면) */
 function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};var fresh=[];rows.forEach(function(c){var l=notiOtherLatest(c,side);cur[c.id]=l;if(prev&&l&&(!prev[c.id]||l>prev[c.id]))fresh.push(c);});
   if(side==="knoll"){var mx="";rows.forEach(function(c){if(String(c.created_at||"")>mx)mx=String(c.created_at||"");});if(prev&&S._notiMaxCreated&&mx>S._notiMaxCreated){var nc=rows.filter(function(c){return String(c.created_at||"")>S._notiMaxCreated;});nc.forEach(function(c){fresh.push(Object.assign({},c,{_isNew:true}));});}S._notiMaxCreated=mx;}
-  S._notiLast=cur;if(!prev||!fresh.length)return;var pref=notiGet();var loud=fresh.filter(function(c){return c._isNew||!notiChatOpen(c.id,side);});
+  S._notiLast=cur;if(!prev||!fresh.length)return;
+  if(S._selfSendUntil&&Date.now()<S._selfSendUntil)return;   /* 내가 방금 보낸 직후엔 알리지 않음 */
+  S._notiDone=S._notiDone||{};
+  fresh=fresh.filter(function(c){var k=String(c.id)+"|"+String(c._isNew?"new":cur[c.id]||"");if(S._notiDone[k])return false;S._notiDone[k]=1;return true;});
+  if(!fresh.length)return;
+  var pref=notiGet();var loud=fresh.filter(function(c){return c._isNew||!notiChatOpen(c.id,side);});
   var awayAll=document.hidden||!document.hasFocus();var deskOK=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
   if(pref.sound&&loud.length)notiBeep();
   if(loud.length){if(awayAll)notiTitle((_notiPending||0)+loud.length);
@@ -1177,7 +1183,12 @@ function notiScan(rows,side){try{rows=rows||[];var prev=S._notiLast;var cur={};v
 function notiConsultOpen(id){try{return !document.hidden&&document.hasFocus()&&S.view==="admin-consults"&&String(S.consultId)===String(id);}catch(e){return false;}}
 function notiConsults(rows){try{if(S.role!=="admin"&&S.role!=="cs")return;rows=rows||[];var prev=S._notiCons;var cur={};var fresh=[];
   rows.forEach(function(c){var m=(c.messages||[]).filter(function(x){return x.role==="cust";});var last=m.length?String(m[m.length-1].at||""):"";cur[c.id]=last;if(prev&&last&&(!prev[c.id]||last>prev[c.id]))fresh.push(c);});
-  S._notiCons=cur;if(!prev||!fresh.length)return;var pref=notiGet();
+  S._notiCons=cur;if(!prev||!fresh.length)return;
+  if(S._selfSendUntil&&Date.now()<S._selfSendUntil)return;
+  S._notiDone=S._notiDone||{};
+  fresh=fresh.filter(function(c){var k="c"+String(c.id)+"|"+String(cur[c.id]||"");if(S._notiDone[k])return false;S._notiDone[k]=1;return true;});
+  if(!fresh.length)return;
+  var pref=notiGet();
   var loud=fresh.filter(function(c){return !notiConsultOpen(c.id);});if(!loud.length)return;
   var awayAll=document.hidden||!document.hasFocus();
   var canDesk=pref.desktop&&("Notification" in window)&&Notification.permission==="granted";
