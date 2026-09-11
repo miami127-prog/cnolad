@@ -377,33 +377,7 @@ function acUploadFieldsHtml(){return ''
 +'<button type="button" onclick="copyUploadBriefFromForm()" class="px-4 py-2 rounded-xl text-[13px] font-bold text-white flex-shrink-0" style="background:#047857">복사</button>'
 +'</div>'
 +'</div>';}
-function buildUploadCopyText(e,brand){e=e||{};var drive=(e.drive||"").trim();var title=(e.upTitle||e.title||"").trim();var hash=(e.hash||"").trim();var shop=(e.shop||"").trim();var thumbNote=(e.thumbNote||"").trim();var thumbUrl=(e.thumbUrl||"").trim();var lines=[];
-lines.push("<드라이브 링크>");
-lines.push("");
-lines.push(drive||"");
-lines.push("");
-lines.push("📸 예약 후 날짜 보이게 캡쳐 부탁드립니다!");
-lines.push("");
-lines.push("⚠️ 미업로드 2차 방지를 하고 있기 때문입니다.");
-lines.push("");
-lines.push("<유튜브 제목>");
-lines.push("");
-lines.push(title||"");
-lines.push("");
-lines.push("<유튜브 설명란>");
-lines.push("");
-lines.push(hash||"");
-lines.push("");
-lines.push("<유튜브 쇼핑태그>");
-lines.push("");
-lines.push(shop||"");
-lines.push("");
-lines.push("<썸네일>");
-lines.push("");
-if(thumbNote)lines.push(thumbNote);
-if(thumbUrl)lines.push(thumbUrl);
-if(!thumbNote&&!thumbUrl)lines.push("");
-return lines.join("\n");}
+function buildUploadCopyText(e,brand){e=e||{};var drive=(e.drive||"").trim();var title=(e.upTitle||e.title||"").trim();var hash=(e.hash||"").trim();var shop=(e.shop||"").trim();var thumbNote=(e.thumbNote||"").trim();var thumbUrl=(e.thumbUrl||"").trim();var thumb="";if(thumbNote&&thumbUrl)thumb=thumbNote+"\n\n"+thumbUrl;else thumb=thumbNote||thumbUrl||"";return ["<드라이브 링크>","",drive,"","","📸 예약 후 날짜 보이게 캡쳐 부탁드립니다!","","⚠️ 미업로드 2차 방지를 하고 있기 때문입니다.","","","<유튜브 제목>","",title,"","","<유튜브 설명란>","",hash,"","","<유튜브 쇼핑태그>","",shop,"","","<썸네일>","",thumb].join("\n");}
 
 function copyUploadText(text){function ok(){toast("업로드 문구 복사됨");}function fallback(){try{var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);ok();}catch(err){toast("복사 실패");}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok).catch(fallback);}else fallback();}
 
