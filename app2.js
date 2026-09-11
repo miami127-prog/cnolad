@@ -361,18 +361,28 @@ function acUploadFieldsHtml(){return ''
 +'<textarea id="acChannels" rows="3" class="'+INPUT+' resize-none"></textarea>'
 +'<p class="text-[11px] text-g400 mt-2">저장 후 목록의 <b>복사</b>를 누르면 전달용 문구가 클립보드에 들어갑니다.</p>'
 +'</div>';}
-function buildUploadCopyText(e,brand){e=e||{};var drive=e.drive||"";var title=e.upTitle||e.title||"";var hash=e.hash||"";var shop=e.shop||"";var channels=(e.channels||"").trim();var lines=[];
-lines.push("드라이브 링크");lines.push(drive||"(드라이브 링크 없음)");lines.push("썸네일 제발 지정해주세요!");lines.push("");
-lines.push("유튜브 · 인스타 · 틱톡 업로드 필수!");lines.push("");
-lines.push("예약하고 가능하면 링크 안되면 캡쳐라도 보내주시면 감사하겠습니다!");lines.push("");
-lines.push("미업로드 2차 방지를 하고 있기 때문입니다,,,");lines.push("");
-if(channels){lines.push(channels);lines.push("");}
-lines.push("<유튜브 제목>");lines.push(title||"");lines.push("");
-lines.push("<유튜브 설명란>");lines.push(hash||"");lines.push("");
-lines.push("<유튜브 쇼핑태그>");lines.push(shop||"");lines.push("");
-lines.push("<인스타 글>");lines.push(title?("❤️ "+title):"❤️");lines.push("");lines.push(hash||"");lines.push("");
-lines.push("<틱톡>");lines.push(title||"");lines.push("");lines.push(hash||"");
+function buildUploadCopyText(e,brand){e=e||{};var drive=(e.drive||"").trim();var title=(e.upTitle||e.title||"").trim();var hash=(e.hash||"").trim();var shop=(e.shop||"").trim();var lines=[];
+lines.push("<드라이브 링크>");
+lines.push("");
+lines.push(drive||"");
+lines.push("");
+lines.push("예약 후 날짜 보이게 캡쳐 부탁드립니다!");
+lines.push("");
+lines.push("미업로드 2차 방지를 하고 있기 때문입니다.");
+lines.push("");
+lines.push("<유튜브 제목>");
+lines.push("");
+lines.push(title||"");
+lines.push("");
+lines.push("<유튜브 설명란>");
+lines.push("");
+lines.push(hash||"");
+lines.push("");
+lines.push("<유튜브 쇼핑태그>");
+lines.push("");
+lines.push(shop||"");
 return lines.join("\n");}
+
 function copyUploadBrief(campId,eid){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(campId);});if(!a){toast("캠페인을 찾을 수 없습니다");return;}var e=((a.schedule)||[]).find(function(x){return String(x.id)===String(eid);});if(!e){toast("일정을 찾을 수 없습니다");return;}if(e.cat&&e.cat!=="업로드"){toast("업로드 일정만 복사할 수 있습니다");return;}var text=buildUploadCopyText(e,a.brand_name);function ok(){toast("업로드 문구 복사됨");}function fallback(){try{var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);ok();}catch(err){toast("복사 실패");}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok).catch(fallback);}else fallback();}
 function admCalPersist(a,sch){a.schedule=sch;fetch(SUPA_URL+'/rest/v1/knollad_applications?id=eq.'+a.id,{method:'PATCH',headers:Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'},SH),body:JSON.stringify({schedule:sch})}).then(function(r){if(!r.ok)toast('저장 실패');else{toast('일정 저장됨');admCalOpen(a.id);if(S.view==="admin-calendar")try{render();}catch(e){}}}).catch(function(){toast('저장 오류');});}
 function admCalSave(id){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var date=gv('acDate'),title=(gv('acTitle')||'').trim();if(!date||!title){toast('날짜와 제목을 입력하세요');return;}var sch=((a.schedule)||[]).slice();var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"업로드";var up=acReadUpload();var row={id:'e'+Date.now(),date:date,title:title,cat:cat,time:(gv('acTime')||'')};if(cat==="업로드"){row.drive=up.drive;row.upTitle=up.upTitle;row.hash=up.hash;row.shop=up.shop;row.channels=up.channels;}sch.push(row);acClearDraft(id,null);admCalPersist(a,sch);}
