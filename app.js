@@ -737,7 +737,7 @@ function authEmail(){var t=authLoad();return (t&&t.user&&t.user.email)?String(t.
 /* 로그인된 계정의 회원 정보(역할) 조회 → S.role / S.cust 설정 */
 function authLoadProfile(){var e=authEmail();if(!e)return Promise.reject(new Error("no user"));return fetch(SUPA_URL+"/rest/v1/knollad_members?email=eq."+encodeURIComponent(e)+"&select=email,role,brand_name,contact_name&limit=1",{headers:SH}).then(function(r){return r.json();}).then(function(rows){var m=Array.isArray(rows)&&rows[0];if(!m)throw new Error("no member");var role=m.role||"일반회원";if(role==="관리자"){S.role="admin";S.cust=null;}else if(role==="CS"||role==="CS담당자"){S.role="cs";S.cust=null;}else{S.role="customer";S.cust={email:e,brand:m.brand_name,name:m.contact_name,role:role};}return m;});}
 /* 페이지 로드 시 세션 복원: 토큰 갱신 → 역할 조회. 실패하면 로그아웃 상태 */
-function authRestore(){var t=authLoad();if(!t||!t.refresh_token){authApply(null);return Promise.resolve(false);}authApply(t);var p=(t.expires_at*1000-Date.now()<120000)?authRefresh():Promise.resolve(t);return p.then(function(){return authLoadProfile();}).then(function(){return true;}).catch(function(){authSave(null);authApply(null);S.role=null;S.cust=null;return false;});}
+function authRestore(){try{setTimeout(function(){notiSyncServer(true);},4000);}catch(_e){}var t=authLoad();if(!t||!t.refresh_token){authApply(null);return Promise.resolve(false);}authApply(t);var p=(t.expires_at*1000-Date.now()<120000)?authRefresh():Promise.resolve(t);return p.then(function(){return authLoadProfile();}).then(function(){return true;}).catch(function(){authSave(null);authApply(null);S.role=null;S.cust=null;return false;});}
 /* 비밀번호 재설정 메일 */
 function authRecover(email){return fetch(SUPA_URL+"/auth/v1/recover",{method:"POST",headers:{apikey:SUPA_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:email,gotrue_meta_security:{}})}).then(function(r){return r.ok;});}
 /* 새 비밀번호 설정 (재설정 링크로 들어왔거나 로그인 상태) */
@@ -750,7 +750,7 @@ function lgxRecover(){var e=(gv("loginEmail")||"").trim().toLowerCase();if(!e||e
 function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";lgxKeepId(e);
   if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");lgxErr("아이디와 비밀번호를 입력해주세요");return;}
   const btn=document.getElementById("loginBtn");if(btn)btn.textContent="확인 중…";
-  authLogin(e,pw).then(function(){return authLoadProfile();}).then(function(){S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];S.myCampsAll=null;logEvent("login");if(S.role==="admin"||S.role==="cs")go("admin-dashboard");else go("customer-dashboard");})
+  authLogin(e,pw).then(function(){return authLoadProfile();}).then(function(){S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];S.myCampsAll=null;logEvent("login");try{notiSyncServer(true);}catch(_e){}if(S.role==="admin"||S.role==="cs")go("admin-dashboard");else go("customer-dashboard");})
   .catch(function(err){if(btn)btn.textContent="로그인";var msg=(err&&err.message)||"";if(err&&err.message==="no member"){authLogout();toast("승인된 계정이 아닙니다");lgxErr("승인된 계정이 아닙니다 · 관리자에게 문의해 주세요");}else if(/invalid|credentials/i.test(msg)||err.code===400){toast("아이디 또는 비밀번호가 올바르지 않습니다");lgxErr("아이디 또는 비밀번호가 올바르지 않습니다");}else{toast("로그인 오류 · 잠시 후 다시 시도해 주세요");lgxErr("로그인 처리 중 오류가 발생했습니다");}});}
 function isMobNav(){try{return window.matchMedia("(max-width:767px)").matches;}catch(e){return true;}}function toggleMobNav(force){if(typeof force==="boolean")S._navOpen=force;else S._navOpen=!S._navOpen;var open=!!S._navOpen;var as=document.querySelector("[data-sidenav]");var ov=document.querySelector("[data-sidenav-ov]");if(as){as.style.transform=(!isMobNav()||open)?"translateX(0)":"translateX(-105%)";}if(ov){if(!isMobNav())ov.classList.add("hidden");else ov.classList.toggle("hidden",!open);}}
 function sidebar(items,cur,badge,bell,bellT){var open=!!S._navOpen;var navBtns=items.map(function(it){var on=cur===it.id;var act=it.act||("go('"+it.id+"')");return '<button onclick="S._navOpen=false;'+act+'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold '+(on?"bg-blue-tint text-blue":"text-g500 hover:text-g800 hover:bg-g100")+'"><i data-lucide="'+it.icon+'" class="w-[16px] h-[16px]"></i><span class="flex-1 text-left">'+it.label+'</span>'+(it.dot?'<span class="inline-flex items-center justify-center text-[10px] font-bold rounded-full w-4 h-4" style="background:#EF4444;color:#fff">N</span>':'')+'</button>';}).join("");return ''
@@ -1101,7 +1101,20 @@ ${siteFooter()}</div>`;}
    · 브라우저 알림은 사용자가 켤 때 권한 요청 · 탭이 뒤에 있거나 해당 채팅이 열려있지 않을 때 표시 */
 var NOTI_KEY="knollad_noti";var _notiUnlocked=false;var _notiTitle=null;var _notiTimer=null;var _notiPending=0;
 function notiGet(){var d={sound:true,desktop:true,vol:0.6,tone:"default"};try{var j=JSON.parse(localStorage.getItem(NOTI_KEY)||"null");if(j)for(var k in j)d[k]=j[k];}catch(e){}return d;}
-function notiSet(p){var d=notiGet();for(var k in p)d[k]=p[k];try{localStorage.setItem(NOTI_KEY,JSON.stringify(d));}catch(e){}return d;}
+function notiSet(p){var d=notiGet();for(var k in p)d[k]=p[k];try{localStorage.setItem(NOTI_KEY,JSON.stringify(d));}catch(e){}notiSyncServer();return d;}
+/* 내 알림 설정을 회원 정보에 저장 (관리자 확인용) · 5초 디바운스 */
+var _notiSyncT=null;
+function notiSyncServer(force){try{
+  var email=(S.cust&&S.cust.email)||((typeof authEmail==="function")?authEmail():"");
+  if(!email)return;
+  if(_notiSyncT)clearTimeout(_notiSyncT);
+  _notiSyncT=setTimeout(function(){try{
+    var d=notiGet();var perm=("Notification" in window)?Notification.permission:"unsupported";
+    var ci=(typeof clientInfo==="function")?clientInfo():{};
+    var body={noti_sound:!!d.sound,noti_desktop:!!(d.desktop&&perm==="granted"),noti_perm:perm,noti_tone:d.tone||"default",noti_vol:Math.round((typeof d.vol==="number"?d.vol:0.6)*100),noti_updated_at:new Date().toISOString(),noti_client:[ci.browser||"",ci.os||"",ci.device||""].filter(Boolean).join(" · ")};
+    fetch(SUPA_URL+"/rest/v1/knollad_members?email=eq."+encodeURIComponent(email),{method:"PATCH",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify(body)}).catch(function(){});
+  }catch(e){}},force?0:5000);
+}catch(e){}}
 var NOTI_TONES=[
  {id:"default",name:"기본 (나무톡+벨)",src:"/snd/default.mp3"},
  {id:"t1",name:"트라이톤",src:"/snd/t1.mp3"},
