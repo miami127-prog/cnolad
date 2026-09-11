@@ -407,7 +407,7 @@ modal('<div class="flex items-center justify-between mb-3 gap-2"><div class="fle
 +list
 +'<div class="mt-3 pt-3 border-t border-g100"><p class="text-[13px] font-bold text-g600 mb-2">'+(ed?'일정 수정':'새 일정 추가')+'</p>'
 +'<input id="acDate" type="date" class="'+INPUT+' mb-2"><input id="acTime" type="time" class="'+INPUT+' mb-2"><input id="acTitle" placeholder="일정 제목 (예: 1차 업로드)" class="'+INPUT+' mb-2">'
-+catRadios+acUploadFieldsHtml()+_btn+'</div>','max-w-xl',true);
++catRadios+acUploadFieldsHtml()+_btn+'</div>','max-w-xl');
 var draft=acLoadDraft(id,editId);var src=ed?ed:(draft||{});
 var _d=document.getElementById('acDate');if(_d)_d.value=src.date||(ed&&ed.date)||'';
 var _t=document.getElementById('acTitle');if(_t)_t.value=src.title||(ed&&ed.title)||'';
