@@ -336,41 +336,46 @@ function exportSalesCSV(){var camps=(ADM_ROWS||[]).filter(function(a){return a.s
 function campSeen(id){try{return !!JSON.parse(localStorage.getItem("knollad_camp_seen")||"{}")[id];}catch(e){return false;}}
 function markCampSeen(id){try{var o=JSON.parse(localStorage.getItem("knollad_camp_seen")||"{}");o[id]=1;localStorage.setItem("knollad_camp_seen",JSON.stringify(o));}catch(e){}}
 function admView(id){markCampSeen(id);admCampDetail(id);if(S.view==="admin-dashboard")renderAdmRows();}
-function acToggleUploadFields(){var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"";var box=document.getElementById("acUploadBox");if(box)box.style.display=(cat==="업로드")?"":"none";}
-function acReadUpload(){return{drive:(gv("acDrive")||"").trim(),upTitle:(gv("acUpTitle")||"").trim(),hash:(gv("acHash")||"").trim(),shop:(gv("acShop")||"").trim(),mention:(gv("acMention")||"").trim(),channels:(gv("acChannels")||"").trim()};}
+function acToggleUploadFields(){var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"";var box=document.getElementById("acUploadBox");if(box)box.style.display=(cat==="업로드")?"":"none";acSaveDraftFromForm();}
+function acDefaultChannels(){return "유튜브 - \n인스타 - \n틱톡 - ";}
+function acDraftKey(campId,editId){return String(campId)+":"+(editId||"new");}
+function acSaveDraft(campId,editId,data){if(!S._acDraft)S._acDraft={};S._acDraft[acDraftKey(campId,editId)]=data;}
+function acLoadDraft(campId,editId){return (S._acDraft&&S._acDraft[acDraftKey(campId,editId)])||null;}
+function acClearDraft(campId,editId){if(S._acDraft)delete S._acDraft[acDraftKey(campId,editId)];}
+function acReadUpload(){return{drive:(gv("acDrive")||"").trim(),upTitle:(gv("acUpTitle")||"").trim(),hash:(gv("acHash")||"").trim(),shop:(gv("acShop")||"").trim(),channels:(gv("acChannels")||"").trim()};}
+function acReadForm(){var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"업로드";var up=acReadUpload();return{date:gv("acDate")||"",time:gv("acTime")||"",title:(gv("acTitle")||"").trim(),cat:cat,drive:up.drive,upTitle:up.upTitle,hash:up.hash,shop:up.shop,channels:up.channels};}
+function acSaveDraftFromForm(){try{if(!S._acDraftCamp)return;acSaveDraft(S._acDraftCamp,S._acDraftEdit,acReadForm());}catch(e){}}
+function acBindDraft(){var root=document.getElementById("modalRoot");if(!root)return;var els=root.querySelectorAll("#acDate,#acTime,#acTitle,#acDrive,#acUpTitle,#acHash,#acShop,#acChannels,input[name='acCat']");for(var i=0;i<els.length;i++){els[i].addEventListener("input",acSaveDraftFromForm);els[i].addEventListener("change",acSaveDraftFromForm);}}
 function acUploadFieldsHtml(){return ''
 +'<div id="acUploadBox" class="mt-2 mb-3 p-3 rounded-xl border border-emerald-100" style="background:#F3FBF7">'
-+'<p class="text-[12px] font-bold text-emerald-700 mb-2">업로드 전달 문구</p>'
++'<p class="text-[12px] font-bold text-emerald-700 mb-2">업로드 전달 문구 <span class="font-normal text-g400">(나가도 임시 저장됨)</span></p>'
 +'<label class="block text-[12px] font-bold text-g600 mb-1">드라이브 링크</label>'
-+'<input id="acDrive" placeholder="https://works.do/..." class="'+INPUT+' mb-2">'
++'<input id="acDrive" placeholder="예: https://works.do/xxxx" class="'+INPUT+' mb-2">'
 +'<label class="block text-[12px] font-bold text-g600 mb-1">콘텐츠 제목 (유튜브/인스타/틱톡)</label>'
-+'<input id="acUpTitle" placeholder="예: K-켄달 제너? 양홍원 복받은 이유" class="'+INPUT+' mb-2">'
++'<input id="acUpTitle" placeholder="예: 제품명 + 핵심 훅 한 줄" class="'+INPUT+' mb-2">'
 +'<label class="block text-[12px] font-bold text-g600 mb-1">해시태그 / 설명란</label>'
-+'<textarea id="acHash" rows="2" placeholder="#shorts #브랜드 ..." class="'+INPUT+' mb-2 resize-none"></textarea>'
++'<textarea id="acHash" rows="2" placeholder="예: #shorts #제품 #브랜드" class="'+INPUT+' mb-2 resize-none"></textarea>'
 +'<label class="block text-[12px] font-bold text-g600 mb-1">유튜브 쇼핑태그</label>'
-+'<input id="acShop" placeholder="없습니다!" class="'+INPUT+' mb-2">'
-+'<label class="block text-[12px] font-bold text-g600 mb-1">멘션</label>'
-+'<input id="acMention" placeholder="@브랜드" class="'+INPUT+' mb-2">'
-+'<label class="block text-[12px] font-bold text-g600 mb-1">채널 배정 (한 줄씩)</label>'
-+'<textarea id="acChannels" rows="3" placeholder="유튜브 - 채널명 (담당 / 완료)\n인스타 - 채널명 (담당 / 완료)\n틱톡 - 채널명 (담당 / 완료)" class="'+INPUT+' resize-none"></textarea>'
++'<input id="acShop" placeholder="예: 제품명 (없으면 비워두기)" class="'+INPUT+' mb-2">'
++'<label class="block text-[12px] font-bold text-g600 mb-1">채널 배정</label>'
++'<textarea id="acChannels" rows="3" class="'+INPUT+' resize-none"></textarea>'
 +'<p class="text-[11px] text-g400 mt-2">저장 후 목록의 <b>복사</b>를 누르면 전달용 문구가 클립보드에 들어갑니다.</p>'
 +'</div>';}
-function buildUploadCopyText(e,brand){e=e||{};var drive=e.drive||"";var title=e.upTitle||e.title||"";var hash=e.hash||"";var shop=e.shop||"없습니다!";var mention=e.mention||(brand?("@"+String(brand).replace(/^@/,"")):"");var channels=(e.channels||"").trim();var lines=[];
+function buildUploadCopyText(e,brand){e=e||{};var drive=e.drive||"";var title=e.upTitle||e.title||"";var hash=e.hash||"";var shop=e.shop||"";var channels=(e.channels||"").trim();var lines=[];
 lines.push("드라이브 링크");lines.push(drive||"(드라이브 링크 없음)");lines.push("썸네일 제발 지정해주세요!");lines.push("");
 lines.push("유튜브 · 인스타 · 틱톡 업로드 필수!");lines.push("");
 lines.push("예약하고 가능하면 링크 안되면 캡쳐라도 보내주시면 감사하겠습니다!");lines.push("");
 lines.push("미업로드 2차 방지를 하고 있기 때문입니다,,,");lines.push("");
-if(mention){lines.push(mention.charAt(0)==="@"?mention:("@"+mention));lines.push("");}
 if(channels){lines.push(channels);lines.push("");}
 lines.push("<유튜브 제목>");lines.push(title||"");lines.push("");
 lines.push("<유튜브 설명란>");lines.push(hash||"");lines.push("");
-lines.push("<유튜브 쇼핑태그>");lines.push(shop||"없습니다!");lines.push("");
+lines.push("<유튜브 쇼핑태그>");lines.push(shop||"");lines.push("");
 lines.push("<인스타 글>");lines.push(title?("❤️ "+title):"❤️");lines.push("");lines.push(hash||"");lines.push("");
 lines.push("<틱톡>");lines.push(title||"");lines.push("");lines.push(hash||"");
 return lines.join("\n");}
 function copyUploadBrief(campId,eid){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(campId);});if(!a){toast("캠페인을 찾을 수 없습니다");return;}var e=((a.schedule)||[]).find(function(x){return String(x.id)===String(eid);});if(!e){toast("일정을 찾을 수 없습니다");return;}if(e.cat&&e.cat!=="업로드"){toast("업로드 일정만 복사할 수 있습니다");return;}var text=buildUploadCopyText(e,a.brand_name);function ok(){toast("업로드 문구 복사됨");}function fallback(){try{var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);ok();}catch(err){toast("복사 실패");}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok).catch(fallback);}else fallback();}
 function admCalPersist(a,sch){a.schedule=sch;fetch(SUPA_URL+'/rest/v1/knollad_applications?id=eq.'+a.id,{method:'PATCH',headers:Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'},SH),body:JSON.stringify({schedule:sch})}).then(function(r){if(!r.ok)toast('저장 실패');else{toast('일정 저장됨');admCalOpen(a.id);if(S.view==="admin-calendar")try{render();}catch(e){}}}).catch(function(){toast('저장 오류');});}
-function admCalSave(id){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var date=gv('acDate'),title=(gv('acTitle')||'').trim();if(!date||!title){toast('날짜와 제목을 입력하세요');return;}var sch=((a.schedule)||[]).slice();var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"업로드";var up=acReadUpload();var row={id:'e'+Date.now(),date:date,title:title,cat:cat,time:(gv('acTime')||'')};if(cat==="업로드"){row.drive=up.drive;row.upTitle=up.upTitle;row.hash=up.hash;row.shop=up.shop;row.mention=up.mention;row.channels=up.channels;}sch.push(row);admCalPersist(a,sch);}
+function admCalSave(id){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var date=gv('acDate'),title=(gv('acTitle')||'').trim();if(!date||!title){toast('날짜와 제목을 입력하세요');return;}var sch=((a.schedule)||[]).slice();var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"업로드";var up=acReadUpload();var row={id:'e'+Date.now(),date:date,title:title,cat:cat,time:(gv('acTime')||'')};if(cat==="업로드"){row.drive=up.drive;row.upTitle=up.upTitle;row.hash=up.hash;row.shop=up.shop;row.channels=up.channels;}sch.push(row);acClearDraft(id,null);admCalPersist(a,sch);}
 function admCalDel(id,eid){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;admCalPersist(a,((a.schedule)||[]).filter(function(x){return x.id!==eid;}));}
 function admCalPick(){var cs=(ADM_ROWS||[]).filter(function(a){return a.status==="승인 완료";});var list=cs.length?cs.map(function(a){return '<button onclick="closeModal();admCalOpen(\''+a.id+'\')" class="w-full flex items-center justify-between py-3 px-3 border-b border-g100 hover:bg-g50 text-left"><span class="text-[15px] font-bold text-g900">'+esc(a.brand_name)+(a.manager?' · '+esc(a.manager):'')+'</span><span class="text-[13px] text-blue font-bold">일정 관리 ›</span></button>';}).join(''):'<p class="text-g400 text-[14px] py-4 text-center">승인 완료된 캠페인이 없습니다</p>';modal('<div class="flex items-center justify-between mb-3"><h3 class="text-[18px] font-bold text-g900">일정을 추가할 캠페인 선택</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div><div class="max-h-[60vh] overflow-y-auto">'+list+'</div>');}
 function admCalOpen(id,editId){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var sch=(a.schedule||[]);var ed=editId?sch.find(function(x){return String(x.id)===String(editId);}):null;var list=sch.length?sch.map(function(e){var _ing=ed&&String(e.id)===String(editId);var copyBtn=(e.cat==="업로드")?('<button type="button" onclick="copyUploadBrief(\''+id+'\',\''+e.id+'\')" class="text-emerald-700 text-[13px] font-bold">복사</button>'):'';return '<div class="flex items-center justify-between gap-2 py-2 border-b border-g100'+(_ing?' bg-blue-soft rounded-lg px-2':'')+'"><div class="text-[14px] text-g800 min-w-0"><b>'+esc(e.date)+(e.time?' <span class="text-g500">'+esc(e.time)+'</span>':'')+'</b> · '+(e.cat?'<span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md mr-1" style="'+calCatStyle(e.cat)+'">'+esc(e.cat)+'</span>':'')+'<span class="break-all">'+esc(e.title)+'</span></div><div class="flex items-center gap-3 flex-shrink-0">'+copyBtn+'<button type="button" onclick="admCalOpen(\''+id+'\',\''+e.id+'\')" class="text-blue text-[13px] font-bold">수정</button><button type="button" onclick="admCalDel(\''+id+'\',\''+e.id+'\')" class="text-red-600 text-[13px] font-bold">삭제</button></div></div>';}).join(''):'<p class="text-g400 text-[14px] py-2">등록된 일정이 없습니다</p>';var _btn=ed?'<button type="button" onclick="admCalUpdate(\''+id+'\',\''+editId+'\')" class="'+BTN+' w-full">수정 저장</button><button type="button" onclick="admCalOpen(\''+id+'\')" class="w-full text-center text-g500 text-[13px] font-bold mt-2 py-1">취소</button>':'<button type="button" onclick="admCalSave(\''+id+'\')" class="'+BTN+' w-full">+ 일정 추가</button>';
@@ -380,23 +385,26 @@ var catRadios='<div class="flex gap-4 mb-2 flex-wrap text-[13px] font-bold">'
 +'<label class="inline-flex items-center gap-1.5 cursor-pointer" style="color:#047857"><input type="radio" name="acCat" value="업로드" checked onchange="acToggleUploadFields()"> 업로드</label>'
 +'<label class="inline-flex items-center gap-1.5 cursor-pointer" style="color:#3182F6"><input type="radio" name="acCat" value="정산" onchange="acToggleUploadFields()"> 정산</label>'
 +'</div>';
-modal('<div class="flex items-center justify-between mb-3 gap-2"><div class="flex items-center gap-2 min-w-0"><button type="button" onclick="admCalPick()" class="text-[13px] font-bold text-blue flex-shrink-0">← 캠페인 선택</button><h3 class="text-[18px] font-bold text-g900 break-all">'+esc(a.brand_name)+' 업로드 일정</h3></div><button type="button" onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div>'
+S._acDraftCamp=id;S._acDraftEdit=editId||null;
+modal('<div class="flex items-center justify-between mb-3 gap-2"><div class="flex items-center gap-2 min-w-0"><button type="button" onclick="acSaveDraftFromForm();admCalPick()" class="text-[13px] font-bold text-blue flex-shrink-0">← 캠페인 선택</button><h3 class="text-[18px] font-bold text-g900 break-all">'+esc(a.brand_name)+' 업로드 일정</h3></div><button type="button" onclick="acSaveDraftFromForm();closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div>'
 +'<div class="bg-g50 rounded-xl p-3 mb-3 text-[13px]"><b class="text-g900">'+esc(a.brand_name||'')+'</b>'+(a.manager?' · 담당 '+esc(a.manager):'')+(a.email?'<br><span class="text-g500">'+esc(a.email)+'</span>':'')+'</div>'
 +list
 +'<div class="mt-3 pt-3 border-t border-g100"><p class="text-[13px] font-bold text-g600 mb-2">'+(ed?'일정 수정':'새 일정 추가')+'</p>'
-+'<input id="acDate" type="date" class="'+INPUT+' mb-2"><input id="acTime" type="time" class="'+INPUT+' mb-2"><input id="acTitle" placeholder="일정 제목 (예: 쇼잉 업로드)" class="'+INPUT+' mb-2">'
-+catRadios+acUploadFieldsHtml()+_btn+'</div>','max-w-xl');
-if(ed){var _d=document.getElementById('acDate');if(_d)_d.value=ed.date||'';var _t=document.getElementById('acTitle');if(_t)_t.value=ed.title||'';var _tm=document.getElementById('acTime');if(_tm)_tm.value=ed.time||'';try{var _cc=document.querySelector('input[name="acCat"][value="'+(ed.cat||'업로드')+'"]');if(_cc)_cc.checked=true;}catch(e){}
-var _dr=document.getElementById('acDrive');if(_dr)_dr.value=ed.drive||'';
-var _ut=document.getElementById('acUpTitle');if(_ut)_ut.value=ed.upTitle||'';
-var _h=document.getElementById('acHash');if(_h)_h.value=ed.hash||'';
-var _s=document.getElementById('acShop');if(_s)_s.value=ed.shop||'';
-var _m=document.getElementById('acMention');if(_m)_m.value=ed.mention||('@'+String(a.brand_name||'').replace(/^@/,''));
-var _ch=document.getElementById('acChannels');if(_ch)_ch.value=ed.channels||'';
-}else{var _m2=document.getElementById('acMention');if(_m2)_m2.value='@'+String(a.brand_name||'').replace(/^@/,'');var _s2=document.getElementById('acShop');if(_s2)_s2.value='없습니다!';}
-acToggleUploadFields();
++'<input id="acDate" type="date" class="'+INPUT+' mb-2"><input id="acTime" type="time" class="'+INPUT+' mb-2"><input id="acTitle" placeholder="일정 제목 (예: 1차 업로드)" class="'+INPUT+' mb-2">'
++catRadios+acUploadFieldsHtml()+_btn+'</div>','max-w-xl',true);
+var draft=acLoadDraft(id,editId);var src=ed?ed:(draft||{});
+var _d=document.getElementById('acDate');if(_d)_d.value=src.date||(ed&&ed.date)||'';
+var _t=document.getElementById('acTitle');if(_t)_t.value=src.title||(ed&&ed.title)||'';
+var _tm=document.getElementById('acTime');if(_tm)_tm.value=src.time||(ed&&ed.time)||'';
+try{var _cc=document.querySelector('input[name="acCat"][value="'+(src.cat||(ed&&ed.cat)||'업로드')+'"]');if(_cc)_cc.checked=true;}catch(e){}
+var _dr=document.getElementById('acDrive');if(_dr)_dr.value=src.drive||(ed&&ed.drive)||'';
+var _ut=document.getElementById('acUpTitle');if(_ut)_ut.value=src.upTitle||(ed&&ed.upTitle)||'';
+var _h=document.getElementById('acHash');if(_h)_h.value=src.hash||(ed&&ed.hash)||'';
+var _s=document.getElementById('acShop');if(_s)_s.value=src.shop||(ed&&ed.shop)||'';
+var _ch=document.getElementById('acChannels');if(_ch){var chv=src.channels||(ed&&ed.channels)||'';_ch.value=chv?chv:acDefaultChannels();}
+acToggleUploadFields();acBindDraft();
 }
-function admCalUpdate(id,eid){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var date=gv('acDate'),title=(gv('acTitle')||'').trim();if(!date||!title){toast('날짜와 제목을 입력하세요');return;}var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"업로드";var up=acReadUpload();var sch=((a.schedule)||[]).map(function(x){if(String(x.id)!==String(eid))return x;var o={id:x.id,date:date,title:title,cat:cat,time:(gv('acTime')||'')};if(cat==="업로드"){o.drive=up.drive;o.upTitle=up.upTitle;o.hash=up.hash;o.shop=up.shop;o.mention=up.mention;o.channels=up.channels;}return o;});admCalPersist(a,sch);}
+function admCalUpdate(id,eid){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var date=gv('acDate'),title=(gv('acTitle')||'').trim();if(!date||!title){toast('날짜와 제목을 입력하세요');return;}var cat=((document.querySelector('input[name="acCat"]:checked')||{}).value)||"업로드";var up=acReadUpload();var sch=((a.schedule)||[]).map(function(x){if(String(x.id)!==String(eid))return x;var o={id:x.id,date:date,title:title,cat:cat,time:(gv('acTime')||'')};if(cat==="업로드"){o.drive=up.drive;o.upTitle=up.upTitle;o.hash=up.hash;o.shop=up.shop;o.channels=up.channels;}return o;});acClearDraft(id,eid);admCalPersist(a,sch);}
 
 function admSaveDiscount(id){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var d=parseInt(gv("admDiscount")||"0",10);if(isNaN(d)||d<0)d=0;a.discount=d;fetch(SUPA_URL+"/rest/v1/knollad_applications?id=eq."+id,{method:"PATCH",headers:Object.assign({"Content-Type":"application/json","Prefer":"return=minimal"},SH),body:JSON.stringify({discount:d})}).then(function(r){if(r.ok){toast("할인 저장됨");closeModal();render();}else toast("저장 실패");}).catch(function(){toast("오류");});}
 function admCampDetail(id){var a=(ADM_ROWS||[]).find(function(x){return String(x.id)===String(id);});if(!a)return;var wf=a.wf||{step:2};var ch=(a.channels||[]).map(function(c){return c.name+(c.product?" ("+c.product+")":"");}).join(", ")||"-";var row=function(k,v){return '<div class="py-2 border-b border-g100 last:border-0"><p class="text-[13px] text-g400 mb-0.5">'+k+'</p><div class="text-[15px] text-g800 break-all" style="white-space:pre-wrap">'+(v||"-")+'</div></div>';};modal('<div class="flex items-center justify-between mb-3"><h3 class="text-[19px] font-bold text-g900 break-all">'+esc(a.brand_name)+'</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500 flex-shrink-0">✕</button></div><div class="max-h-[74vh] overflow-y-auto">'+row("담당자 · 이메일",esc(a.contact_name||"")+" · "+esc(a.email||""))+row("상태",statusBadge(a.status)+holdBadge(a)+(a.pay_status?" "+statusBadge(a.pay_status):""))+row("진행 단계",stageIdx(wf)+"/"+STAGE_N+" · "+stageName(wf)+" (step "+wf.step+")")+row("업로드 희망일",esc(a.preferred_date||""))+row("약관·개인정보 동의",(a.wf&&a.wf.consent)?("약관 v"+esc(a.wf.consent.terms||"")+" · 개인정보 v"+esc(a.wf.consent.privacy||"")+" · 2차 활용 "+(a.wf.consent.secondary_use?"동의":"미동의")+" · "+esc(String(a.wf.consent.at||"").replace("T"," ").slice(0,16))):"기록 없음 (동의 버전 기록 도입 전 신청)")+row("희망 채널",esc(ch))+row("활용 소재",esc(a.material||""))+row("광고 고지",esc(a.ad_disclosure||""))+row("희망 컨셉",esc(a.concept||""))+row("요청사항",esc(a.note||""))+row("금액",priceRows(a,{small:true}))+'<div class="py-2 border-b border-g100"><p class="text-[13px] text-g400 mb-0.5">할인 (만원 · 정액)</p><div class="flex items-center gap-2 mt-1"><input id="admDiscount" type="number" min="0" value="'+(a.discount||0)+'" class="'+INPUT+'" style="max-width:130px"><button onclick="admSaveDiscount(\''+a.id+'\')" class="'+BTN+'" style="padding:8px 16px;width:auto">저장</button></div><p class="text-[13px] font-bold text-blue mt-1">할인 후 공급가 '+wonF(priceOf(a).supply)+' · 청구액(VAT 포함) '+wonF(priceOf(a).bill)+'</p></div>'+row("제출 파일",(a.files&&a.files.length)?a.files.map(function(fl){return '<a href="'+esc(fl.url)+'" target="_blank" class="text-blue underline">'+esc(fl.name||"파일")+' ↗</a>';}).join("<br>"):"-")+'</div><div class="flex gap-2 mt-4"><button onclick="closeModal();openAdmWf(\''+a.id+'\')" class="'+BTN+' flex-1">워크플로우 관리 →</button><button onclick="admCalOpen(\''+a.id+'\')" class="'+BTN+' flex-1">일정 관리</button><button onclick="closeModal()" class="'+BTN_GHOST+' px-5">닫기</button></div>',"max-w-2xl");}
