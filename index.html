@@ -114,8 +114,10 @@ section.pb-24{padding-bottom:44px!important;}
 /* 로그인 버튼: 얇은 폰트만 */
 #loginBtn{font-weight:500!important}
 
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%;max-width:100%}
-.cal-grid>*{min-width:0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%;max-width:100%;border-top:1px solid #E5E8EB;border-left:1px solid #E5E8EB}
+.cal-grid>*{min-width:0;border-right:1px solid #E5E8EB;border-bottom:1px solid #E5E8EB;box-sizing:border-box}
+.cal-grid.cal-head>*{border-right:none;border-bottom:none}
+.cal-grid.cal-head{border:none}
 /* 가로 드래그 스크롤(카테고리·필터·테이블·스테퍼) */
 .h-scroll{display:flex;flex-wrap:nowrap!important;align-items:center;gap:.375rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain;max-width:100%}
 .h-scroll::-webkit-scrollbar{display:none;height:0}
@@ -133,7 +135,7 @@ section.pb-24{padding-bottom:44px!important;}
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609111920"></script>
-<script src="/app2.js?v=202609111920"></script>
+<script src="/app.js?v=202609111935"></script>
+<script src="/app2.js?v=202609111935"></script>
 </body>
 </html
