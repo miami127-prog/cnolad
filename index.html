@@ -131,14 +131,21 @@ section.pb-24{padding-bottom:44px!important;}
 .wf-stepper .break-keep{word-break:keep-all;overflow-wrap:anywhere}
 #scrollTopBtn{transition:opacity .15s,transform .15s,box-shadow .15s}#scrollTopBtn:hover{box-shadow:0 10px 28px rgba(25,31,40,.22)}#scrollTopBtn:active{transform:scale(.96)}
 @media(max-width:639px){#qChanList{max-height:50vh}}
-@media(min-width:768px){aside[data-sidenav]{overflow-x:hidden}}
+@media(min-width:768px){
+aside[data-sidenav]{overflow-x:hidden;width:14rem!important;transition:width .3s cubic-bezier(.2,.8,.2,1);}
+aside[data-sidenav].is-folded{width:4.5rem!important;}
+main[data-main]{transition:margin-left .3s cubic-bezier(.2,.8,.2,1);}
+main[data-main].is-folded{margin-left:4.5rem!important;}
+aside[data-sidenav] .side-label{transition:opacity .2s ease,max-width .3s ease;max-width:12rem;opacity:1;overflow:hidden;white-space:nowrap;display:inline-block;}
+aside[data-sidenav].is-folded .side-label{opacity:0;max-width:0;padding:0;margin:0;}
+}
 </style>
 </head>
 <body class="font-sans">
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609121230"></script>
-<script src="/app2.js?v=202609121230"></script>
+<script src="/app.js?v=202609121250"></script>
+<script src="/app2.js?v=202609121250"></script>
 </body>
 </html
