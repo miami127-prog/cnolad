@@ -763,10 +763,11 @@ function sidebar(items,cur,badge,bell,bellT){var open=!!S._navOpen;var fold=!!S.
 +'</div>'
 +'<div data-sidenav-ov onclick="toggleMobNav(false)" class="md:hidden fixed inset-0 z-40 bg-black/40 '+(open?"":"hidden")+'" style="backdrop-filter:blur(2px)"></div>'
 +'<aside data-sidenav class="'+aw+' border-r border-g100 flex flex-col fixed top-0 bottom-0 left-0 z-50 bg-white shadow-2xl md:shadow-none md:z-20" style="transform:'+((open||!isMobNav())?"translateX(0)":"translateX(-105%)")+';transition:transform .28s cubic-bezier(.2,.8,.2,1),width .28s cubic-bezier(.2,.8,.2,1)">'
-+'<div class="'+(fold?"px-5 md:px-2":"px-5")+' py-5"><div class="flex items-center justify-between gap-1">'
++'<div class="'+(fold?"px-5 md:px-2":"px-5")+' py-5">'
++'<div class="'+(fold?"flex flex-col items-center gap-2":"flex items-center justify-between gap-1")+'">'
 +'<div class="'+(fold?"md:hidden":"")+'">'+brandLogo(true,true)+'</div>'
-+(fold?('<button type="button" onclick="goHome()" class="hidden md:grid w-10 h-10 rounded-xl bg-blue-tint place-items-center flex-shrink-0 mx-auto" title="크놀AD">'+logoMark("w-6 h-6")+'</button>'):'')
-+(bellT?('<button onclick="openTodo()" title="알림" class="'+(fold?"hidden md:grid w-10 h-10 rounded-full place-items-center mx-auto ":"hidden md:flex items-center gap-1.5 pl-2.5 pr-3 h-10 rounded-full ")+(bell>0?"bg-red-50":"bg-g100")+' hover:opacity-90"><i data-lucide="bell" class="w-[20px] h-[20px] '+(bell>0?"text-red-500":"text-g600")+'"></i>'+((bell>0&&!fold)?'<span class="text-[14px] font-bold" style="color:#EF4444">'+(bell>99?"99+":bell)+'</span>':'')+'</button>'):'')
++(fold?('<button type="button" onclick="goHome()" class="hidden md:grid w-10 h-10 rounded-xl bg-blue-tint place-items-center flex-shrink-0" title="크놀AD">'+logoMark("w-6 h-6")+'</button>'):'')
++(bellT?('<button onclick="openTodo()" title="알림" class="relative '+(fold?"hidden md:grid w-10 h-10 rounded-full place-items-center ":"hidden md:flex items-center gap-1.5 pl-2.5 pr-3 h-10 rounded-full ")+(bell>0?"bg-red-50":"bg-g100")+' hover:opacity-90"><i data-lucide="bell" class="w-[20px] h-[20px] '+(bell>0?"text-red-500":"text-g600")+'"></i>'+(bell>0?(fold?'<span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full grid place-items-center text-[10px] font-bold text-white" style="background:#EF4444">'+(bell>99?"99+":bell)+'</span>':'<span class="text-[14px] font-bold" style="color:#EF4444">'+(bell>99?"99+":bell)+'</span>'):'')+'</button>'):'')
 +'<button type="button" onclick="toggleMobNav(false)" class="md:hidden w-9 h-9 rounded-full bg-g100 grid place-items-center text-g500" aria-label="닫기">✕</button>'
 +'</div>'+(badge?'<span class="mt-2 inline-flex px-2 py-0.5 rounded-md bg-blue-tint text-blue text-[11px] font-bold'+labHide+'">'+badge+'</span>':'')+'</div>'
 +'<nav class="flex-1 px-3 space-y-1 overflow-y-auto overflow-x-hidden">'+navBtns+'</nav>'
