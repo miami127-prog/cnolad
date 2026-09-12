@@ -143,13 +143,19 @@ aside[data-sidenav].is-folded .side-brand-btn,
 aside[data-sidenav].is-animating .side-brand-btn{width:2.5rem;height:2.5rem;justify-content:center;border-radius:0.75rem;background:#EAF2FF;gap:0!important;padding:0;}
 aside[data-sidenav].is-folded .side-brand-btn svg,
 aside[data-sidenav].is-animating .side-brand-btn svg{width:1.5rem;height:1.5rem;}
-aside[data-sidenav].is-folded .side-bell-top{display:none!important;}
-aside[data-sidenav]:not(.is-folded) .side-bell-bot{display:none!important;}
-aside[data-sidenav].is-folded .side-bell-bot{display:flex!important;}
+/* bell stays under logo when folded — compact, almost no gap */
+aside[data-sidenav].is-folded [data-side-head]{padding:.5rem .5rem .25rem!important;}
+aside[data-sidenav].is-folded [data-side-head] > div{gap:0!important;row-gap:0!important;}
+aside[data-sidenav].is-folded .side-bell-top{
+  display:flex!important;
+  width:2.5rem!important;height:2.5rem!important;
+  padding:0!important;margin-top:2px!important;
+  justify-content:center!important;align-items:center!important;
+  gap:0!important;border-radius:9999px!important;
+}
 aside[data-sidenav].is-folded .side-bell-badge{display:grid;}
 aside[data-sidenav]:not(.is-folded) .side-bell-badge{display:none!important;}
 aside[data-sidenav].is-folded [data-side-foot] button{justify-content:center!important;padding:.5rem!important;gap:0!important;}
-aside[data-sidenav].is-folded [data-side-head]{padding:.75rem .5rem .5rem!important;}
 aside[data-sidenav].is-folded nav button{padding-top:.5rem!important;padding-bottom:.5rem!important;}
 }
 </style>
@@ -158,7 +164,7 @@ aside[data-sidenav].is-folded nav button{padding-top:.5rem!important;padding-bot
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609121510"></script>
-<script src="/app2.js?v=202609121510"></script>
+<script src="/app.js?v=202609121530"></script>
+<script src="/app2.js?v=202609121530"></script>
 </body>
 </html
