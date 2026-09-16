@@ -366,6 +366,8 @@ function wonF(n){return Number(n||0).toLocaleString("ko-KR")+"원";}
 function priceLine(a){var p=priceOf(a);if(p.disc>0||p.extra>0)return wonM(p.net)+' <span class="text-[#B0B8C1] font-normal line-through text-[0.85em]">'+wonM(p.list)+'</span>';return wonM(p.list);}
 function priceRows(a,opt){opt=opt||{};var p=priceOf(a);var sz=opt.small?"text-[13px]":"text-[14px]";var r=function(k,v,cls){return '<div class="flex justify-between py-1 '+sz+' border-b border-g100"><span class="text-g500">'+k+'</span><span class="num '+(cls||"text-g800 font-bold")+'">'+v+'</span></div>';};return '<div class="'+(opt.cls||"")+'">'+r("정가 (VAT 별도)",wonM(p.list))+(p.disc>0?r("할인","-"+wonM(p.disc),"font-bold text-red-600"):"")+(p.extra>0?r("추가 금액","+"+wonM(p.extra),"font-bold text-blue"):"")+r("공급가액",wonF(p.supply))+r("부가세 (VAT 10%)",wonF(p.vat),"text-g600")+'<div class="flex justify-between items-center py-2"><span class="font-bold text-g900 '+(opt.small?"text-[14px]":"text-[15px]")+'">'+(opt.billLabel||"청구액 (VAT 포함)")+'</span><span class="font-bold text-blue '+(opt.small?"text-[16px]":"text-[18px]")+' num">'+wonF(p.bill)+'</span></div></div>';}
 const esc=s=>(s==null?"":String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function asList(x){if(Array.isArray(x))return x;if(!x)return [];if(typeof x==="string"){try{var j=JSON.parse(x);return Array.isArray(j)?j:[];}catch(_e){return [];}}return [];}
 const avgView=c=>c.vids?Math.round(c.views/c.vids):0;
 
 let S={view:"home",role:null,form:{},_submitted:null,_cameFrom:"apply",cust:null,wf:{step:1,edit:null},myCamps:[],activeCamp:null,notify:null,members:[]};
@@ -402,6 +404,7 @@ document.addEventListener("input",function(e){try{var t=e.target;if(t&&t.id&&(t.
 window.addEventListener("scroll",function(){try{syncScrollTopBtn();}catch(_st){}if(!_scrollLock)_scrollKeep=window.scrollY||window.pageYOffset||0;},{passive:true});
 function render(){
   const v=S.view;let h;
+  try{
   if(v==="home"){h=viewHome();}
   else if(v==="apply")h=viewApply();
   else if(v==="channel-picker")h=viewPicker();
@@ -413,6 +416,7 @@ function render(){
   else if(S.role==="admin")h=adminShell(v);
   else if(S.role==="cs")h=adminShell(v);
   else h=viewApply();
+  }catch(_re){try{console.error("render view failed",_re);}catch(_c){}h='<div class="min-h-screen grid place-items-center p-8 text-center"><p class="text-[16px] font-bold text-g800 mb-2">화면을 표시하는 중 문제가 생겼어요</p><p class="text-[14px] text-g500 mb-4">잠시 후 다시 시도하거나 새로고침 해 주세요.</p><button type="button" onclick="try{render();}catch(e){location.reload();}" class="px-5 py-3 rounded-2xl bg-blue text-white font-bold text-[15px]">다시 시도</button></div>';}
   /* 폴링으로 다시 그릴 때 화면이 튀지 않도록 스크롤 위치 보존 */
   var _sameView=(S._lastRenderView===S.view);var _wy=(typeof _scrollKeep==="number"&&_scrollKeep>0)?_scrollKeep:(window.scrollY||window.pageYOffset||0);
   var _chatPos=[];try{document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll').forEach(function(el,i){_chatPos.push([el.id||("k"+i),el.scrollTop,el.scrollHeight-el.clientHeight-el.scrollTop<40]);});}catch(_e0){}
@@ -428,7 +432,8 @@ function render(){
   /* 입력 중이던 칸의 포커스·커서 위치 기억 */
   var _fx=null;try{var _ae=document.activeElement;if(_ae&&_ae.id&&(_ae.tagName==="TEXTAREA"||_ae.tagName==="INPUT"))_fx={id:_ae.id,s:_ae.selectionStart,e:_ae.selectionEnd};}catch(_ef){}
   try{if(_sameView){var _rt=document.getElementById("root");if(_rt)_rt.style.minHeight=_rt.offsetHeight+"px";}}catch(_eh){}
-  document.getElementById("root").innerHTML=h;
+  try{var _rootEl=document.getElementById("root");if(_rootEl)_rootEl.innerHTML=h;}catch(_ri){try{console.error("render paint failed",_ri);}catch(_c2){}try{var _r2=document.getElementById("root");if(_r2)_r2.innerHTML='<div class="min-h-screen grid place-items-center p-8 text-center"><p class="text-[16px] font-bold text-g800 mb-2">화면 갱신에 실패했어요</p><button type="button" onclick="location.reload()" class="px-5 py-3 rounded-2xl bg-blue text-white font-bold text-[15px]">새로고침</button></div>';}catch(_c3){}}
+
   /* 다시 그린 뒤 같은 칸으로 포커스 복원 → 채팅 입력이 끊기지 않음 */
   if(_fx&&_sameView){try{var _nf=document.getElementById(_fx.id);if(_nf){_nf.focus({preventScroll:true});if(typeof _fx.s==="number"){try{_nf.setSelectionRange(_fx.s,_fx.e);}catch(_es){}}}}catch(_ef2){}}
   /* 렌더 후 입력값·첨부파일 복원 */
@@ -444,7 +449,7 @@ function render(){
   else{var rt0=document.getElementById("root");if(rt0)rt0.style.minHeight="";}
   try{var _els=document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll');_els.forEach(function(el,i){var p=_chatPos[i];if(!p)return;el.scrollTop=p[2]?el.scrollHeight:p[1];});}catch(_e2){}
   try{var _pub=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding"||v==="apply");var _mr=document.querySelector('meta[name="robots"]');if(!_mr){_mr=document.createElement("meta");_mr.setAttribute("name","robots");document.head.appendChild(_mr);}_mr.setAttribute("content",_pub?"index,follow":"noindex,nofollow,noarchive");}catch(_re){}
-  if(window.lucide)lucide.createIcons();
+  try{if(window.lucide)lucide.createIcons();}catch(_li){}
   var _cr=document.getElementById("consultRoot");if(!_cr){_cr=document.createElement("div");_cr.id="consultRoot";document.body.appendChild(_cr);_cr.innerHTML=consultWidget();}var _tip=document.getElementById("consultTip");if(_tip)_tip.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";var _fab=document.getElementById("consultFab");if(_fab)_fab.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";
   if(S.view==="home"){setTimeout(function(){upgradeWall();wallVis();initReveal();armCounters();},120);}
   if(S.view==="celeb"||S.view==="celebrity"||S.view==="personal-branding"){setTimeout(function(){wallVis();initReveal();armCounters();pbAutoplay();},120);}
