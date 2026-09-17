@@ -115,7 +115,8 @@ section.pb-24{padding-bottom:44px!important;}
 #loginBtn{font-weight:500!important}
 /* ── 사이드바 다크 네이비 ── */
 [data-sidenav]{background:linear-gradient(180deg,#18244E 0%,#131D40 55%,#0E1630 100%)!important;border-color:rgba(255,255,255,.06)!important}
-[data-sidenav] .side-grp{font-size:11.5px;font-weight:700;color:#5B688C;letter-spacing:.07em;padding:14px 12px 5px}
+[data-sidenav] [data-sidenav] .side-nav-btn{font-weight:600}
+.side-grp{font-size:11.5px;font-weight:700;color:#5B688C;letter-spacing:.07em;padding:14px 12px 5px}
 [data-sidenav].is-folded .side-grp,[data-sidenav] .is-folded .side-grp{display:none}
 [data-sidenav] .side-nav-btn{color:#ADB9D6}
 [data-sidenav] .side-nav-btn:hover{background:rgba(255,255,255,.09)!important;color:#fff!important}
@@ -139,7 +140,29 @@ section.pb-24{padding-bottom:44px!important;}
 .dbx-sales table thead th:first-child{border-radius:12px 0 0 12px}
 .dbx-sales table thead th:last-child{border-radius:0 12px 12px 0}
 .dbx-sales table tbody td{padding:13px;border-bottom:1px solid #F5F7FA}
-.dbx-sales table tbody tr:hover td{background:#F8FAFF}
+.dbx-sales table tbody tr:nth-child(even) td{background:#FAFBFC}
+.dbx-sales table tbody tr:hover td{background:#F0F6FF!important}
+.dbx-sales table tbody td{vertical-align:top}
+.dbx-sales table select{border:1px solid #E5E8EB;border-radius:10px;padding:5px 8px;font-size:12.5px;color:#4E5968;background:#fff;cursor:pointer}
+.dbx-sales table select:hover{border-color:#B9D4FB}
+.dbx-sales table input[type=date]{border:1px solid #E5E8EB;border-radius:10px;padding:5px 8px;font-size:12.5px;color:#4E5968;background:#fff}
+.dbx-sales table input[type=date]:focus{outline:2px solid #B9D4FB;border-color:#3182F6}
+.gflow-row{display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1fr;align-items:stretch;gap:0}
+.gflow-node{background:#FAFBFC;border:1px solid #F2F4F6;border-radius:18px;padding:14px 16px;min-width:0}
+.gflow-num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#3182F6;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;line-height:1}
+.gflow-arr{display:grid;place-items:center;color:#B0B8C1;font-size:17px;font-weight:700}
+.gflow-arr .av{display:none}
+.gflow-mid{display:flex;justify-content:flex-end;padding:5px 0;color:#B0B8C1;font-size:17px;font-weight:700}
+.gflow-mid.left{justify-content:flex-start}
+.gflow-mid span{width:calc((100% - 78px)/4);text-align:center}
+@media(max-width:767px){
+.gflow-row{display:flex;flex-direction:column;gap:4px}
+.gflow-row.rev{flex-direction:column-reverse}
+.gflow-arr .ah{display:none}.gflow-arr .av{display:block}
+.gflow-arr{padding:1px 0}
+.gflow-mid{justify-content:center;padding:1px 0}
+.gflow-mid span{width:auto}
+}
 .chlogo{width:20px;height:20px;border-radius:7px;object-fit:cover;flex-shrink:0;display:block}
 /* ── 대시보드(신규 메뉴) 전용 ── */
 .dbx-hero{background:radial-gradient(130% 240% at 92% -30%,#3D55C9 0%,#1B2450 42%,#111631 100%);border-radius:26px;padding:26px 30px;color:#fff;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;box-shadow:0 22px 44px -20px rgba(17,22,49,.5)}
@@ -265,7 +288,7 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609180900"></script>
-<script src="/app2.js?v=202609180900"></script>
+<script src="/app.js?v=202609181100"></script>
+<script src="/app2.js?v=202609181100"></script>
 </body>
 </html

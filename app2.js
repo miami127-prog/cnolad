@@ -14,9 +14,25 @@ if(act==="conti"||act==="video"){const isC=act==="conti";const lbl=isC?"콘티":
 return "";}
 const GUIDE=STAGES.map(function(st){return [st.t,st.en,st.g];});
 const GUIDE_POLICY=[["dot","콘티 수정","2회까지 무상수정 · 3회차부터 추가요금이 발생합니다."],["dot","영상 수정","단순 컷·순서·로고 변경에 한해 2회 무상 · 3회차부터 추가요금이 발생합니다."],["warn","영상수정 시 콘티 변경 발생","무상수정 횟수와 무관하게 바로 추가요금이 발생합니다."],["check","제작사 실수로 인한 오류","횟수 제한 없이 무상수정으로 진행됩니다."]];
-function viewGuide(){return `<div class="p-4 sm:p-6 md:p-10"><div class="max-w-6xl">${pageHeader("GUIDE","제작 워크플로우 · 총 "+STAGE_N+"단계","문의 접수부터 인사이트 리포트 제공까지 — 원스톱으로 진행됩니다")}
-<div class="${CARD} p-6 md:p-8 mb-6"><div class="grid md:grid-cols-2 gap-x-12 gap-y-1">${GUIDE.map(function(g,i){return `<div class="flex gap-4 ${i<GUIDE.length-1?"pb-3 border-b border-g100":""}"><div class="w-10 h-10 rounded-full bg-blue-tint text-blue grid place-items-center font-bold text-[15px] flex-shrink-0 num">${String(i+1).padStart(2,"0")}</div><div class="flex-1 min-w-0"><div class="flex items-baseline gap-2 flex-wrap"><p class="text-[17px] font-bold text-g900">${g[0]}</p><span class="text-[12px] font-bold text-g400 tracking-wide">${g[1]}</span></div><p class="text-[15px] text-g600 leading-relaxed mt-0.5">${g[2]}</p></div></div>`;}).join("")}</div></div>
-<div class="${CARD} p-6 md:p-8"><h2 class="text-[19px] font-bold text-g900 mb-4">수정 정책 및 추가요금</h2><div class="space-y-3.5">${GUIDE_POLICY.map(function(p){var ic=p[0]==="warn"?["triangle-alert","bg-amber-50 text-amber-600"]:p[0]==="check"?["check","bg-emerald-50 text-emerald-600"]:["circle-dot","bg-blue-tint text-blue"];return `<div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-full grid place-items-center flex-shrink-0 ${ic[1]}"><i data-lucide="${ic[0]}" class="w-[18px] h-[18px]"></i></div><div class="flex-1"><p class="text-[15px] font-bold text-g900">${p[1]}</p><p class="text-[15px] text-g600 leading-relaxed">${p[2]}</p></div></div>`;}).join("")}</div></div>
+function viewGuide(){
+ var N=GUIDE.length,per=4;
+ var node=function(i){var g=GUIDE[i];return '<div class="gflow-node"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span class="gflow-num">'+String(i+1).padStart(2,"0")+'</span><p class="text-[15.5px] font-bold text-g900" style="line-height:1.25">'+g[0]+'</p></div><p class="text-[11px] font-bold text-g400 tracking-wide" style="margin-bottom:4px">'+g[1]+'</p><p class="text-[13.5px] text-g600 leading-relaxed">'+g[2]+"</p></div>";};
+ var arr=function(dir){return '<div class="gflow-arr"><span class="ah">'+(dir==="l"?"\u2190":"\u2192")+'</span><span class="av">\u2193</span></div>';};
+ var rowsHtml="";
+ var nRows=Math.ceil(N/per);
+ for(var r=0;r<nRows;r++){
+  var ids=[];for(var k=0;k<per;k++){var ix=r*per+k;if(ix<N)ids.push(ix);}
+  var rev=(r%2===1);
+  var seq=rev?ids.slice().reverse():ids;
+  var cells=[];
+  seq.forEach(function(ix2,k2){if(k2>0)cells.push(arr(rev?"l":"r"));cells.push(node(ix2));});
+  while(cells.length<per*2-1){if(rev){cells.unshift("<div></div>");cells.unshift("<div></div>");}else{cells.push("<div></div>");cells.push("<div></div>");}}
+  if(r>0)rowsHtml+='<div class="gflow-mid'+((r%2===1)?"":" left")+'"><span>\u2193</span></div>';
+  rowsHtml+='<div class="gflow-row'+(rev?" rev":"")+'">'+cells.join("")+"</div>";
+ }
+ return `<div class="p-4 sm:p-6 md:p-10"><div class="max-w-6xl">${pageHeader("GUIDE","제작 워크플로우 · 총 "+STAGE_N+"단계","문의 접수부터 인사이트 리포트 제공까지 — 원스톱으로 진행됩니다")}
+<div class="${CARD} p-5 md:p-7 mb-6">${rowsHtml}</div>
+<div class="${CARD} p-6 md:p-8"><h2 class="text-[19px] font-bold text-g900 mb-4">수정 정책 및 추가요금</h2><div class="grid md:grid-cols-2 gap-3">${GUIDE_POLICY.map(function(p){var ic=p[0]==="warn"?["triangle-alert","bg-amber-50 text-amber-600"]:p[0]==="check"?["check","bg-emerald-50 text-emerald-600"]:["circle-dot","bg-blue-tint text-blue"];return `<div class="flex gap-3 items-start rounded-2xl border border-g100 p-4" style="background:#FAFBFC"><div class="w-8 h-8 rounded-full grid place-items-center flex-shrink-0 ${ic[1]}"><i data-lucide="${ic[0]}" class="w-[18px] h-[18px]"></i></div><div class="flex-1 min-w-0"><p class="text-[15px] font-bold text-g900">${p[1]}</p><p class="text-[14px] text-g600 leading-relaxed mt-0.5">${p[2]}</p></div></div>`;}).join("")}</div></div>
 </div></div>`;}
 function wfStepper(wfOrStep){var wf=(typeof wfOrStep==="object"&&wfOrStep)?wfOrStep:{step:wfOrStep};return stageStepper(wf);}
 function wfActivityFeed(camp){const wf=wfOf(camp);const C={blue:"bg-blue-tint text-blue",emerald:"bg-emerald-50 text-emerald-600",violet:"bg-violet-50 text-violet-600",amber:"bg-amber-50 text-amber-700",g:"bg-g100 text-g500"};const ev=[];
@@ -764,11 +780,28 @@ function dbxSalesCard(){
  var tabs=["7일","28일","90일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="event.stopPropagation();S._dbxP=\''+k+'\';render()">'+k+"</span>";}).join("");
  return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-1"><h2 class="dbx-sec">매출 추이</h2><div class="dbx-tog">'+tabs+'</div><span style="font-size:19px;font-weight:800;color:#191F28;letter-spacing:-0.5px;margin-left:12px" title="최근 '+P+' 매출 합계">'+dbxWon(d.total)+"</span>"+(delta!=null?'<span style="font-size:12.5px;font-weight:700;margin-left:7px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'<span class="dbx-va" onclick="go(\'admin-sales\')">상세보기 →</span></div>'
  +dbxArea(vals,labels,"#3182F6","dbxg"+N,dbxWonS,tips,dbxWon)
- +'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">최근 '+P+' 합계 · 등록일 기준 · 공급가</div></div>';}
+ +'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">최근 '+P+' 합계 · 등록일 기준 · 공급가 (VAT 미포함)</div></div>';}
 /* ── 거래처별 매출 비중 (이번 달 입금) */
 function dbxShareCard(){
  var P=S._dbxP||"7일";var N=P==="7일"?7:(P==="28일"?28:90);
  return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">채널별 매출 비중</h2><span class="dbx-va" onclick="dbxChannelModal('+N+')">자세히 →</span></div>'+dbxChannelShareBody(false,N)+"</div>";}
+/* ── 대시보드 메신저 카드 */
+function dbxMsgGo(id){if(S.role==="admin"||S.role==="cs"){openAdmWf(id);return;}var a=(S.myCamps||[]).find(function(x){return String(x.id)===String(id);});if(a)S.activeCamp=a;go("notes");}
+function dbxMsgCard(){
+ var isAdm=(S.role==="admin"||S.role==="cs");
+ var camps=(isAdm?(ADM_ROWS||[]):(S.myCamps||[])).filter(function(a){return a.status==="승인 완료";});
+ var fromKnoll=function(x){return x.role==="knoll"||x.who==="크놀AD";};
+ var msgs=[];
+ camps.forEach(function(a){var cur=a[isAdm?"read_knoll":"read_cust"]||"";
+  (a.notes||[]).forEach(function(x){if(!x)return;var mine=isAdm?fromKnoll(x):!fromKnoll(x);
+   msgs.push({b:a.brand_name||"캠페인",t:(x.text||(x.fileUrl?"📎 파일":"")),at:String(x.at||""),id:a.id,un:!mine&&(!cur||String(x.at||"")>String(cur))});});});
+ msgs.sort(function(a,b){return b.at.localeCompare(a.at);});
+ var top=msgs.slice(0,4);
+ var unTot=0;camps.forEach(function(a){unTot+=unreadCount(a,isAdm?"adm":"cust");});
+ var fmt=function(at){if(!at)return "";var d=new Date(at);if(isNaN(d))return "";var pd=function(n){return (n<10?"0":"")+n;};var t=new Date();return d.toDateString()===t.toDateString()?(pd(d.getHours())+":"+pd(d.getMinutes())):((d.getMonth()+1)+"/"+d.getDate());};
+ var rows=top.length?top.map(function(m){return '<div class="dbx-nrow" onclick="dbxMsgGo(\''+m.id+'\')"><span style="font-size:10.5px;font-weight:700;border-radius:6px;padding:3px 7px;flex-shrink:0;background:'+(m.un?"#FEF1F0":"#F2F4F6")+';color:'+(m.un?"#F04438":"#8B95A1")+'">'+(m.un?"NEW":"메시지")+'</span><p><b style="color:#191F28">'+esc(m.b)+"</b> · "+esc(String(m.t).slice(0,60))+"</p><time>"+fmt(m.at)+"</time></div>";}).join("")
+  :'<p class="text-g400 text-[13.5px] py-6 text-center">주고받은 메시지가 없습니다</p>';
+ return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">메신저'+(unTot?' <span style="background:#F04438;color:#fff;font-size:11.5px;font-weight:700;min-width:21px;height:21px;border-radius:11px;display:inline-grid;place-items:center;padding:0 6px">'+(unTot>99?"99+":unTot)+"</span>":"")+'</h2><span class="dbx-va" onclick="'+(isAdm?"go(&quot;admin-workflow&quot;)":"go(&quot;notes&quot;)")+'">전체 보기 →</span></div>'+rows+"</div>";}
 /* ── 관리자 대시보드 */
 function viewAdminHome(){
  if(!(ADM_ROWS||[]).length)setTimeout(loadApps,30);
@@ -798,7 +831,7 @@ function viewAdminHome(){
  return '<div class="px-4 sm:px-6 md:px-10 pt-3 md:pt-5 pb-8 md:pb-10 space-y-4">'+hero+kpis
   +'<div class="dbx-g2a">'+dbxTodoCard()+quick+"</div>"
   +'<div class="dbx-g2b">'+dbxSalesCard()+dbxShareCard()+"</div>"
-  +'<div class="dbx-g2c">'+dbxNoticeCard()+dbxMiniCal(ev,"admin-calendar","캠페인 일정")+"</div></div>";}
+  +'<div class="dbx-g2c">'+dbxMsgCard()+dbxNoticeCard()+"</div></div>";}
 function p2(n){return String(Number(n)||0);}
 /* ── 고객 대시보드 */
 function viewCustomerHome(){
@@ -830,7 +863,7 @@ function viewCustomerHome(){
  return '<div class="px-4 sm:px-6 md:px-10 pt-3 md:pt-5 pb-8 md:pb-10 space-y-4">'+hero+kpis
   +'<div class="dbx-g2a">'+dbxTodoCard()+quick+"</div>"
   +stepCard
-  +'<div class="dbx-g2c">'+dbxNoticeCard()+dbxMiniCal(ev,"calendar","캠페인 일정")+"</div></div>";}
+  +'<div class="dbx-g2c">'+dbxMsgCard()+dbxNoticeCard()+"</div></div>";}
 
 /* ── 매출분석 상단 요약 (매출 기준 · 등록일) ── */
 function dbxSalesMonthly12(group){
@@ -849,7 +882,7 @@ function dbxSalesSummary(group){
  var delta=body.prev>0?Math.round((body.total-body.prev)/body.prev*100):null;
  var tabs=["7일","28일","90일","365일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="S._salesTrendP=\''+k+'\';render()">'+k+"</span>";}).join("");
  var g=group||"all";
- var trend='<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-2"><div><div style="font-size:13.5px;color:#8B95A1;font-weight:500">매출 · '+(P==="365일"?"최근 1년":"최근 "+P)+'</div><div style="font-size:29px;font-weight:700;letter-spacing:-1px;margin-top:4px;color:#191F28">'+dbxWon(body.total)+(delta!=null?'<span style="font-size:14px;font-weight:700;margin-left:9px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'</div></div><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'+dbxArea(body.vals,body.labels,"#3182F6","dbxS"+P,dbxWonS,tips,dbxWon)+'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">등록일 기준 · 공급가 합계</div></div>';
+ var trend='<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-2"><div><div style="font-size:13.5px;color:#8B95A1;font-weight:500">매출 · '+(P==="365일"?"최근 1년":"최근 "+P)+' · VAT 미포함</div><div style="font-size:29px;font-weight:700;letter-spacing:-1px;margin-top:4px;color:#191F28">'+dbxWon(body.total)+(delta!=null?'<span style="font-size:14px;font-weight:700;margin-left:9px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'</div></div><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'+dbxArea(body.vals,body.labels,"#3182F6","dbxS"+P,dbxWonS,tips,dbxWon)+'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">등록일 기준 · 공급가 합계 (VAT 미포함)</div></div>';
  return '<div class="dbx-g2b" style="margin:2px 0 18px">'+trend+'<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">채널별 매출 비중</h2><span class="dbx-va" onclick="dbxChannelModal('+N+',\''+g+'\')">상세보기 →</span></div>'+dbxChannelShareBody(true,N,group)+"</div></div>";}
 function dbxShareData(){
  var p=function(n){return (n<10?"0":"")+n;};var nd=new Date();var pref=nd.getFullYear()+"-"+p(nd.getMonth()+1);
@@ -931,9 +964,9 @@ function dbxSalesKpis(group){
  var lb=P==="365일"?"최근 1년":"최근 "+P;
  var tabs=["7일","28일","90일","365일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="S._salesTrendP=\''+k+'\';render()">'+k+"</span>";}).join("");
  function kc(l,v,sub,subC){return '<div class="dbx-kc" style="cursor:default"><div class="kl">'+l+'</div><div class="kn" style="font-size:27px;margin:8px 0 6px">'+v+'</div><span style="font-size:12.5px;font-weight:600;color:'+(subC||"#8B95A1")+'">'+sub+"</span></div>";}
- return '<div class="flex items-center mb-3" style="margin-top:2px"><h2 class="dbx-sec">매출 요약 <span style="font-size:12.5px;color:#8B95A1;font-weight:600">· '+lb+' · 등록일 기준</span></h2><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'
+ return '<div class="flex items-center mb-3" style="margin-top:2px"><h2 class="dbx-sec">매출 요약 <span style="font-size:12.5px;color:#8B95A1;font-weight:600">· '+lb+' · 등록일 기준 · 공급가 (VAT 미포함)</span></h2><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'
  +'<div class="dbx-g4" style="margin-bottom:16px">'
- +kc(lb+" 매출",dbxWon(sum),dD!=null?((dD>=0?"+":"")+dD+"% 이전 기간 대비"):"이전 기간 데이터 없음",dD!=null?(dD>=0?"#0FA774":"#F04438"):null)
+ +kc(lb+" 매출 · VAT 미포함",dbxWon(sum),dD!=null?((dD>=0?"+":"")+dD+"% 이전 기간 대비"):"이전 기간 데이터 없음",dD!=null?(dD>=0?"#0FA774":"#F04438"):null)
  +kc("이번 달 매출",dbxWon(mSum),mD!=null?((mD>=0?"+":"")+mD+"% 전월 대비"):"전월 데이터 없음",mD!=null?(mD>=0?"#0FA774":"#F04438"):null)
  +kc("거래처",Object.keys(brands).length+"곳",lb+" 매출 발생 기준")
  +kc("평균 단가",dbxWon(avg),lb+" 캠페인당")+"</div>";}
