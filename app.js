@@ -734,10 +734,30 @@ var AUTH_KEY="knollad_auth";var _authTimer=null;
 function authLoad(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||"null");}catch(e){return null;}}
 function authSave(t){try{if(t)localStorage.setItem(AUTH_KEY,JSON.stringify(t));else localStorage.removeItem(AUTH_KEY);}catch(e){}}
 function authApply(t){if(t&&t.access_token){SH.Authorization="Bearer "+t.access_token;authSchedule(t);}else{SH.Authorization="Bearer "+SUPA_KEY;if(_authTimer){clearTimeout(_authTimer);_authTimer=null;}}}
-function authSchedule(t){if(_authTimer)clearTimeout(_authTimer);var ms=Math.max(15000,((t.expires_at||0)*1000-Date.now())-60000);_authTimer=setTimeout(function(){authRefresh().catch(function(){});},ms);}
+function authSchedule(t){if(_authTimer)clearTimeout(_authTimer);var ms=Math.max(15000,((t.expires_at||0)*1000-Date.now())-60000);_authTimer=setTimeout(authRefreshSafe,ms);}
+/* 안전 갱신: 다른 탭이 이미 갱신했으면 건너뛰고, 서버·네트워크 오류면 30초 뒤 재시도, 토큰이 진짜 무효일 때만 세션 종료 */
+function authRefreshSafe(){try{var t=authLoad();if(!t||!t.refresh_token)return;
+  if((t.expires_at||0)*1000-Date.now()>300000){authApply(t);return;}
+  authRefresh().catch(function(e){if(e&&e.permanent)return;setTimeout(authRefreshSafe,30000);});
+}catch(e){}}
 function authNormalize(j){var exp=j.expires_at||(Math.floor(Date.now()/1000)+(j.expires_in||3600));return {access_token:j.access_token,refresh_token:j.refresh_token,expires_at:exp,user:j.user?{id:j.user.id,email:j.user.email}:null};}
 function authLogin(email,pw){return fetch(SUPA_URL+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:SUPA_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:email,password:pw})}).then(function(r){return r.json().then(function(j){if(!r.ok||!j.access_token){var m=(j&&(j.error_description||j.msg||j.error))||"";var err=new Error(m||"login failed");err.code=r.status;throw err;}var t=authNormalize(j);authSave(t);authApply(t);return t;});});}
-function authRefresh(){var t=authLoad();if(!t||!t.refresh_token)return Promise.reject(new Error("no session"));return fetch(SUPA_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:SUPA_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:t.refresh_token})}).then(function(r){return r.json().then(function(j){if(!r.ok||!j.access_token){authSave(null);authApply(null);throw new Error("refresh failed");}var n=authNormalize(j);authSave(n);authApply(n);return n;});});}
+var _authRefreshP=null;
+function authRefresh(){var t=authLoad();if(!t||!t.refresh_token)return Promise.reject(new Error("no session"));
+  if(_authRefreshP)return _authRefreshP;
+  _authRefreshP=fetch(SUPA_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:SUPA_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:t.refresh_token})})
+  .then(function(r){return r.json().catch(function(){return {};}).then(function(j){
+    if(r.ok&&j.access_token){var n=authNormalize(j);authSave(n);authApply(n);return n;}
+    var err=new Error("refresh failed ("+r.status+")");
+    if(r.status===400||r.status===401||r.status===403){err.permanent=true;authSave(null);authApply(null);}
+    throw err;});})
+  .then(function(n){_authRefreshP=null;return n;},function(e){_authRefreshP=null;throw e;});
+  return _authRefreshP;}
+/* 절전 복귀·네트워크 복구·탭 전환 시 세션 상태 점검 (만료 5분 전이면 즉시 갱신) */
+(function(){function _authChk(){try{var t=authLoad();if(!t||!t.refresh_token)return;if((t.expires_at||0)*1000-Date.now()<300000)authRefreshSafe();}catch(e){}}
+try{window.addEventListener("focus",_authChk);window.addEventListener("online",_authChk);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)_authChk();});
+setInterval(_authChk,60000);}catch(e){}})();
 function authLogout(){var t=authLoad();authSave(null);authApply(null);if(t&&t.access_token){try{fetch(SUPA_URL+"/auth/v1/logout",{method:"POST",headers:{apikey:SUPA_KEY,Authorization:"Bearer "+t.access_token}}).catch(function(){});}catch(e){}}}
 function authEmail(){var t=authLoad();return (t&&t.user&&t.user.email)?String(t.user.email).toLowerCase():"";}
 /* 로그인된 계정의 회원 정보(역할) 조회 → S.role / S.cust 설정 */
@@ -756,7 +776,7 @@ function lgxRecover(){var e=(gv("loginEmail")||"").trim().toLowerCase();if(!e||e
 function doLogin(){const e=(gv("loginEmail")||"").trim().toLowerCase();const pw=gv("loginPw")||"";lgxKeepId(e);
   if(!e||!pw){toast("아이디와 비밀번호를 입력해주세요");lgxErr("아이디와 비밀번호를 입력해주세요");return;}
   const btn=document.getElementById("loginBtn");if(btn)btn.textContent="확인 중…";
-  authLogin(e,pw).then(function(){return authLoadProfile();}).then(function(){S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];S.myCampsAll=null;logEvent("login");try{notiSyncServer(true);}catch(_e){}if(S.role==="admin"||S.role==="cs")go("admin-dashboard");else go("customer-dashboard");})
+  authLogin(e,pw).catch(function(err){var st=err&&err.code;if(st===504||st===502||st===503||st===522||(!st&&!/invalid|credentials/i.test((err&&err.message)||""))){if(btn)btn.textContent="서버 응답 지연 · 다시 시도 중…";return new Promise(function(rs){setTimeout(rs,1500);}).then(function(){return authLogin(e,pw);});}throw err;}).then(function(){return authLoadProfile();}).then(function(){S.wf={step:1,edit:null};S.activeCamp=null;S.myCamps=[];S.myCampsAll=null;logEvent("login");try{notiSyncServer(true);}catch(_e){}if(S.role==="admin"||S.role==="cs")go("admin-dashboard");else go("customer-dashboard");})
   .catch(function(err){if(btn)btn.textContent="로그인";var msg=(err&&err.message)||"";if(err&&err.message==="no member"){authLogout();toast("승인된 계정이 아닙니다");lgxErr("승인된 계정이 아닙니다 · 관리자에게 문의해 주세요");}else if(/invalid|credentials/i.test(msg)||err.code===400){toast("아이디 또는 비밀번호가 올바르지 않습니다");lgxErr("아이디 또는 비밀번호가 올바르지 않습니다");}else{toast("로그인 오류 · 잠시 후 다시 시도해 주세요");lgxErr("로그인 처리 중 오류가 발생했습니다");}});}
 function isMobNav(){try{return window.matchMedia("(max-width:767px)").matches;}catch(e){return true;}}function toggleMobNav(force){if(typeof force==="boolean")S._navOpen=force;else S._navOpen=!S._navOpen;var open=!!S._navOpen;var as=document.querySelector("[data-sidenav]");var ov=document.querySelector("[data-sidenav-ov]");if(as){as.style.transform=(!isMobNav()||open)?"translateX(0)":"translateX(-105%)";}if(ov){if(!isMobNav())ov.classList.add("hidden");else ov.classList.toggle("hidden",!open);}}
 function applySideFoldClass(){var fold=!!S._sideFold;var as=document.querySelector("[data-sidenav]");var mains=document.querySelectorAll("[data-main]");if(as){as.classList.toggle("is-folded",fold&&!isMobNav());}for(var i=0;i<mains.length;i++){mains[i].classList.toggle("is-folded",fold&&!isMobNav());}}
@@ -1277,7 +1297,7 @@ var NOTICE_TPL=[
 ];
 function noticeFmt(at){if(!at)return "";var d=new Date(at);if(isNaN(d.getTime()))return "";var p=function(n){return (n<10?"0":"")+n;};return d.getFullYear()+"."+p(d.getMonth()+1)+"."+p(d.getDate());}
 function loadNotices(force){if(!S.role)return Promise.resolve([]);if(!force&&S._noticesAt&&Date.now()-S._noticesAt<60000)return Promise.resolve(S.notices||[]);S._noticesAt=Date.now();
-  return fetch(SUPA_URL+"/rest/v1/knollad_notices?select=*&order=pinned.desc,created_at.desc",{headers:SH}).then(function(r){return r.ok?r.json():[];}).then(function(rows){rows=Array.isArray(rows)?rows:[];var sig=JSON.stringify(rows.map(function(n){return [n.id,n.updated_at||n.created_at,n.pinned];}));var changed=sig!==S._noticeSig;S._noticeSig=sig;S.notices=rows;if(changed){var el=document.getElementById("noticeBar");if(el)el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}return rows;}).catch(function(){return S.notices||[];});}
+  return fetch(SUPA_URL+"/rest/v1/knollad_notices?select=*&order=created_at.desc",{headers:SH}).then(function(r){return r.ok?r.json():[];}).then(function(rows){rows=Array.isArray(rows)?rows:[];var sig=JSON.stringify(rows.map(function(n){return [n.id,n.updated_at||n.created_at,n.pinned];}));var changed=sig!==S._noticeSig;S._noticeSig=sig;S.notices=rows;if(changed){var el=document.getElementById("noticeBar");if(el)el.outerHTML=noticeBar();if(window.lucide)lucide.createIcons();}return rows;}).catch(function(){return S.notices||[];});}
 function noticeLatest(){var l=S.notices||[];return l.length?l[0]:null;}
 function noticeSeenKey(){var l=S.notices||[];var mx="";l.forEach(function(n){var t=String(n.updated_at||n.created_at||"");if(t>mx)mx=t;});return mx?("v2|"+mx):"";}
 function noticeIsNew(n){try{var k=noticeSeenKey();return !!k&&localStorage.getItem(NOTICE_SEEN)!==k;}catch(e){return false;}}
