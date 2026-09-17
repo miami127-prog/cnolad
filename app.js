@@ -806,6 +806,18 @@ function sidebar(items,cur,badge,bell,bellT){var open=!!S._navOpen;var fold=!!S.
 +'<button type="button" onclick="toggleSideFold()" title="'+(fold?"메뉴 펼치기":"메뉴 접기")+'" class="side-nav-btn hidden md:flex w-full items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="'+(fold?"panel-left-open":"panel-left-close")+'" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">'+(fold?"메뉴 펼치기":"메뉴 접기")+'</span><span class="side-label-mini">'+(fold?"펼치기":"접기")+'</span></button>'
 +'<button title="알림 설정" onclick="S._navOpen=false;notiModal()" class="side-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="bell-ring" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">알림 설정</span><span class="side-label-mini">알림</span></button>'
 +'<button title="로그아웃" onclick="S._navOpen=false;logout()" class="side-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="log-out" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">로그아웃</span><span class="side-label-mini">로그아웃</span></button>'
++(function(){try{
+ if(S.role==="admin"||S.role==="cs"){
+  var rows=ADM_ROWS||[];var now=Date.now();
+  var wk=rows.filter(function(a){var t=new Date(a.created_at||0).getTime();return t&&now-t<7*86400000;}).length;
+  var wait=rows.filter(function(a){return a.status==="검토 대기중";}).length;
+  return '<div class="side-cta side-label-full"><b>이번 주 신규 신청 '+wk+'건</b><span>'+(wait?'검토 대기 '+wait+'건이 있습니다':'검토 대기 건이 없습니다')+'</span><button type="button" onclick="S._navOpen=false;go(\'admin-dashboard\')">신청 검토하기</button></div>';
+ }else if(S.role==="customer"){
+  var camps=S.myCamps||[];
+  var act=camps.filter(function(a){try{return a.status==="승인 완료"&&stageIdx(wfOf(a))<8;}catch(_e2){return false;}}).length;
+  var un=0;camps.forEach(function(a){if(a.status==="승인 완료")un+=unreadCount(a,"cust");});
+  return '<div class="side-cta side-label-full"><b>진행 중 캠페인 '+act+'건</b><span>'+(un?'새 메시지 '+un+'건이 있습니다':'새 메시지가 없습니다')+'</span><button type="button" onclick="S._navOpen=false;go(\'workflow\')">워크플로우 보기</button></div>';
+ }}catch(_e){}return "";})()
 +'</nav>'
 +'</aside>';
 }
