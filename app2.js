@@ -808,7 +808,7 @@ function viewAdminHome(){
  if(!S.consults)setTimeout(loadConsults,60);
  var rows=ADM_ROWS||[];var today=dbxToday();
  var news=rows.filter(function(a){return a.status==="검토 대기중";}).length;
- var act=rows.filter(function(a){return a.status==="승인 완료"&&(((a.wf||{}).step)||1)<8;}).length;
+ var act=rows.filter(function(a){return a.status==="승인 완료"&&stageIdx(a.wf||{})<8;}).length;
  var upToday=rows.filter(function(a){return a.status==="승인 완료"&&a.preferred_date===today;}).length;
  var unread=0;rows.forEach(function(a){if(a.status==="승인 완료")unread+=unreadCount(a,"adm");});
  var cwait=(S.consults||[]).filter(function(c){var m=c.messages||[];return m.length&&m[m.length-1].role==="cust";}).length;
@@ -837,8 +837,8 @@ function p2(n){return String(Number(n)||0);}
 function viewCustomerHome(){
  setTimeout(loadMyCamps,30);
  var camps=(S.myCamps||[]);var today=dbxToday();
- var act=camps.filter(function(a){return a.status==="승인 완료"&&((wfOf(a).step)||1)<8;});
- var done=camps.filter(function(a){return a.status==="승인 완료"&&((wfOf(a).step)||1)>=8;}).length;
+ var act=camps.filter(function(a){return a.status==="승인 완료"&&stageIdx(wfOf(a))<8;});
+ var done=camps.filter(function(a){return a.status==="종료"||(a.status==="승인 완료"&&stageIdx(wfOf(a))>=8);}).length;
  var up=camps.filter(function(a){return a.status==="승인 완료"&&a.preferred_date&&a.preferred_date>=today;}).length;
  var unread=0;camps.forEach(function(a){if(a.status==="승인 완료")unread+=unreadCount(a,"cust");});
  var bell=buildTasks().length;
