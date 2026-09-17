@@ -801,12 +801,12 @@ function sidebar(items,cur,badge,bell,bellT){var open=!!S._navOpen;var fold=!!S.
 +(bellT?('<button onclick="openTodo()" title="알림" class="side-bell-top relative hidden md:flex items-center gap-1.5 pl-2.5 pr-3 h-10 rounded-full '+(bell>0?"bg-red-50":"bg-g100")+' hover:opacity-90"><i data-lucide="bell" class="w-[20px] h-[20px] '+(bell>0?"text-red-500":"text-g600")+'"></i><span class="side-label-mini">알림</span>'+(bell>0?'<span class="side-label-full text-[14px] font-bold" style="color:#EF4444">'+(bell>99?"99+":bell)+'</span><span class="side-bell-badge absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full grid place-items-center text-[10px] font-bold text-white" style="background:#EF4444">'+(bell>99?"99+":bell)+'</span>':'')+'</button>'):'')
 +'<button type="button" onclick="toggleMobNav(false)" class="md:hidden w-9 h-9 rounded-full bg-g100 grid place-items-center text-g500" aria-label="닫기">✕</button>'
 +'</div>'+(badge?'<span class="side-label-full mt-2 inline-flex px-2 py-0.5 rounded-md bg-blue-tint text-blue text-[11px] font-bold">'+badge+'</span>':'')+'</div>'
-+'<nav data-sidenav-list onscroll="S._sideY=this.scrollTop" class="flex-1 px-3 space-y-1 overflow-y-auto overflow-x-hidden">'+navBtns+'</nav>'
-+'<div data-side-foot class="px-3 border-t border-g100 '+(fold?"py-1.5 space-y-0.5":"py-3 space-y-1")+'">'
++'<nav data-sidenav-list onscroll="S._sideY=this.scrollTop" class="flex-1 px-3 space-y-1 overflow-y-auto overflow-x-hidden pb-3">'+navBtns
++'<div class="side-grp side-label-full">기능</div>'
 +'<button type="button" onclick="toggleSideFold()" title="'+(fold?"메뉴 펼치기":"메뉴 접기")+'" class="side-nav-btn hidden md:flex w-full items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="'+(fold?"panel-left-open":"panel-left-close")+'" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">'+(fold?"메뉴 펼치기":"메뉴 접기")+'</span><span class="side-label-mini">'+(fold?"펼치기":"접기")+'</span></button>'
 +'<button title="알림 설정" onclick="S._navOpen=false;notiModal()" class="side-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="bell-ring" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">알림 설정</span><span class="side-label-mini">알림</span></button>'
 +'<button title="로그아웃" onclick="S._navOpen=false;logout()" class="side-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="log-out" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">로그아웃</span><span class="side-label-mini">로그아웃</span></button>'
-+'</div>'
++'</nav>'
 +'</aside>';
 }
 
