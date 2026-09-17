@@ -660,21 +660,43 @@ function dbxDateLabel(){var d=new Date();return d.getFullYear()+"년 "+(d.getMon
 function dbxWon(v){if(!v)return "0원";if(v>=100000000){var e=Math.round(v/1000000)/100;return (e%1?e:Math.round(e))+"억";}return Math.round(v/10000).toLocaleString()+"만 원";}
 function dbxWonS(v){v=Number(v)||0;if(!v)return "0";if(v>=100000000)return (Math.round(v/10000000)/10)+"억";return Math.round(v/10000).toLocaleString()+"만";}
 function dbxGrpOk(a,group){return !group||group==="all"||((group==="partner")===salesIsPartnerCamp(a));}
-function dbxArea(vals,labels,color,id,fmt,tips){
+var _DBXC={};
+function dbxChartMove(ev,id){
+ try{
+ var c=_DBXC[id];if(!c)return;
+ var svg=ev.currentTarget;var r=svg.getBoundingClientRect();if(!r.width)return;
+ var xr=(ev.clientX-r.left)/r.width*c.w;
+ var bi=0,bd=1e9;for(var i=0;i<c.x.length;i++){var d=Math.abs(c.x[i]-xr);if(d<bd){bd=d;bi=i;}}
+ var hl=document.getElementById(id+"-hl"),hd=document.getElementById(id+"-hd"),tip=document.getElementById(id+"-tip");
+ if(hl){hl.setAttribute("x1",c.x[bi]);hl.setAttribute("x2",c.x[bi]);hl.style.display="";}
+ if(hd){hd.setAttribute("cx",c.x[bi]);hd.setAttribute("cy",c.y[bi]);hd.style.display="";}
+ if(tip){tip.innerHTML='<span style="color:#B0B8C1;font-weight:600;font-size:11px">'+(c.l[bi]||"")+'</span><br><b style="font-size:13.5px">'+c.d[bi]+"</b>";
+  tip.style.display="block";
+  var px=c.x[bi]/c.w*r.width,py=c.y[bi]/c.h*r.height;
+  var tw=tip.offsetWidth||96,th=tip.offsetHeight||44;
+  var lx=px+13;if(lx+tw>r.width-2)lx=px-tw-13;if(lx<2)lx=2;
+  var st=svg.offsetTop||0;var ty=py+st-th-10;if(ty<0)ty=py+st+12;
+  tip.style.left=lx+"px";tip.style.top=ty+"px";}
+ }catch(_e){}}
+function dbxChartOut(id){try{["-hl","-hd","-tip"].forEach(function(sfx){var el=document.getElementById(id+sfx);if(el)el.style.display="none";});}catch(_e){}}
+function dbxArea(vals,labels,color,id,fmt,tips,fmt2){
  var w=560,h=170,pad=8,mx=Math.max.apply(null,vals.concat([1]))*1.15;
  var tt=fmt||function(v){return Math.round(v).toLocaleString();};
+ var t2=fmt2||tt;
  var pts=vals.map(function(v,i){return [pad+i*((w-pad*2)/Math.max(1,vals.length-1)), h-24-(v/mx)*(h-44)];});
+ _DBXC[id]={w:w,h:h,x:pts.map(function(pt){return pt[0];}),y:pts.map(function(pt){return pt[1];}),d:vals.map(function(v){return t2(v);}),l:(tips||labels).map(function(x){return x||"";})};
  var line=pts.map(function(pt){return pt[0].toFixed(1)+","+pt[1].toFixed(1);}).join(" ");
  var area=line+" "+(w-pad)+","+(h-24)+" "+pad+","+(h-24);
  var labs=labels.map(function(l,i){return l?'<text x="'+pts[i][0]+'" y="'+(h-8)+'" text-anchor="middle" font-size="10.5" fill="#8B95A1" font-weight="600">'+l+"</text>":"";}).join("");
  var mxi=vals.indexOf(Math.max.apply(null,vals));
  var dots=vals.length&&Math.max.apply(null,vals)>0?'<circle cx="'+pts[mxi][0]+'" cy="'+pts[mxi][1]+'" r="4.5" fill="#fff" stroke="'+color+'" stroke-width="3"/>':"";
- var vlabs="";
- if(vals.length<=14)vlabs=vals.map(function(v,i){if(v<=0)return "";var x=Math.min(w-22,Math.max(22,pts[i][0]));return '<text x="'+x+'" y="'+Math.max(11,pts[i][1]-9)+'" text-anchor="middle" font-size="9.5" font-weight="700" fill="'+color+'">'+tt(v)+"</text>";}).join("");
- var hots=pts.map(function(pt,i){return '<circle cx="'+pt[0]+'" cy="'+pt[1]+'" r="10" fill="transparent"><title>'+((tips&&tips[i])||labels[i]||"")+" "+tt(vals[i])+"</title></circle>";}).join("");
- return '<svg width="100%" viewBox="0 0 '+w+" "+h+'" style="display:block;margin-top:10px"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs>'
- +[0.25,0.5,0.75].map(function(f){var y=h-24-(h-44)*f;return '<line x1="'+pad+'" x2="'+(w-pad)+'" y1="'+y+'" y2="'+y+'" stroke="#F2F4F6" stroke-width="1"/>';}).join("")
- +'<polygon points="'+area+'" fill="url(#'+id+')"/><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+dots+vlabs+labs+hots+"</svg>";}
+ return '<div style="position:relative">'
+ +'<svg width="100%" viewBox="0 0 '+w+" "+h+'" style="display:block;margin-top:10px" onmousemove="dbxChartMove(event,\''+id+'\')" onmouseleave="dbxChartOut(\''+id+'\')"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs>'
+ +[0.25,0.5,0.75].map(function(f){var y=h-24-(h-44)*f;return '<line x1="'+pad+'" x2="'+(w-pad)+'" y1="'+y+'" y2="'+y+'" stroke="#F2F4F6" stroke-width="1"/><text x="'+(w-pad-2)+'" y="'+(y-4)+'" text-anchor="end" font-size="9.5" fill="#B0B8C1" font-weight="600">'+tt(mx*f)+"</text>";}).join("")
+ +'<polygon points="'+area+'" fill="url(#'+id+')"/><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+dots+labs
+ +'<line id="'+id+'-hl" x1="0" x2="0" y1="18" y2="'+(h-24)+'" stroke="#B0B8C1" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>'
+ +'<circle id="'+id+'-hd" r="4.5" fill="#fff" stroke="'+color+'" stroke-width="3" style="display:none"/>'
+ +'</svg><div id="'+id+'-tip" style="position:absolute;display:none;pointer-events:none;background:#1B1F27;color:#fff;border-radius:10px;padding:7px 11px;line-height:1.4;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:30"></div></div>';}
 function dbxDonut(segs,center1,center2){
  var R=52,C=2*Math.PI*R,acc=0,tot=segs.reduce(function(t,x){return t+x.v;},0)||1;
  var el=segs.map(function(d){var len=C*d.v/tot;var e='<circle cx="70" cy="70" r="'+R+'" fill="none" stroke="'+d.c+'" stroke-width="17" stroke-dasharray="'+Math.max(0,len-2.5)+" "+(C-len+2.5)+'" stroke-dashoffset="'+(-acc)+'" transform="rotate(-90 70 70)"/>';acc+=len;return e;}).join("");
@@ -733,7 +755,7 @@ function dbxSalesCard(){
  var delta=d.prev>0?Math.round((d.total-d.prev)/d.prev*100):null;
  var tabs=["7일","28일","90일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="event.stopPropagation();S._dbxP=\''+k+'\';render()">'+k+"</span>";}).join("");
  return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center"><h2 class="dbx-sec">매출 추이</h2><div class="dbx-tog">'+tabs+'</div><span class="dbx-va" onclick="go(\'admin-sales\')">상세보기 →</span></div>'
- +dbxArea(vals,labels,"#3182F6","dbxg"+N,dbxWonS,tips)
+ +dbxArea(vals,labels,"#3182F6","dbxg"+N,dbxWonS,tips,dbxWon)
  +'<div style="display:flex;gap:16px;margin-top:8px;font-size:13px;color:#8B95A1;font-weight:500"><span>최근 '+P+' 매출 합계 <b style="color:#191F28">'+dbxWon(d.total)+"</b></span>"+(delta!=null?'<span>이전 기간 대비 <b style="color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</b></span>":"")+"</div></div>";}
 /* ── 거래처별 매출 비중 (이번 달 입금) */
 function dbxShareCard(){
@@ -819,7 +841,7 @@ function dbxSalesSummary(group){
  var delta=body.prev>0?Math.round((body.total-body.prev)/body.prev*100):null;
  var tabs=["7일","28일","90일","365일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="S._salesTrendP=\''+k+'\';render()">'+k+"</span>";}).join("");
  var g=group||"all";
- var trend='<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-2"><div><div style="font-size:13.5px;color:#8B95A1;font-weight:500">매출 · '+(P==="365일"?"최근 1년":"최근 "+P)+'</div><div style="font-size:29px;font-weight:700;letter-spacing:-1px;margin-top:4px;color:#191F28">'+dbxWon(body.total)+(delta!=null?'<span style="font-size:14px;font-weight:700;margin-left:9px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'</div></div><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'+dbxArea(body.vals,body.labels,"#3182F6","dbxS"+P,dbxWonS,tips)+'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">등록일 기준 · 공급가 합계</div></div>';
+ var trend='<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-2"><div><div style="font-size:13.5px;color:#8B95A1;font-weight:500">매출 · '+(P==="365일"?"최근 1년":"최근 "+P)+'</div><div style="font-size:29px;font-weight:700;letter-spacing:-1px;margin-top:4px;color:#191F28">'+dbxWon(body.total)+(delta!=null?'<span style="font-size:14px;font-weight:700;margin-left:9px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'</div></div><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'+dbxArea(body.vals,body.labels,"#3182F6","dbxS"+P,dbxWonS,tips,dbxWon)+'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">등록일 기준 · 공급가 합계</div></div>';
  return '<div class="dbx-g2b" style="margin:2px 0 18px">'+trend+'<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">채널별 매출 비중</h2><span class="dbx-va" onclick="dbxChannelModal('+N+',\''+g+'\')">상세보기 →</span></div>'+dbxChannelShareBody(true,N,group)+"</div></div>";}
 function dbxShareData(){
  var p=function(n){return (n<10?"0":"")+n;};var nd=new Date();var pref=nd.getFullYear()+"-"+p(nd.getMonth()+1);
@@ -865,9 +887,9 @@ function dbxChannelData(days,group){
  return {list:list,tot:tot,lbl:lbl};}
 function dbxChLogo(name,color){try{var c=(CH||[]).filter(function(x){return x.name===name;})[0];if(c&&c.logo)return '<img class="chlogo" src="'+c.logo+'" alt="">';}catch(e){}return '<i style="width:10px;height:10px;border-radius:3px;flex-shrink:0;margin-top:4px;display:inline-block;background:'+color+'"></i>';}
 function dbxChannelShareBody(withAmt,days,group){
- var d=dbxChannelData(days,group);var colors=["#3182F6","#7C6BF0","#38BDF8","#0FA774","#F59E0B"];
+ var d=dbxChannelData(days,group);var colors=["#3182F6","#7C6BF0","#38BDF8","#0FA774","#F59E0B","#F04438","#EC4899"];
  if(!d.tot)return '<p class="text-g400 text-[13.5px] py-9 text-center">'+d.lbl+' 매출이 아직 없습니다</p>';
- var top=d.list.slice(0,4),rest=d.list.slice(4);var restSum=rest.reduce(function(t,x){return t+x.v;},0);
+ var top=d.list.slice(0,7),rest=d.list.slice(7);var restSum=rest.reduce(function(t,x){return t+x.v;},0);
  var segs=top.map(function(x,i){return {v:x.v,c:colors[i]};});if(restSum)segs.push({v:restSum,c:"#D1D6DB"});
  return '<div style="display:flex;align-items:center;gap:18px;padding-top:2px">'+dbxDonut(segs,d.lbl,dbxWon(d.tot))
  +'<div class="dbx-leg" style="flex:1;min-width:0">'+top.map(function(x,i){return '<div class="li">'+dbxChLogo(x.n,colors[i])+'<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(x.n)+(withAmt?'<br><span style="font-size:11px;color:#B0B8C1;font-weight:500">'+dbxWon(x.v)+" · "+x.c+"건</span>":"")+"</span><b>"+Math.round(x.v/d.tot*100)+"%</b></div>";}).join("")

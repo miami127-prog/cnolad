@@ -420,7 +420,7 @@ function render(){
   /* 폴링으로 다시 그릴 때 화면이 튀지 않도록 스크롤 위치 보존 */
   var _sameView=(S._lastRenderView===S.view);var _wy=(typeof _scrollKeep==="number"&&_scrollKeep>0)?_scrollKeep:(window.scrollY||window.pageYOffset||0);
   var _chatPos=[];try{document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll').forEach(function(el,i){_chatPos.push([el.id||("k"+i),el.scrollTop,el.scrollHeight-el.clientHeight-el.scrollTop<40]);});}catch(_e0){}
-  var _sideY=0;try{var _sn0=document.querySelector("[data-sidenav]");if(_sn0)_sideY=_sn0.scrollTop;}catch(_se){}
+  var _sideY=0;try{var _sn0=document.querySelector("[data-sidenav-list]")||document.querySelector("[data-sidenav]");if(_sn0)_sideY=_sn0.scrollTop;}catch(_se){}
   S._lastRenderView=S.view;
   try{syncScrollTopBtn();}catch(_st2){}
 
@@ -448,7 +448,7 @@ function render(){
   if(_sameView&&_wy>0){_scrollLock=true;try{window.scrollTo(0,_wy);}catch(_e1){}
     setTimeout(function(){try{if(Math.abs((window.scrollY||0)-_wy)>2)window.scrollTo(0,_wy);}catch(_e){}_scrollLock=false;var rt=document.getElementById("root");if(rt)rt.style.minHeight="";},80);}
   else{var rt0=document.getElementById("root");if(rt0)rt0.style.minHeight="";}
-  try{var _sn1=document.querySelector("[data-sidenav]");if(_sn1&&_sideY)_sn1.scrollTop=_sideY;}catch(_se2){}
+  try{var _sn1=document.querySelector("[data-sidenav-list]")||document.querySelector("[data-sidenav]");if(_sn1&&_sideY)_sn1.scrollTop=_sideY;}catch(_se2){}
   try{var _els=document.querySelectorAll('[data-kkochat],#chatScroll,#acScroll');_els.forEach(function(el,i){var p=_chatPos[i];if(!p)return;el.scrollTop=p[2]?el.scrollHeight:p[1];});}catch(_e2){}
   try{var _pub=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding"||v==="apply");var _mr=document.querySelector('meta[name="robots"]');if(!_mr){_mr=document.createElement("meta");_mr.setAttribute("name","robots");document.head.appendChild(_mr);}_mr.setAttribute("content",_pub?"index,follow":"noindex,nofollow,noarchive");}catch(_re){}
   try{if(window.lucide)lucide.createIcons();}catch(_li){}
@@ -801,7 +801,7 @@ function sidebar(items,cur,badge,bell,bellT){var open=!!S._navOpen;var fold=!!S.
 +(bellT?('<button onclick="openTodo()" title="알림" class="side-bell-top relative hidden md:flex items-center gap-1.5 pl-2.5 pr-3 h-10 rounded-full '+(bell>0?"bg-red-50":"bg-g100")+' hover:opacity-90"><i data-lucide="bell" class="w-[20px] h-[20px] '+(bell>0?"text-red-500":"text-g600")+'"></i><span class="side-label-mini">알림</span>'+(bell>0?'<span class="side-label-full text-[14px] font-bold" style="color:#EF4444">'+(bell>99?"99+":bell)+'</span><span class="side-bell-badge absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full grid place-items-center text-[10px] font-bold text-white" style="background:#EF4444">'+(bell>99?"99+":bell)+'</span>':'')+'</button>'):'')
 +'<button type="button" onclick="toggleMobNav(false)" class="md:hidden w-9 h-9 rounded-full bg-g100 grid place-items-center text-g500" aria-label="닫기">✕</button>'
 +'</div>'+(badge?'<span class="side-label-full mt-2 inline-flex px-2 py-0.5 rounded-md bg-blue-tint text-blue text-[11px] font-bold">'+badge+'</span>':'')+'</div>'
-+'<nav class="flex-1 px-3 space-y-1 overflow-y-auto overflow-x-hidden">'+navBtns+'</nav>'
++'<nav data-sidenav-list class="flex-1 px-3 space-y-1 overflow-y-auto overflow-x-hidden">'+navBtns+'</nav>'
 +'<div data-side-foot class="px-3 border-t border-g100 '+(fold?"py-1.5 space-y-0.5":"py-3 space-y-1")+'">'
 +'<button type="button" onclick="toggleSideFold()" title="'+(fold?"메뉴 펼치기":"메뉴 접기")+'" class="side-nav-btn hidden md:flex w-full items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="'+(fold?"panel-left-open":"panel-left-close")+'" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">'+(fold?"메뉴 펼치기":"메뉴 접기")+'</span><span class="side-label-mini">'+(fold?"펼치기":"접기")+'</span></button>'
 +'<button title="알림 설정" onclick="S._navOpen=false;notiModal()" class="side-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[15px] font-bold text-g500 hover:text-g800 hover:bg-g100"><i data-lucide="bell-ring" class="w-[16px] h-[16px] flex-shrink-0"></i><span class="side-label-full">알림 설정</span><span class="side-label-mini">알림</span></button>'
