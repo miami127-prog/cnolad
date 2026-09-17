@@ -679,22 +679,30 @@ function dbxChartMove(ev,id){
   tip.style.left=lx+"px";tip.style.top=ty+"px";}
  }catch(_e){}}
 function dbxChartOut(id){try{["-hl","-hd","-tip"].forEach(function(sfx){var el=document.getElementById(id+sfx);if(el)el.style.display="none";});}catch(_e){}}
-function dbxArea(vals,labels,color,id,fmt,tips,fmt2,showVals){
- var w=560,h=170,pad=8,mx=Math.max.apply(null,vals.concat([1]))*1.15;
+function dbxArea(vals,labels,color,id,fmt,tips,fmt2){
+ var w=560,h=170,padL=44,padR=10,top=(h-44),base=h-24;
  var tt=fmt||function(v){return Math.round(v).toLocaleString();};
  var t2=fmt2||tt;
- var pts=vals.map(function(v,i){return [pad+i*((w-pad*2)/Math.max(1,vals.length-1)), h-24-(v/mx)*(h-44)];});
+ /* 눈금: 0 / 50 / 100 처럼 떨어지는 값 (만원 단위) */
+ var mxRaw=Math.max.apply(null,vals.concat([0]));var mMan=mxRaw/10000;
+ var step=(function(m){if(m<=0)return 1;var t=m/3;var pw=Math.pow(10,Math.floor(Math.log(t)/Math.LN10));var f=t/pw;var nf=f<=1?1:(f<=2?2:(f<=2.5?2.5:(f<=5?5:10)));return nf*pw;})(mMan);
+ var topMan=Math.max(step,Math.ceil((mMan||1)/step)*step);
+ var mx=topMan*10000;
+ var tkFmt=function(v){return v>=10000?(Math.round(v/1000)/10)+"억":(v%1?v.toFixed(1):String(v));};
+ var ticks=[];for(var tv=0;tv<=topMan+1e-9;tv+=step)ticks.push(Math.round(tv*100)/100);
+ var pts=vals.map(function(v,i){return [padL+i*((w-padL-padR)/Math.max(1,vals.length-1)), base-(v/mx)*top];});
  _DBXC[id]={w:w,h:h,x:pts.map(function(pt){return pt[0];}),y:pts.map(function(pt){return pt[1];}),d:vals.map(function(v){return t2(v);}),l:(tips||labels).map(function(x){return x||"";})};
  var line=pts.map(function(pt){return pt[0].toFixed(1)+","+pt[1].toFixed(1);}).join(" ");
- var area=line+" "+(w-pad)+","+(h-24)+" "+pad+","+(h-24);
+ var area=line+" "+(w-padR)+","+base+" "+padL+","+base;
  var labs=labels.map(function(l,i){return l?'<text x="'+pts[i][0]+'" y="'+(h-8)+'" text-anchor="middle" font-size="10.5" fill="#8B95A1" font-weight="600">'+l+"</text>":"";}).join("");
  var mxi=vals.indexOf(Math.max.apply(null,vals));
  var dots=vals.length&&Math.max.apply(null,vals)>0?'<circle cx="'+pts[mxi][0]+'" cy="'+pts[mxi][1]+'" r="4.5" fill="#fff" stroke="'+color+'" stroke-width="3"/>':"";
+ var grid=ticks.map(function(tv){var y=base-(tv/topMan)*top;return (tv>0?'<line x1="'+padL+'" x2="'+(w-padR)+'" y1="'+y+'" y2="'+y+'" stroke="#F2F4F6" stroke-width="1"/>':'')+'<text x="'+(padL-8)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="9.5" fill="#B0B8C1" font-weight="600">'+tkFmt(tv)+"</text>";}).join("");
  return '<div style="position:relative">'
  +'<svg width="100%" viewBox="0 0 '+w+" "+h+'" style="display:block;margin-top:10px" onmousemove="dbxChartMove(event,\''+id+'\')" onmouseleave="dbxChartOut(\''+id+'\')"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs>'
- +[0.25,0.5,0.75].map(function(f){var y=h-24-(h-44)*f;return '<line x1="'+pad+'" x2="'+(w-pad)+'" y1="'+y+'" y2="'+y+'" stroke="#F2F4F6" stroke-width="1"/><text x="'+(w-pad-2)+'" y="'+(y-4)+'" text-anchor="end" font-size="9.5" fill="#B0B8C1" font-weight="600">'+tt(mx*f)+"</text>";}).join("")
- +'<polygon points="'+area+'" fill="url(#'+id+')"/><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+dots+(function(){if(!showVals)return "";var idx=[];if(vals.length<=14){vals.forEach(function(v,i){if(v>0)idx.push(i);});}else{var pk=[];vals.forEach(function(v,i){if(v<=0)return;var l0=i>0?vals[i-1]:-1,r0=i<vals.length-1?vals[i+1]:-1;if(v>=l0&&v>=r0)pk.push(i);});pk.sort(function(a,b){return vals[b]-vals[a];});idx=pk.slice(0,6);}return idx.map(function(i){var x=Math.min(w-22,Math.max(22,pts[i][0]));return '<text x="'+x+'" y="'+Math.max(11,pts[i][1]-9)+'" text-anchor="middle" font-size="9.5" font-weight="700" fill="'+color+'">'+tt(vals[i])+"</text>";}).join("");})()+labs
- +'<line id="'+id+'-hl" x1="0" x2="0" y1="18" y2="'+(h-24)+'" stroke="#B0B8C1" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>'
+ +grid
+ +'<polygon points="'+area+'" fill="url(#'+id+')"/><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+dots+labs
+ +'<line id="'+id+'-hl" x1="0" x2="0" y1="18" y2="'+base+'" stroke="#B0B8C1" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>'
  +'<circle id="'+id+'-hd" r="4.5" fill="#fff" stroke="'+color+'" stroke-width="3" style="display:none"/>'
  +'</svg><div id="'+id+'-tip" style="position:absolute;display:none;pointer-events:none;background:#1B1F27;color:#fff;border-radius:10px;padding:7px 11px;line-height:1.4;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:30"></div></div>';}
 function dbxDonut(segs,center1,center2){
@@ -754,9 +762,9 @@ function dbxSalesCard(){
  var tips=d.keys.map(md);
  var delta=d.prev>0?Math.round((d.total-d.prev)/d.prev*100):null;
  var tabs=["7일","28일","90일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="event.stopPropagation();S._dbxP=\''+k+'\';render()">'+k+"</span>";}).join("");
- return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center"><h2 class="dbx-sec">매출 추이</h2><div class="dbx-tog">'+tabs+'</div><span class="dbx-va" onclick="go(\'admin-sales\')">상세보기 →</span></div>'
- +dbxArea(vals,labels,"#3182F6","dbxg"+N,dbxWonS,tips,dbxWon,true)
- +'<div style="display:flex;gap:16px;margin-top:8px;font-size:13px;color:#8B95A1;font-weight:500"><span>최근 '+P+' 매출 합계 <b style="color:#191F28">'+dbxWon(d.total)+"</b></span>"+(delta!=null?'<span>이전 기간 대비 <b style="color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</b></span>":"")+"</div></div>";}
+ return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-1"><h2 class="dbx-sec">매출 추이</h2><div class="dbx-tog">'+tabs+'</div><span style="font-size:19px;font-weight:800;color:#191F28;letter-spacing:-0.5px;margin-left:12px" title="최근 '+P+' 매출 합계">'+dbxWon(d.total)+"</span>"+(delta!=null?'<span style="font-size:12.5px;font-weight:700;margin-left:7px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'<span class="dbx-va" onclick="go(\'admin-sales\')">상세보기 →</span></div>'
+ +dbxArea(vals,labels,"#3182F6","dbxg"+N,dbxWonS,tips,dbxWon)
+ +'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">최근 '+P+' 합계 · 등록일 기준 · 공급가</div></div>';}
 /* ── 거래처별 매출 비중 (이번 달 입금) */
 function dbxShareCard(){
  var P=S._dbxP||"7일";var N=P==="7일"?7:(P==="28일"?28:90);
