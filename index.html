@@ -129,6 +129,18 @@ section.pb-24{padding-bottom:44px!important;}
 [data-sidenav] .side-brand-btn .side-label-full{color:#fff!important}
 [data-sidenav] .side-bell-top{background:rgba(255,255,255,.09)!important}
 [data-sidenav] .bg-white{background:rgba(255,255,255,.08)!important}
+[data-sidenav]{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+[data-sidenav]::-webkit-scrollbar{width:5px}
+[data-sidenav]::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:3px}
+[data-sidenav]::-webkit-scrollbar-track{background:transparent}
+/* 매출분석 표 정돈 */
+.dbx-sales table{border-collapse:separate;border-spacing:0}
+.dbx-sales table thead th{background:#F9FAFB;color:#8B95A1;font-weight:600;font-size:12.5px;padding:11px 13px;white-space:nowrap;border-bottom:1px solid #F2F4F6}
+.dbx-sales table thead th:first-child{border-radius:12px 0 0 12px}
+.dbx-sales table thead th:last-child{border-radius:0 12px 12px 0}
+.dbx-sales table tbody td{padding:13px;border-bottom:1px solid #F5F7FA}
+.dbx-sales table tbody tr:hover td{background:#F8FAFF}
+.chlogo{width:20px;height:20px;border-radius:7px;object-fit:cover;flex-shrink:0;display:block}
 /* ── 대시보드(신규 메뉴) 전용 ── */
 .dbx-hero{background:radial-gradient(130% 240% at 92% -30%,#3D55C9 0%,#1B2450 42%,#111631 100%);border-radius:26px;padding:26px 30px;color:#fff;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;box-shadow:0 22px 44px -20px rgba(17,22,49,.5)}
 .dbx-hero::before{content:'';position:absolute;right:-70px;top:-90px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(93,137,245,.4),transparent 65%)}
@@ -253,7 +265,7 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609180120"></script>
-<script src="/app2.js?v=202609180120"></script>
+<script src="/app.js?v=202609180230"></script>
+<script src="/app2.js?v=202609180230"></script>
 </body>
 </html

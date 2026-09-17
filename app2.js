@@ -295,7 +295,7 @@ var moRows=monthly.map(function(m){var g=m.agg;var on=f.month===m.m;var empty=!g
   // ── 캠페인별 상세
   var sortedRows=rows.slice().sort(function(a,b){return (b.recv||"").localeCompare(a.recv||"");});var dRows=rows.length?salesSlice("salesPage",sortedRows,15).map(function(r){return '<tr class="border-b border-[#F2F4F6] last:border-0 align-top '+(r.cancelled?"opacity-50":"")+'"><td class="px-3 py-2.5 text-[12px] text-[#333D4B] num whitespace-nowrap">'+(r.recv||"미확인")+'</td><td class="px-3 py-2.5"><p class="font-bold text-g900 whitespace-nowrap">'+esc(r.brand)+'</p><p class="text-[12px] text-[#333D4B] whitespace-nowrap">'+esc(group==="partner"?(salesPartnerName(r)+" · "+(r.mgr||"미지정")):(group==="all"&&r.partner?(salesPartnerName(r)+" · "+(r.mgr||"미지정")):(r.contact||r.email)))+(group==="all"?' <span class="text-[10.5px] font-bold px-1.5 py-0.5 rounded-md '+(r.partner?"bg-violet-50 text-violet-700":"bg-blue-tint text-blue")+'">'+(r.partner?"파트너":"일반")+"</span>":"")+'</p></td><td class="px-3 py-2.5 text-[12.5px] text-[#191F28] max-w-[220px]"><p class="truncate" title="'+esc(r.unitPrices)+'">'+esc(r.channels)+'</p><p class="text-[12px] text-[#333D4B] truncate">적용 단가 '+esc(r.unitPrices)+'</p>'+(r.listPrice!=null&&r.listPrice!==r.supplyBefore?'<p class="text-[12px] text-[#333D4B]">일반 단가 합 '+salesWon(r.listPrice)+' (참고)</p>':"")+'</td><td class="px-3 py-2.5 num text-[#191F28] whitespace-nowrap">'+(r.unknownAmt?'<span class="text-red-500 font-bold">미확인</span>':salesWon(r.supplyBefore))+'</td><td class="px-3 py-2.5 num text-red-600 whitespace-nowrap">'+(r.disc?"-"+salesWon(r.disc):"—")+'</td><td class="px-3 py-2.5 num text-g900 whitespace-nowrap">'+(r.unknownAmt?"미확인":salesWon(r.supply))+'</td><td class="px-3 py-2.5 num text-[#333D4B] whitespace-nowrap">'+(r.unknownAmt?"미확인":salesWon(r.vat))+'</td><td class="px-3 py-2.5 num font-bold text-g900 whitespace-nowrap">'+(r.unknownAmt?"미확인":salesWon(r.bill))+'</td><td class="px-3 py-2.5 num font-bold text-blue whitespace-nowrap">'+salesWon(r.paid)+'</td><td class="px-3 py-2.5 num text-amber-600 whitespace-nowrap">'+(r.unknownAmt?"미확인":salesWon(r.balance))+'</td><td class="px-3 py-2.5 whitespace-nowrap">'+salesPstBadge(r)+(r.cancelled?"":'<select onchange="admSalesPay(\''+r.id+'\',this.value)" class="block mt-1 text-[12.5px] rounded-lg border border-[#E5E8EB] px-1.5 py-1 bg-white">'+["결제 대기중","입금 확인중","결제 완료"].map(function(s){return '<option value="'+s+'"'+((r.a.pay_status||"결제 대기중")===s?" selected":"")+'>'+s+'</option>';}).join("")+'</select>')+'</td><td class="px-3 py-2.5 whitespace-nowrap"><input type="date" value="'+esc(r.due)+'" onchange="admSalesPayDue(\''+r.id+'\',this.value)" class="text-[12.5px] rounded-lg border border-[#E5E8EB] px-1.5 py-1 bg-white w-[124px]"></td><td class="px-3 py-2.5 whitespace-nowrap"><p class="num text-[12.5px] '+(r.payDate?"text-g900":"text-[#191F28]")+'">'+(r.payDate||"미확인")+'</p><button onclick="salesPayModal(\''+r.id+'\')" class="text-[12.5px] font-bold text-blue mt-0.5">입금 기록 '+(salesPayments(r.a).length?"("+salesPayments(r.a).length+")":"추가")+'</button></td></tr>';}).join(""):'<tr><td colspan="13" class="px-4 py-10 text-center text-[#191F28]">조회 조건에 해당하는 캠페인이 없습니다.</td></tr>';
   var detailCard='<div id="salesDetailCard" class="'+CARD+' overflow-hidden"><div class="px-5 py-4 border-b border-[#F2F4F6] flex items-center justify-between flex-wrap gap-2"><div><h2 class="text-[21px] font-bold text-g900">캠페인별 상세 내역 <span class="text-blue">'+rows.length+'</span>건</h2><p class="text-[14.5px] text-[#333D4B] mt-1">'+esc(cond)+' · 정가·적용 단가·추가 할인·공급가·부가세·청구액·입금액·미입금 금액</p></div><div class="text-[15px] text-[#333D4B] flex items-center gap-x-4 gap-y-1 flex-wrap"><span>합계 청구액 <b class="text-g900 num text-[19px]">'+salesWon(agg.bill)+'</b></span><span>입금 <b class="text-blue num text-[19px]">'+salesWon(agg.paid)+'</b></span><span>미입금 <b class="text-amber-600 num text-[19px]">'+salesWon(agg.unpaid)+'</b></span></div></div><div class="overflow-x-auto"><table class="w-full text-left min-w-[1500px] text-[13px]"><thead><tr>'+["접수일","브랜드",(group==="partner"?"채널 · 적용 단가":"채널 · 적용 단가"),"정가 합","추가 할인","공급가액","부가세","청구액","입금액","미입금 금액","결제 상태","입금예정일","입금일 · 기록"].map(function(h){return '<th class="px-3 py-2.5 text-[12px] font-bold text-[#333D4B] whitespace-nowrap sticky top-0 z-20" style="background:#F2F4F6">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+dRows+'</tbody></table></div>'+salesPager("salesPage",rows.length,15)+'</div>';
-  return '<div class="p-4 sm:p-6 md:p-10">'+pageHeader("SALES","매출 분석",(group==="partner"?"와이트라이브(파트너사) — 전용 단가 적용 캠페인":group==="all"?"총매출 — 일반회원 + 와이트라이브 전체 합산":"일반회원 — 정상 단가 캠페인")+" · 접수월/입금월 기준으로 금액과 입금 현황을 확인합니다")+salesTabs(group==="partner"?"와이트라이브":group==="all"?"총매출":"일반회원")+dbxSalesKpis()+dbxSalesSummary()+filterBar+kpis+monthlyCard+brandCard+detailCard+'</div>';}
+  return '<div class="dbx-sales p-4 sm:p-6 md:p-10">'+pageHeader("SALES","매출 분석",(group==="partner"?"와이트라이브(파트너사) — 전용 단가 적용 캠페인":group==="all"?"총매출 — 일반회원 + 와이트라이브 전체 합산":"일반회원 — 정상 단가 캠페인")+" · 접수월/입금월 기준으로 금액과 입금 현황을 확인합니다")+salesTabs(group==="partner"?"와이트라이브":group==="all"?"총매출":"일반회원")+dbxSalesKpis(group)+dbxSalesSummary(group)+filterBar+kpis+monthlyCard+brandCard+detailCard+'</div>';}
 function salesHelp(group){var f=salesFilter();var rows=salesRows(group);var agg=salesAgg(rows);var li=function(t,d){return '<div class="py-2.5 border-b border-[#F2F4F6] last:border-0"><p class="text-[14px] font-bold text-g900">'+t+'</p><p class="text-[13px] text-[#333D4B] leading-relaxed mt-0.5">'+d+'</p></div>';};
 modal('<div class="flex items-center justify-between mb-2"><h3 class="text-[18px] font-bold text-g900">매출 분석 집계 기준</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-[#F2F4F6] grid place-items-center text-[#333D4B]">✕</button></div><div class="bg-blue-soft rounded-2xl p-3 mb-2 text-[13px] text-g900"><b>현재 조회 조건</b> '+esc(salesCondText(group,f))+'</div>'
 +li("금액 단위","원 · 공급가액 = VAT 별도 · 부가세 10% · 청구액 = VAT 포함. 전체 거래 금액은 청구액(VAT 포함) 기준입니다. 현재 조회: 공급가액 "+salesWon(agg.supply)+" + 부가세 "+salesWon(agg.vat)+" = 청구액 "+salesWon(agg.bill))
@@ -658,17 +658,23 @@ function dbxToday(){var d=new Date();var p=function(n){return (n<10?"0":"")+n;};
 function dbxGreet(){var h=new Date().getHours();if(h<6)return "늦은 시간까지 수고 많으세요";if(h<12)return "좋은 아침입니다";if(h<18)return "좋은 오후입니다";return "좋은 저녁입니다";}
 function dbxDateLabel(){var d=new Date();return d.getFullYear()+"년 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 ("+["일","월","화","수","목","금","토"][d.getDay()]+")";}
 function dbxWon(v){if(!v)return "0원";if(v>=100000000){var e=Math.round(v/1000000)/100;return (e%1?e:Math.round(e))+"억";}return Math.round(v/10000).toLocaleString()+"만 원";}
-function dbxArea(vals,labels,color,id){
+function dbxWonS(v){v=Number(v)||0;if(!v)return "0";if(v>=100000000)return (Math.round(v/10000000)/10)+"억";return Math.round(v/10000).toLocaleString()+"만";}
+function dbxGrpOk(a,group){return !group||group==="all"||((group==="partner")===salesIsPartnerCamp(a));}
+function dbxArea(vals,labels,color,id,fmt,tips){
  var w=560,h=170,pad=8,mx=Math.max.apply(null,vals.concat([1]))*1.15;
+ var tt=fmt||function(v){return Math.round(v).toLocaleString();};
  var pts=vals.map(function(v,i){return [pad+i*((w-pad*2)/Math.max(1,vals.length-1)), h-24-(v/mx)*(h-44)];});
  var line=pts.map(function(pt){return pt[0].toFixed(1)+","+pt[1].toFixed(1);}).join(" ");
  var area=line+" "+(w-pad)+","+(h-24)+" "+pad+","+(h-24);
  var labs=labels.map(function(l,i){return l?'<text x="'+pts[i][0]+'" y="'+(h-8)+'" text-anchor="middle" font-size="10.5" fill="#8B95A1" font-weight="600">'+l+"</text>":"";}).join("");
  var mxi=vals.indexOf(Math.max.apply(null,vals));
  var dots=vals.length&&Math.max.apply(null,vals)>0?'<circle cx="'+pts[mxi][0]+'" cy="'+pts[mxi][1]+'" r="4.5" fill="#fff" stroke="'+color+'" stroke-width="3"/>':"";
+ var vlabs="";
+ if(vals.length<=14)vlabs=vals.map(function(v,i){if(v<=0)return "";var x=Math.min(w-22,Math.max(22,pts[i][0]));return '<text x="'+x+'" y="'+Math.max(11,pts[i][1]-9)+'" text-anchor="middle" font-size="9.5" font-weight="700" fill="'+color+'">'+tt(v)+"</text>";}).join("");
+ var hots=pts.map(function(pt,i){return '<circle cx="'+pt[0]+'" cy="'+pt[1]+'" r="10" fill="transparent"><title>'+((tips&&tips[i])||labels[i]||"")+" "+tt(vals[i])+"</title></circle>";}).join("");
  return '<svg width="100%" viewBox="0 0 '+w+" "+h+'" style="display:block;margin-top:10px"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs>'
  +[0.25,0.5,0.75].map(function(f){var y=h-24-(h-44)*f;return '<line x1="'+pad+'" x2="'+(w-pad)+'" y1="'+y+'" y2="'+y+'" stroke="#F2F4F6" stroke-width="1"/>';}).join("")
- +'<polygon points="'+area+'" fill="url(#'+id+')"/><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+dots+labs+"</svg>";}
+ +'<polygon points="'+area+'" fill="url(#'+id+')"/><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+dots+vlabs+labs+hots+"</svg>";}
 function dbxDonut(segs,center1,center2){
  var R=52,C=2*Math.PI*R,acc=0,tot=segs.reduce(function(t,x){return t+x.v;},0)||1;
  var el=segs.map(function(d){var len=C*d.v/tot;var e='<circle cx="70" cy="70" r="'+R+'" fill="none" stroke="'+d.c+'" stroke-width="17" stroke-dasharray="'+Math.max(0,len-2.5)+" "+(C-len+2.5)+'" stroke-dashoffset="'+(-acc)+'" transform="rotate(-90 70 70)"/>';acc+=len;return e;}).join("");
@@ -705,12 +711,13 @@ function dbxMiniCal(evDates,dest,title){
 function dbxHero(name,sub,chips){
  return '<div class="dbx-hero"><div><h1><em>'+esc(name)+"</em>님, "+dbxGreet()+'</h1><p class="sub">'+sub+'</p></div><div style="margin-left:auto;position:relative;z-index:1"><div style="font-size:12.5px;color:#7D89A8;font-weight:600;margin-bottom:10px;text-align:right">'+dbxDateLabel()+'</div><div class="dbx-chips">'+chips.map(function(c){return '<div class="dbx-chip" onclick="'+(c[3]||"")+'"><b'+(c[2]?' class="pt"':"")+">"+c[0]+"</b><span>"+c[1]+"</span></div>";}).join("")+"</div></div></div>";}
 /* ── 매출 추이 (관리자 · 입금액 기준 실데이터) */
-function dbxSalesDaily(days){ /* 매출 기준: 승인·종료 캠페인의 매출(공급가)을 등록일로 집계 */
+function dbxSalesDaily(days,group){ /* 매출 기준: 승인·종료 캠페인의 매출(공급가)을 등록일로 집계 */
  var out=[],map={},p=function(n){return (n<10?"0":"")+n;};
  var end=new Date();for(var i=days-1;i>=0;i--){var d=new Date(end.getTime()-i*86400000);map[d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())]=0;}
  var prev=0;var startMs=end.getTime()-(days-1)*86400000-days*86400000;
  (ADM_ROWS||[]).forEach(function(a){
    if(a.status!=="승인 완료"&&a.status!=="종료")return;
+   if(!dbxGrpOk(a,group))return;
    var dt=(a.created_at||"").slice(0,10);if(!dt)return;var amt=priceOf(a).supply;
    if(map[dt]!=null)map[dt]+=amt;
    else{var t=new Date(dt).getTime();if(t>=startMs&&t<end.getTime()-(days-1)*86400000)prev+=amt;}});
@@ -720,15 +727,18 @@ function dbxSalesDaily(days){ /* 매출 기준: 승인·종료 캠페인의 매�
 function dbxSalesCard(){
  var P=S._dbxP||"7일";var N=P==="7일"?7:(P==="28일"?28:90);
  var d=dbxSalesDaily(N);
- var vals=d.vals,labels=d.keys.map(function(k,i){var step=Math.max(1,Math.round(d.keys.length/7));if(i===d.keys.length-1)return "오늘";return i%step===0?String(Number(k.slice(5,7)))+"/"+String(Number(k.slice(8,10))):"";});
+ var md=function(k){return String(Number(k.slice(5,7)))+"/"+String(Number(k.slice(8,10)));};
+ var vals=d.vals,labels=d.keys.map(function(k,i){var step=Math.max(1,Math.round(d.keys.length/7));if(i===d.keys.length-1)return "오늘";return i%step===0?md(k):"";});
+ var tips=d.keys.map(md);
  var delta=d.prev>0?Math.round((d.total-d.prev)/d.prev*100):null;
  var tabs=["7일","28일","90일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="event.stopPropagation();S._dbxP=\''+k+'\';render()">'+k+"</span>";}).join("");
  return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center"><h2 class="dbx-sec">매출 추이</h2><div class="dbx-tog">'+tabs+'</div><span class="dbx-va" onclick="go(\'admin-sales\')">상세보기 →</span></div>'
- +dbxArea(vals,labels,"#3182F6","dbxg"+N)
- +'<div style="display:flex;gap:16px;margin-top:8px;font-size:13px;color:#8B95A1;font-weight:500"><span>최근 '+P+" 매출 합계 <b style=\'color:#191F28\'>".replace(/\\'/g,String.fromCharCode(39))+dbxWon(d.total)+"</b></span>"+(delta!=null?"<span>이전 기간 대비 <b style=\'color:"+(delta>=0?"#0FA774":"#F04438")+"\'>".replace(/\\'/g,String.fromCharCode(39))+(delta>=0?"+":"")+delta+"%</b></span>":"")+"</div></div>";}
+ +dbxArea(vals,labels,"#3182F6","dbxg"+N,dbxWonS,tips)
+ +'<div style="display:flex;gap:16px;margin-top:8px;font-size:13px;color:#8B95A1;font-weight:500"><span>최근 '+P+' 매출 합계 <b style="color:#191F28">'+dbxWon(d.total)+"</b></span>"+(delta!=null?'<span>이전 기간 대비 <b style="color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</b></span>":"")+"</div></div>";}
 /* ── 거래처별 매출 비중 (이번 달 입금) */
 function dbxShareCard(){
- return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">채널별 매출 비중</h2><span class="dbx-va" onclick="dbxChannelModal()">자세히 →</span></div>'+dbxChannelShareBody(false)+"</div>";}
+ var P=S._dbxP||"7일";var N=P==="7일"?7:(P==="28일"?28:90);
+ return '<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">채널별 매출 비중</h2><span class="dbx-va" onclick="dbxChannelModal('+N+')">자세히 →</span></div>'+dbxChannelShareBody(false,N)+"</div>";}
 /* ── 관리자 대시보드 */
 function viewAdminHome(){
  if(!(ADM_ROWS||[]).length)setTimeout(loadApps,30);
@@ -755,11 +765,11 @@ function viewAdminHome(){
   ["users","회원DB","활동 · 알림 설정","go(&quot;admin-members&quot;)","#FFF4DC","#C07F06"],
   ["message-circle","실시간 상담",(cwait?"대기 "+cwait+"건":"대기 없음"),"go(&quot;admin-consults&quot;)","#E8F7FE","#0B93D6"],
   ["file-text","견적서","채널 · 단가 계산","go(&quot;admin-quote&quot;)","#F2F4F6","#4E5968"]]);
- return '<div class="p-4 sm:p-6 md:p-10 space-y-4">'+hero+kpis
+ return '<div class="px-4 sm:px-6 md:px-10 pt-3 md:pt-5 pb-8 md:pb-10 space-y-4">'+hero+kpis
   +'<div class="dbx-g2a">'+dbxTodoCard()+quick+"</div>"
   +'<div class="dbx-g2b">'+dbxSalesCard()+dbxShareCard()+"</div>"
   +'<div class="dbx-g2c">'+dbxNoticeCard()+dbxMiniCal(ev,"admin-calendar","캠페인 일정")+"</div></div>";}
-function p2(n){n=Number(n)||0;return n<10?"0"+n:String(n);}
+function p2(n){return String(Number(n)||0);}
 /* ── 고객 대시보드 */
 function viewCustomerHome(){
  setTimeout(loadMyCamps,30);
@@ -787,28 +797,30 @@ function viewCustomerHome(){
   ["book-open","가이드라인","이용 방법","go(&quot;guide&quot;)","#F2F4F6","#4E5968"]]);
  var cur=S.activeCamp&&S.activeCamp.status==="승인 완료"?S.activeCamp:act[0];
  var stepCard=cur?'<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center"><h2 class="dbx-sec">'+esc(cur.brand_name||"진행 캠페인")+'</h2><span class="dbx-pill bg-emerald-50 text-emerald-600" style="margin-left:10px">진행 중</span><span class="dbx-va" onclick="go(\'workflow\')">워크플로우 열기 →</span></div>'+stageStepper(wfOf(cur))+"</div>":"";
- return '<div class="p-4 sm:p-6 md:p-10 space-y-4">'+hero+kpis
+ return '<div class="px-4 sm:px-6 md:px-10 pt-3 md:pt-5 pb-8 md:pb-10 space-y-4">'+hero+kpis
   +'<div class="dbx-g2a">'+dbxTodoCard()+quick+"</div>"
   +stepCard
   +'<div class="dbx-g2c">'+dbxNoticeCard()+dbxMiniCal(ev,"calendar","캠페인 일정")+"</div></div>";}
 
 /* ── 매출분석 상단 요약 (매출 기준 · 등록일) ── */
-function dbxSalesMonthly12(){
+function dbxSalesMonthly12(group){
  var out=[],labels=[],map={},p=function(n){return (n<10?"0":"")+n;};
  var nd=new Date();
  for(var i=11;i>=0;i--){var d=new Date(nd.getFullYear(),nd.getMonth()-i,1);var k=d.getFullYear()+"-"+p(d.getMonth()+1);map[k]=0;labels.push((d.getMonth()+1)+"월");}
- (ADM_ROWS||[]).forEach(function(a){if(a.status!=="승인 완료"&&a.status!=="종료")return;var k=(a.created_at||"").slice(0,7);if(map[k]!=null)map[k]+=priceOf(a).supply;});
+ (ADM_ROWS||[]).forEach(function(a){if(a.status!=="승인 완료"&&a.status!=="종료")return;if(!dbxGrpOk(a,group))return;var k=(a.created_at||"").slice(0,7);if(map[k]!=null)map[k]+=priceOf(a).supply;});
  Object.keys(map).sort().forEach(function(k){out.push(map[k]);});
  return {vals:out,labels:labels,total:out.reduce(function(t,v){return t+v;},0)};}
-function dbxSalesSummary(){
- var P=S._salesTrendP||"7일";var body;
- if(P==="365일"){var m=dbxSalesMonthly12();body={vals:m.vals,labels:m.labels,total:m.total,prev:0};}
- else{var N=P==="7일"?7:(P==="28일"?28:90);var d=dbxSalesDaily(N);
-  body={vals:d.vals,labels:d.keys.map(function(k,i){var st=Math.max(1,Math.round(d.keys.length/7));if(i===d.keys.length-1)return "오늘";return i%st===0?String(Number(k.slice(5,7)))+"/"+String(Number(k.slice(8,10))):"";}),total:d.total,prev:d.prev};}
+function dbxSalesSummary(group){
+ var P=S._salesTrendP||"7일";var N=P==="7일"?7:(P==="28일"?28:(P==="90일"?90:365));var body,tips=null;
+ var md=function(k){return String(Number(k.slice(5,7)))+"/"+String(Number(k.slice(8,10)));};
+ if(P==="365일"){var m=dbxSalesMonthly12(group);body={vals:m.vals,labels:m.labels,total:m.total,prev:0};tips=m.labels;}
+ else{var d=dbxSalesDaily(N,group);
+  body={vals:d.vals,labels:d.keys.map(function(k,i){var st=Math.max(1,Math.round(d.keys.length/7));if(i===d.keys.length-1)return "오늘";return i%st===0?md(k):"";}),total:d.total,prev:d.prev};tips=d.keys.map(md);}
  var delta=body.prev>0?Math.round((body.total-body.prev)/body.prev*100):null;
- var tabs=["7일","28일","90일","365일"].map(function(k){return '<span class="'+(k===(S._salesTrendP||"7일")?"on":"")+'" onclick="S._salesTrendP=\''+k+'\';render()">'+k+"</span>";}).join("");
- var trend='<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-2"><div><div style="font-size:13.5px;color:#8B95A1;font-weight:500">매출 · 최근 '+P+'</div><div style="font-size:29px;font-weight:700;letter-spacing:-1px;margin-top:4px;color:#191F28">'+dbxWon(body.total)+(delta!=null?'<span style="font-size:14px;font-weight:700;margin-left:9px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'</div></div><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'+dbxArea(body.vals,body.labels,"#3182F6","dbxS"+P)+'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">등록일 기준 · 공급가 합계</div></div>';
- return '<div class="dbx-g2b" style="margin:2px 0 18px">'+trend+'<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">채널별 매출 비중</h2><span class="dbx-va" onclick="dbxChannelModal()">상세보기 →</span></div>'+dbxChannelShareBody(true)+"</div></div>";}
+ var tabs=["7일","28일","90일","365일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="S._salesTrendP=\''+k+'\';render()">'+k+"</span>";}).join("");
+ var g=group||"all";
+ var trend='<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center flex-wrap gap-y-2"><div><div style="font-size:13.5px;color:#8B95A1;font-weight:500">매출 · '+(P==="365일"?"최근 1년":"최근 "+P)+'</div><div style="font-size:29px;font-weight:700;letter-spacing:-1px;margin-top:4px;color:#191F28">'+dbxWon(body.total)+(delta!=null?'<span style="font-size:14px;font-weight:700;margin-left:9px;color:'+(delta>=0?"#0FA774":"#F04438")+'">'+(delta>=0?"+":"")+delta+"%</span>":"")+'</div></div><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'+dbxArea(body.vals,body.labels,"#3182F6","dbxS"+P,dbxWonS,tips)+'<div style="text-align:right;font-size:11.5px;color:#B0B8C1;margin-top:4px">등록일 기준 · 공급가 합계</div></div>';
+ return '<div class="dbx-g2b" style="margin:2px 0 18px">'+trend+'<div class="bg-white rounded-[28px] shadow-card p-6"><div class="flex items-center mb-1"><h2 class="dbx-sec">채널별 매출 비중</h2><span class="dbx-va" onclick="dbxChannelModal('+N+',\''+g+'\')">상세보기 →</span></div>'+dbxChannelShareBody(true,N,group)+"</div></div>";}
 function dbxShareData(){
  var p=function(n){return (n<10?"0":"")+n;};var nd=new Date();var pref=nd.getFullYear()+"-"+p(nd.getMonth()+1);
  var by={},cnt={},tot=0;
@@ -834,56 +846,67 @@ function dbxShareModal(){
  modal('<div class="flex items-center justify-between mb-3"><h3 class="text-[19px] font-bold text-g900">거래처별 매출 상세 <span class="text-[13px] text-g400 font-normal">· 이번 달 '+dbxWon(d.tot)+'</span></h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div><div class="max-h-[64vh] overflow-y-auto pr-1">'+rows+"</div>","max-w-xl");}
 
 /* ── 채널별 매출 집계 (이번 달 · 등록일 기준 · 할인 비례 배분) ── */
-function dbxChannelData(){
- var p=function(n){return (n<10?"0":"")+n;};var nd=new Date();var pref=nd.getFullYear()+"-"+p(nd.getMonth()+1);
- var by={},cnt={},tot=0;
+function dbxChannelData(days,group){
+ var by={},cnt={},tot=0,inWin,lbl,p=function(n){return (n<10?"0":"")+n;};
+ if(days){var sd=new Date(Date.now()-(days-1)*86400000);var sk=sd.getFullYear()+"-"+p(sd.getMonth()+1)+"-"+p(sd.getDate());lbl=days===365?"최근 1년":"최근 "+days+"일";
+  inWin=function(a){return (a.created_at||"").slice(0,10)>=sk;};}
+ else{var nd=new Date();var pref=nd.getFullYear()+"-"+p(nd.getMonth()+1);lbl="이번 달";
+  inWin=function(a){return (a.created_at||"").slice(0,7)===pref;};}
  (ADM_ROWS||[]).forEach(function(a){
    if(a.status!=="승인 완료"&&a.status!=="종료")return;
-   if((a.created_at||"").slice(0,7)!==pref)return;
+   if(!dbxGrpOk(a,group))return;
+   if(!inWin(a))return;
    var pr=priceOf(a);var f=(pr.list>0)?(pr.net/pr.list):1;
    var chs=Array.isArray(a.channels)?a.channels:[];
    if(!chs.length){var k0=a.brand_name||"기타";by[k0]=(by[k0]||0)+pr.supply;cnt[k0]=(cnt[k0]||0)+1;tot+=pr.supply;return;}
    chs.forEach(function(c){var amt=Math.round((Number(c.amount||c.price)||0)*f*10000);if(amt<=0)return;
      var k=c.name||"기타";by[k]=(by[k]||0)+amt;cnt[k]=(cnt[k]||0)+1;tot+=amt;});});
  var list=Object.keys(by).map(function(k){return {n:k,v:by[k],c:cnt[k]};}).sort(function(a,b){return b.v-a.v;});
- return {list:list,tot:tot};}
-function dbxChannelShareBody(withAmt){
- var d=dbxChannelData();var colors=["#3182F6","#7C6BF0","#38BDF8","#0FA774","#F59E0B"];
- if(!d.tot)return '<p class="text-g400 text-[13.5px] py-9 text-center">이번 달 매출이 아직 없습니다</p>';
+ return {list:list,tot:tot,lbl:lbl};}
+function dbxChLogo(name,color){try{var c=(CH||[]).filter(function(x){return x.name===name;})[0];if(c&&c.logo)return '<img class="chlogo" src="'+c.logo+'" alt="">';}catch(e){}return '<i style="width:10px;height:10px;border-radius:3px;flex-shrink:0;margin-top:4px;display:inline-block;background:'+color+'"></i>';}
+function dbxChannelShareBody(withAmt,days,group){
+ var d=dbxChannelData(days,group);var colors=["#3182F6","#7C6BF0","#38BDF8","#0FA774","#F59E0B"];
+ if(!d.tot)return '<p class="text-g400 text-[13.5px] py-9 text-center">'+d.lbl+' 매출이 아직 없습니다</p>';
  var top=d.list.slice(0,4),rest=d.list.slice(4);var restSum=rest.reduce(function(t,x){return t+x.v;},0);
  var segs=top.map(function(x,i){return {v:x.v,c:colors[i]};});if(restSum)segs.push({v:restSum,c:"#D1D6DB"});
- return '<div style="display:flex;align-items:center;gap:18px;padding-top:2px">'+dbxDonut(segs,"이번 달",dbxWon(d.tot))
- +'<div class="dbx-leg" style="flex:1;min-width:0">'+top.map(function(x,i){return '<div class="li"><i style="background:'+colors[i]+'"></i><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(x.n)+(withAmt?'<br><span style="font-size:11px;color:#B0B8C1;font-weight:500">'+dbxWon(x.v)+" · "+x.c+"건</span>":"")+"</span><b>"+Math.round(x.v/d.tot*100)+"%</b></div>";}).join("")
+ return '<div style="display:flex;align-items:center;gap:18px;padding-top:2px">'+dbxDonut(segs,d.lbl,dbxWon(d.tot))
+ +'<div class="dbx-leg" style="flex:1;min-width:0">'+top.map(function(x,i){return '<div class="li">'+dbxChLogo(x.n,colors[i])+'<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(x.n)+(withAmt?'<br><span style="font-size:11px;color:#B0B8C1;font-weight:500">'+dbxWon(x.v)+" · "+x.c+"건</span>":"")+"</span><b>"+Math.round(x.v/d.tot*100)+"%</b></div>";}).join("")
  +(restSum?'<div class="li"><i style="background:#D1D6DB"></i><span>기타 채널'+(withAmt?'<br><span style="font-size:11px;color:#B0B8C1;font-weight:500">'+dbxWon(restSum)+" · "+rest.length+"개</span>":"")+"</span><b>"+Math.round(restSum/d.tot*100)+"%</b></div>":"")+"</div></div>";}
-function dbxChannelModal(){
- var d=dbxChannelData();var colors=["#3182F6","#7C6BF0","#38BDF8","#0FA774","#F59E0B","#F04438","#EC4899","#8B95A1"];
+function dbxChannelModal(days,group){
+ var d=dbxChannelData(days,group);var colors=["#3182F6","#7C6BF0","#38BDF8","#0FA774","#F59E0B","#F04438","#EC4899","#8B95A1"];
  var mx=d.list.length?d.list[0].v:1;
  var rows=d.list.length?d.list.map(function(x,i){var c=colors[i%colors.length];
-  return '<div style="display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid #F9FAFB"><i style="width:10px;height:10px;border-radius:3px;background:'+c+';flex-shrink:0"></i><span style="min-width:0;flex:1"><b style="font-size:14.5px;color:#191F28">'+esc(x.n)+'</b><span style="display:block;font-size:11.5px;color:#B0B8C1">'+x.c+'건 진행</span></span><span style="flex:0 0 100px;height:7px;border-radius:4px;background:#F2F4F6;overflow:hidden"><i style="display:block;height:100%;border-radius:4px;width:'+Math.round(x.v/mx*100)+'%;background:'+c+'"></i></span><span style="font-size:13px;color:#6B7684;font-weight:600;width:92px;text-align:right">'+dbxWon(x.v)+'</span><b style="font-size:15px;width:44px;text-align:right">'+Math.round(x.v/d.tot*100)+"%</b></div>";}).join("")
-  :'<p class="text-g400 text-[13.5px] py-8 text-center">이번 달 매출이 아직 없습니다</p>';
- modal('<div class="flex items-center justify-between mb-3"><h3 class="text-[19px] font-bold text-g900">채널별 매출 상세 <span class="text-[13px] text-g400 font-normal">· 이번 달 '+dbxWon(d.tot)+'</span></h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div><div class="max-h-[64vh] overflow-y-auto pr-1">'+rows+"</div>","max-w-xl");}
+  return '<div style="display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid #F9FAFB">'+dbxChLogo(x.n,c)+'<span style="min-width:0;flex:1"><b style="font-size:14.5px;color:#191F28">'+esc(x.n)+'</b><span style="display:block;font-size:11.5px;color:#B0B8C1">'+x.c+'건 진행</span></span><span style="flex:0 0 100px;height:7px;border-radius:4px;background:#F2F4F6;overflow:hidden"><i style="display:block;height:100%;border-radius:4px;width:'+Math.round(x.v/mx*100)+'%;background:'+c+'"></i></span><span style="font-size:13px;color:#6B7684;font-weight:600;width:92px;text-align:right">'+dbxWon(x.v)+'</span><b style="font-size:15px;width:44px;text-align:right">'+Math.round(x.v/d.tot*100)+"%</b></div>";}).join("")
+  :'<p class="text-g400 text-[13.5px] py-8 text-center">'+d.lbl+' 매출이 아직 없습니다</p>';
+ modal('<div class="flex items-center justify-between mb-3"><h3 class="text-[19px] font-bold text-g900">채널별 매출 상세 <span class="text-[13px] text-g400 font-normal">· '+d.lbl+" "+dbxWon(d.tot)+'</span></h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-g100 grid place-items-center text-g500">✕</button></div><div class="max-h-[64vh] overflow-y-auto pr-1">'+rows+"</div>","max-w-xl");}
 /* ── 매출분석 상단 KPI (미리보기 스타일) ── */
-function dbxSalesKpis(){
- var p=function(n){return (n<10?"0":"")+n;};var nd=new Date();
- var cm=nd.getFullYear()+"-"+p(nd.getMonth()+1);
+function dbxSalesKpis(group){
+ var P=S._salesTrendP||"7일";var N=P==="7일"?7:(P==="28일"?28:(P==="90일"?90:365));
+ var p=function(n){return (n<10?"0":"")+n;};
+ var sd=new Date(Date.now()-(N-1)*86400000);var sk=sd.getFullYear()+"-"+p(sd.getMonth()+1)+"-"+p(sd.getDate());
+ var pd=new Date(Date.now()-(2*N-1)*86400000);var pk=pd.getFullYear()+"-"+p(pd.getMonth()+1)+"-"+p(pd.getDate());
+ var nd=new Date();var cm=nd.getFullYear()+"-"+p(nd.getMonth()+1);
  var pmD=new Date(nd.getFullYear(),nd.getMonth()-1,1);var pm=pmD.getFullYear()+"-"+p(pmD.getMonth()+1);
- var mSum=0,pSum=0,mCnt=0,brands={},active={};
+ var sum=0,prev=0,cnt=0,brands={},mSum=0,pSum=0;
  (ADM_ROWS||[]).forEach(function(a){
-   if(a.status==="승인 완료"&&(((a.wf||{}).step)||1)<8&&a.brand_name)active[a.brand_name]=1;
    if(a.status!=="승인 완료"&&a.status!=="종료")return;
-   var mo=(a.created_at||"").slice(0,7);var sup=priceOf(a).supply;
-   if(mo===cm){mSum+=sup;mCnt++;}else if(mo===pm)pSum+=sup;});
- var w=dbxSalesDaily(7);
+   if(!dbxGrpOk(a,group))return;
+   var dt=(a.created_at||"").slice(0,10);if(!dt)return;var sup=priceOf(a).supply;
+   var mo=dt.slice(0,7);if(mo===cm)mSum+=sup;else if(mo===pm)pSum+=sup;
+   if(dt>=sk){sum+=sup;cnt++;brands[a.brand_name||a.email||"기타"]=1;}
+   else if(dt>=pk)prev+=sup;});
+ var dD=prev>0?Math.round((sum-prev)/prev*100):null;
  var mD=pSum>0?Math.round((mSum-pSum)/pSum*100):null;
- var wD=w.prev>0?Math.round((w.total-w.prev)/w.prev*100):null;
- var avg=mCnt?Math.round(mSum/mCnt):0;
+ var avg=cnt?Math.round(sum/cnt):0;
+ var lb=P==="365일"?"최근 1년":"최근 "+P;
+ var tabs=["7일","28일","90일","365일"].map(function(k){return '<span class="'+(k===P?"on":"")+'" onclick="S._salesTrendP=\''+k+'\';render()">'+k+"</span>";}).join("");
  function kc(l,v,sub,subC){return '<div class="dbx-kc" style="cursor:default"><div class="kl">'+l+'</div><div class="kn" style="font-size:27px;margin:8px 0 6px">'+v+'</div><span style="font-size:12.5px;font-weight:600;color:'+(subC||"#8B95A1")+'">'+sub+"</span></div>";}
- return '<div class="dbx-g4" style="margin-bottom:16px">'
+ return '<div class="flex items-center mb-3" style="margin-top:2px"><h2 class="dbx-sec">매출 요약 <span style="font-size:12.5px;color:#8B95A1;font-weight:600">· '+lb+' · 등록일 기준</span></h2><div class="dbx-tog" style="margin-left:auto">'+tabs+'</div></div>'
+ +'<div class="dbx-g4" style="margin-bottom:16px">'
+ +kc(lb+" 매출",dbxWon(sum),dD!=null?((dD>=0?"+":"")+dD+"% 이전 기간 대비"):"이전 기간 데이터 없음",dD!=null?(dD>=0?"#0FA774":"#F04438"):null)
  +kc("이번 달 매출",dbxWon(mSum),mD!=null?((mD>=0?"+":"")+mD+"% 전월 대비"):"전월 데이터 없음",mD!=null?(mD>=0?"#0FA774":"#F04438"):null)
- +kc("최근 7일",dbxWon(w.total),wD!=null?((wD>=0?"+":"")+wD+"% 이전 주 대비"):"이전 주 데이터 없음",wD!=null?(wD>=0?"#0FA774":"#F04438"):null)
- +kc("진행 거래처",Object.keys(active).length+"곳","진행 중 캠페인 기준")
- +kc("평균 단가",dbxWon(avg),"이번 달 캠페인당")+"</div>";}
-
+ +kc("거래처",Object.keys(brands).length+"곳",lb+" 매출 발생 기준")
+ +kc("평균 단가",dbxWon(avg),lb+" 캠페인당")+"</div>";}
 /* ── 리포트: 유튜브 조회수 실데이터 (YouTube Data API) ── */
 var _ytQ={};
 function dbxFmtN(n){n=Number(n)||0;if(n>=100000000)return (Math.round(n/10000000)/10)+"억";if(n>=10000)return (Math.round(n/1000)/10)+"만";return n.toLocaleString();}
