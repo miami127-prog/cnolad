@@ -326,14 +326,25 @@ function viewSalesReport(group){if(!ADM_ROWS.length)setTimeout(loadApps,30);if(!
     +'<div class="flex items-center justify-end flex-wrap gap-2 mt-3 pt-3 border-t border-[#F2F4F6]">'+'<button onclick="salesHelp(\''+group+'\')" class="w-10 h-10 rounded-xl bg-amber-50 grid place-items-center hover:bg-amber-100" title="집계 기준 · 유의사항"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.27 3.6c.77-1.33 2.69-1.33 3.46 0l8.02 13.9c.77 1.33-.19 3-1.73 3H3.98c-1.54 0-2.5-1.67-1.73-3l8.02-13.9z" fill="#F59E0B"/><rect x="11" y="8.2" width="2" height="6" rx="1" fill="#fff"/><circle cx="12" cy="16.6" r="1.25" fill="#fff"/></svg></button><div class="flex gap-2"><button onclick="loadApps()" class="'+BTN_GHOST+' px-4 py-2 text-[13px]"><i data-lucide="refresh-cw" class="w-4 h-4"></i>새로고침</button><button onclick="salesExportXlsx(\''+group+'\')" class="'+BTN+' px-4 py-2 text-[13px]"><i data-lucide="download" class="w-4 h-4"></i>엑셀 다운로드</button><button onclick="exportSalesCSV()" class="'+BTN_GHOST+' px-4 py-2 text-[13px]" title="기존 채널별 업로드 리스트 양식">업로드 리스트</button></div></div></div>';
   // ── KPI
   var kpi=function(t,v,sub,cls){return '<div class="'+CARD+' p-5"><p class="text-[13.5px] text-[#191F28] mb-1.5">'+t+'</p><p class="font-display text-[24px] font-bold '+(cls||"text-g900")+' num leading-none">'+v+'</p>'+(sub?'<p class="text-[12px] text-[#333D4B] mt-2 leading-snug">'+sub+'</p>':"")+'</div>';};
-  var kpis='<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">'+kpi("전체 거래 금액",salesWon(agg.bill)+'<span class="text-[13px] font-bold text-[#333D4B] ml-2 align-middle">VAT 포함</span>',"","text-g900")+kpi("입금 완료 금액",salesWon(agg.paid),"","text-blue")+kpi("미입금 금액",salesWon(agg.unpaid),"","text-amber-600")+kpi("캠페인 수",agg.n+"건",(agg.unknown?'<span class="text-red-500 font-bold">금액 미확인 '+agg.unknown+'건 (합계 제외)</span>':""))+'</div>';
-  // ── 월별
-  var maxB=1;monthly.forEach(function(m){if(m.agg.bill>maxB)maxB=m.agg.bill;});
-  var CH_H=190;var bars=monthly.map(function(m){var hb=Math.round(m.agg.bill/maxB*CH_H),hp=Math.round(m.agg.paid/maxB*CH_H);var on=f.month===m.m;var pct=m.agg.bill?Math.round(m.agg.paid/m.agg.bill*100):0;return '<button onclick="salesSetF(\'month\','+(on?0:m.m)+')" class="flex flex-col items-center flex-shrink-0 rounded-2xl px-3 pt-3 pb-2 transition-colors '+(on?"bg-blue-soft":"hover:bg-[#F9FAFB]")+'" style="width:112px"><div class="text-[16px] font-bold num text-g900 leading-none mb-1">'+(m.agg.bill?Math.round(m.agg.bill/10000).toLocaleString()+'<span class="text-[12px] font-bold ml-0.5">만</span>':'<span class="text-[#B0B8C1]">—</span>')+'</div><div class="text-[11.5px] font-bold num mb-2 '+(m.agg.bill?"text-blue":"text-transparent")+'">입금 '+pct+'%</div><div class="relative" style="width:58px;height:'+CH_H+'px"><div class="absolute bottom-0 left-0 right-0 rounded-[12px]" style="height:'+Math.max(hb,6)+'px;background:'+(m.agg.bill?"#E9EEF5":"#F2F4F6")+';box-shadow:inset 0 1px 0 rgba(255,255,255,.8)"></div>'+(hp>0?'<div class="absolute bottom-0 left-0 right-0 rounded-[12px]" style="height:'+Math.max(hp,6)+'px;background:linear-gradient(180deg,#5B9BFF 0%,#3182F6 55%,#1B64DA 100%);box-shadow:0 6px 14px rgba(49,130,246,.28),inset 0 1px 0 rgba(255,255,255,.35)"></div>':"")+'</div><div class="text-[14.5px] font-bold mt-2.5 '+(on?"text-blue":"text-g900")+'">'+m.m+'월</div></button>';}).join("");
-var moRows=monthly.map(function(m){var g=m.agg;var on=f.month===m.m;var empty=!g.n&&!g.cancelN;return '<tr onclick="salesSetF(\'month\','+(on?0:m.m)+')" class="border-b border-[#F2F4F6] last:border-0 cursor-pointer '+(on?"bg-blue-soft":"hover:bg-[#F9FAFB]")+(empty?" opacity-40":"")+'"><td class="px-4 py-2.5 font-bold '+(on?"text-blue":"text-g900")+' num whitespace-nowrap">'+f.year+'.'+String(m.m).padStart(2,"0")+'</td><td class="px-4 py-2.5 num text-[#191F28]">'+g.n+'</td><td class="px-4 py-2.5 num text-[#191F28] whitespace-nowrap">'+salesWon(g.supply)+'</td><td class="px-4 py-2.5 num text-[#333D4B] whitespace-nowrap">'+salesWon(g.vat)+'</td><td class="px-4 py-2.5 num font-bold text-g900 whitespace-nowrap">'+salesWon(g.bill)+'</td><td class="px-4 py-2.5 num font-bold text-blue whitespace-nowrap">'+salesWon(g.paid)+'</td><td class="px-4 py-2.5 num text-amber-600 whitespace-nowrap">'+salesWon(g.unpaid)+(g.hold?' <span class="text-[11px] text-orange-600">(보류 '+salesWon(g.hold)+')</span>':"")+'</td></tr>';}).join("");
+  var kpis='<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">'
+  +'<div style="background:#DCEBFF;border-radius:18px;padding:14px 17px"><p style="font-size:12px;color:#3B6FC2;font-weight:700">전체 거래 금액</p><b class="num" style="font-size:19px;color:#1D4E9E">'+salesWon(agg.bill)+'</b><p style="font-size:10.5px;color:#7FA0CC">VAT 포함</p></div>'
+  +'<div style="background:#E3F6E9;border-radius:18px;padding:14px 17px"><p style="font-size:12px;color:#2F9155;font-weight:700">받은 돈</p><b class="num" style="font-size:19px;color:#187244">'+salesWon(agg.paid)+'</b><p style="font-size:10.5px;color:#7EB795">입금 완료</p></div>'
+  +'<div style="background:#FFEFD7;border-radius:18px;padding:14px 17px"><p style="font-size:12px;color:#B37E1F;font-weight:700">받을 돈</p><b class="num" style="font-size:19px;color:#8A5B00">'+salesWon(agg.unpaid)+'</b><p style="font-size:10.5px;color:#CBA05C">미입금</p></div>'
+  +'<div style="background:#F3F0FF;border-radius:18px;padding:14px 17px"><p style="font-size:12px;color:#6D5AE6;font-weight:700">캠페인</p><b class="num" style="font-size:19px;color:#5646B8">'+agg.n+'건</b><p style="font-size:10.5px;color:'+(agg.unknown?"#F04438":"#A79BE0")+'">'+(agg.unknown?"금액 미확인 "+agg.unknown+"건 제외":"이번 조회 기준")+'</p></div></div>';
+  // ── 월별 (파스텔)
+  var moCards=monthly.map(function(m){var g=m.agg;var on=f.month===m.m;var pct=g.bill?Math.round(g.paid/g.bill*100):0;var has=g.n>0;
+   var barC=pct>=100?"linear-gradient(90deg,#59C98A,#2F9155)":(pct>0?"#FFB020":"#F04438");
+   var stTxt=!has?'<span style="color:#B0B8C1">캠페인 없음</span>':(pct>=100?'<span style="color:#2F9155">입금 100% 🎉</span>':(pct>0?'<span style="color:#B37E1F">입금 '+pct+'%</span>':'<span style="color:#D23B33">입금 0% · 회수 필요</span>'));
+   return '<button onclick="salesSetF(\'month\','+(on?0:m.m)+')" style="flex:1;min-width:118px;text-align:center;border-radius:20px;padding:15px 10px;cursor:pointer;'+(on?"background:#fff;border:2px solid #3182F6;box-shadow:0 6px 16px rgba(49,130,246,.12)":"background:#F7F8FA;border:2px solid transparent")+(has?"":";opacity:.55")+'"><p style="font-size:13px;font-weight:800;color:'+(on?"#3182F6":"#6B7684")+'">'+m.m+'월'+(on?" ✓":"")+'</p><b class="num" style="font-size:19px;color:#191F28">'+(has?Math.round(g.bill/10000).toLocaleString()+"만":"—")+'</b><div style="height:8px;border-radius:4px;background:#EDEFF2;margin:9px 0 6px;overflow:hidden">'+(has?'<i style="display:block;height:100%;width:'+Math.max(pct,pct>0?pct:2)+'%;border-radius:4px;background:'+barC+'"></i>':"")+'</div><p style="font-size:11.5px;font-weight:700">'+stTxt+'</p></button>';}).join("");
+  var _mc2=function(v2,c2,b2){return '<'+(b2?"b":"span")+' class="num" style="flex:1;text-align:right;'+(c2?"color:"+c2:"")+'">'+v2+"</"+(b2?"b":"span")+">";};
+  var moRows=monthly.map(function(m){var g=m.agg;var on=f.month===m.m;var empty=!g.n;
+   return '<div onclick="salesSetF(\'month\','+(on?0:m.m)+')" style="display:flex;font-size:13.5px;padding:11px '+(on?"8px":"0")+';border-bottom:1px solid #EDEFF2;align-items:center;cursor:pointer;'+(on?"background:#F0F6FF;border-radius:12px":"")+(empty?";opacity:.45":"")+'"><b style="width:64px;'+(on?"color:#3182F6":"")+'">'+m.m+'월</b><span class="num" style="width:58px">'+g.n+'건</span>'+_mc2(salesWon(g.supply),"#6B7684",false)+_mc2(salesWon(g.bill),null,true)+_mc2(g.paid?salesWon(g.paid):"0","#2F9155",true)+_mc2((g.unpaid?salesWon(g.unpaid):"0")+(g.hold?' <span style="font-size:10.5px;color:#E8833A">(보류)</span>':""),g.unpaid?"#B37E1F":"#B0B8C1",!!g.unpaid)+"</div>";}).join("");
   var tot=salesAgg(monthly.reduce(function(acc,m){return acc.concat(m.rows);},[]));
-  var monthlyCard='<div class="'+CARD+' p-6 mb-5"><div class="flex items-center justify-between flex-wrap gap-2 mb-4"><h2 class="text-[16px] font-bold text-g900">월별 상세 · '+f.year+'년 ('+(f.basis==="pay"?"입금월":"접수월")+' 기준)</h2><p class="text-[13px] font-bold text-g900"><span class="inline-block w-3 h-3 rounded-sm align-middle mr-1" style="background:linear-gradient(180deg,#5B9BFF,#1B64DA)"></span>입금액 &nbsp; <span class="inline-block w-3 h-3 rounded-sm align-middle mr-1" style="background:#E9EEF5"></span>청구액 (VAT 포함) &nbsp;·&nbsp; 월을 누르면 아래 목록이 바뀝니다</p></div><div class="flex items-end justify-center gap-3 overflow-x-auto pb-2 mb-4 rounded-2xl" style="background:repeating-linear-gradient(180deg,transparent 0 47px,#F2F4F6 47px 48px)">'+bars+'</div><div class="overflow-x-auto"><table class="w-full text-left min-w-[760px]"><thead><tr class="border-b border-[#F2F4F6]">'+["월","캠페인","공급가액","부가세","청구액","입금액","미입금"].map(function(h){return '<th class="px-4 py-2 text-[12px] font-bold text-[#333D4B] whitespace-nowrap">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+moRows+'<tr class="bg-[#F9FAFB] font-bold"><td class="px-4 py-2.5 text-g900">연간 합계</td><td class="px-4 py-2.5 num">'+tot.n+'</td><td class="px-4 py-2.5 num whitespace-nowrap">'+salesWon(tot.supply)+'</td><td class="px-4 py-2.5 num text-[#333D4B] whitespace-nowrap">'+salesWon(tot.vat)+'</td><td class="px-4 py-2.5 num whitespace-nowrap">'+salesWon(tot.bill)+'</td><td class="px-4 py-2.5 num text-blue whitespace-nowrap">'+salesWon(tot.paid)+'</td><td class="px-4 py-2.5 num text-amber-600 whitespace-nowrap">'+salesWon(tot.unpaid)+'</td></tr></tbody></table></div></div>';
-  // ── 거래처·브랜드별
+  var monthlyCard='<div class="'+CARD+' p-6 mb-5"><div class="flex items-center flex-wrap gap-y-1 mb-3"><h2 class="text-[16px] font-bold text-g900">월별 상세 📅 · '+f.year+'년 ('+(f.basis==="pay"?"입금월":"접수월")+' 기준)</h2><span style="margin-left:auto;font-size:12px;color:#8B95A1;font-weight:600">월을 누르면 아래 목록이 바뀝니다</span></div>'
+  +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+moCards+'</div>'
+  +'<div style="background:#F7F8FA;border-radius:18px;padding:6px 18px"><div style="display:flex;font-size:11.5px;color:#9BA1A9;font-weight:700;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="width:64px">월</span><span style="width:58px">캠페인</span><span style="flex:1;text-align:right">공급가액</span><span style="flex:1;text-align:right">청구액</span><span style="flex:1;text-align:right">입금액</span><span style="flex:1;text-align:right">미입금</span></div>'+moRows
+  +'<div style="display:flex;font-size:13.5px;padding:12px 0;align-items:center;font-weight:800"><b style="width:64px">연간</b><b class="num" style="width:58px">'+tot.n+'건</b>'+_mc2(salesWon(tot.supply),null,true)+_mc2(salesWon(tot.bill),null,true)+_mc2(salesWon(tot.paid),"#2F9155",true)+_mc2(salesWon(tot.unpaid),"#B37E1F",true)+"</div></div></div>";
+  
   var byKey={};rows.forEach(function(r){if(r.cancelled)return;var k=group==="partner"?salesPartnerName(r)+"|"+(r.mgr||"미지정"):(r.brand||"미확인")+"|"+r.email;if(!byKey[k])byKey[k]={k:k,rows:[]};byKey[k].rows.push(r);});
   var bkeys=Object.keys(byKey).map(function(k){var g=salesAgg(byKey[k].rows);var last=byKey[k].rows.reduce(function(m,r){return (r.recv||"")>m?(r.recv||""):m;},"");return {k:k,g:g,rows:byKey[k].rows,last:last};}).sort(function(a,b){return b.last.localeCompare(a.last)||b.g.bill-a.g.bill;});
   var _bs=S._bSort||"bill";
@@ -1047,8 +1058,11 @@ function dbxSalesKpis(group){
 /* ── 리포트: 유튜브 조회수 실데이터 (YouTube Data API) ── */
 var _ytQ={};
 function dbxFmtN(n){n=Number(n)||0;if(n>=100000000)return (Math.round(n/10000000)/10)+"억";if(n>=10000)return (Math.round(n/1000)/10)+"만";return n.toLocaleString();}
+var _YTC_KEY="knollad_yt_cache_v2";var _YTC_TTL=21600000;var _ytTryN={};
+function _ytLoadCache(){if(S._ytStats)return;S._ytStats={};S._ytCacheT=Date.now();try{var c=JSON.parse(localStorage.getItem(_YTC_KEY)||"null");if(c&&c.t&&Date.now()-c.t<_YTC_TTL&&c.d){S._ytStats=c.d;S._ytCacheT=c.t;}}catch(e){}}
+function _ytSaveCache(){try{localStorage.setItem(_YTC_KEY,JSON.stringify({t:S._ytCacheT||Date.now(),d:S._ytStats}));}catch(e){}}
 function dbxYtFetch(ids){
- S._ytStats=S._ytStats||{};
+ _ytLoadCache();
  var need=(ids||[]).filter(function(i){return i&&!S._ytStats[i]&&!_ytQ[i];});
  if(!need.length)return;
  need.forEach(function(i){_ytQ[i]=1;});
@@ -1057,19 +1071,26 @@ function dbxYtFetch(ids){
   .then(function(r){return r.json();}).then(function(j){
     (j.items||[]).forEach(function(it){var st=it.statistics||{},sn=it.snippet||{};
       S._ytStats[it.id]={t:sn.title||"",at:(sn.publishedAt||"").slice(0,10),v:+st.viewCount||0,l:+st.likeCount||0,cm:+st.commentCount||0};});
-    batch.forEach(function(i){if(!S._ytStats[i])S._ytStats[i]={v:0,l:0,cm:0,miss:1};});
+    batch.forEach(function(i){delete _ytQ[i];if(!S._ytStats[i])S._ytStats[i]={v:0,l:0,cm:0,miss:1};});
+    _ytSaveCache();
     if(S.view==="report"||S.view==="admin-report")render();
-  }).catch(function(){});})(need.slice(b,b+50));}}
+  }).catch(function(){
+    var k0=batch[0];_ytTryN[k0]=(_ytTryN[k0]||0)+1;
+    batch.forEach(function(i){delete _ytQ[i];});
+    if(_ytTryN[k0]>=3){batch.forEach(function(i){if(!S._ytStats[i])S._ytStats[i]={v:0,l:0,cm:0,miss:1};});_ytSaveCache();}
+    setTimeout(function(){if(S.view==="report"||S.view==="admin-report")render();},3000);
+  });})(need.slice(b,b+50));}}
+
 function dbxCampYtIds(c){var wf=wfOf(c);var out=[];String((wf.urls||{}).yt||"").split(/\n+/).forEach(function(u){var id=ytId(u.trim());if(id&&out.indexOf(id)<0)out.push(id);});return out;}
 function dbxRepKpis(ids){
  var loaded=ids.map(function(i){return (S._ytStats||{})[i];}).filter(function(x){return x&&!x.miss;});
- var pend=ids.length&&loaded.length<ids.length;
+ var _res=ids.filter(function(i2){return (S._ytStats||{})[i2];}).length;var pend=ids.length&&_res<ids.length;
  var tv=loaded.reduce(function(t,x){return t+x.v;},0);
  var tl=loaded.reduce(function(t,x){return t+x.l+x.cm;},0);
  var eng=tv>0?(Math.round(tl/tv*1000)/10)+"%":"—";
  function kc(l,v,sub){return '<div class="dbx-kc" style="cursor:default"><div class="kl">'+l+'</div><div class="kn" style="font-size:27px;margin:8px 0 6px">'+v+'</div><span style="font-size:12.5px;font-weight:600;color:#8B95A1">'+sub+"</span></div>";}
  return '<div class="dbx-g4" style="margin-bottom:18px">'
- +kc("총 조회수",ids.length?(pend?"집계 중…":dbxFmtN(tv)):"—","유튜브 업로드 영상 기준")
+ +kc("총 조회수",ids.length?(dbxFmtN(tv)+(pend?' <span style="font-size:12px;color:#B0B8C1;font-weight:600">집계 중</span>':"")):"—","유튜브 업로드 영상 기준")
  +kc("평균 조회수",loaded.length?dbxFmtN(Math.round(tv/loaded.length)):"—","영상당")
  +kc("업로드 영상",ids.length+"개","유튜브 기준")
  +kc("평균 반응률",eng,"좋아요+댓글 ÷ 조회수")+"</div>";}
