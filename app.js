@@ -402,6 +402,56 @@ function logout(){authLogout();S._notiLast=null;S._notiMaxCreated=null;S._notiCo
 var _scrollKeep=0,_scrollLock=false;
 document.addEventListener("input",function(e){try{var t=e.target;if(t&&t.id&&(t.tagName==="TEXTAREA"||t.tagName==="INPUT")){S._touched=S._touched||{};S._touched[t.id]=1;}}catch(_e){}},true);
 window.addEventListener("scroll",function(){try{syncScrollTopBtn();}catch(_st){}if(!_scrollLock)_scrollKeep=window.scrollY||window.pageYOffset||0;},{passive:true});
+
+/* ═══ 별빛 마우스 편집 모드: 주소 끝에 #staredit 붙이고 새로고침 ═══ */
+var _auEd={sz:4,tw:1,drag:null};
+function _auStars(){return window.__auStars||(window.__auStars=(AU_STARS||[]).slice());}
+function _auSave(){try{localStorage.setItem("knollad_stars_v1",JSON.stringify(_auStars()));}catch(_e){}var c=document.getElementById("auEdCnt");if(c)c.textContent=_auStars().length;}
+function _auBox(){var orb=document.querySelector('.au-orb');if(orb&&orb.parentElement)return orb.parentElement;return document.querySelector('.au-stage,.pf-page');}
+function _auMk(p,i){var d=document.createElement('div');d.className='au-star'+(p[3]?' s2':'');d.style.cssText='width:'+(p[2]||4)+'px;height:'+(p[2]||4)+'px;left:'+p[0]+'%;top:'+p[1]+'%;position:absolute;border-radius:50%;';d.dataset.auIdx=i;
+ d.style.pointerEvents='auto';d.style.cursor='grab';d.style.outline='1px dashed rgba(255,255,255,.5)';d.style.outlineOffset='3px';return d;}
+function _auRedraw(){var box=_auBox();if(!box)return;box.querySelectorAll('.au-star').forEach(function(e){e.remove();});_auStars().forEach(function(p,i){box.appendChild(_auMk(p,i));});}
+function auStarEdit(){if(!auEdOn())return;var box=_auBox();if(!box)return;box.style.zIndex='50';
+ if(!document.getElementById('auEdPanel')){
+  var pn=document.createElement('div');pn.id='auEdPanel';
+  pn.style.cssText='position:fixed;left:18px;bottom:18px;z-index:9999;background:rgba(10,10,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:14px 16px;color:#fff;font-size:13px;box-shadow:0 12px 34px rgba(0,0,0,.5);width:250px';
+  pn.innerHTML='<b style="font-size:14px">⭐ 별빛 편집 모드</b><p style="font-size:11.5px;color:rgba(255,255,255,.65);margin:6px 0 10px;line-height:1.5">빈 곳 클릭=추가 · 별 클릭=삭제 · 드래그=이동</p>'
+  +'<div style="display:flex;gap:6px;margin-bottom:8px"><span style="color:rgba(255,255,255,.6);align-self:center">크기</span>'
+  +[3,4,6,8].map(function(v){return '<button data-ausz="'+v+'" style="flex:1;padding:6px 0;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:'+(v===4?'#fff':'transparent')+';color:'+(v===4?'#111':'#fff')+';font-weight:700;cursor:pointer">'+v+'</button>';}).join('')+'</div>'
+  +'<label style="display:flex;gap:6px;align-items:center;margin-bottom:10px;cursor:pointer"><input type="checkbox" id="auEdTw" checked> 깜빡임</label>'
+  +'<div style="display:flex;gap:6px"><button id="auEdCopy" style="flex:1.4;padding:9px 0;border-radius:9px;border:0;background:#3182F6;color:#fff;font-weight:800;cursor:pointer">코드 복사</button>'
+  +'<button id="auEdClr" style="flex:1;padding:9px 0;border-radius:9px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;cursor:pointer">전체 지움</button></div>'
+  +'<button id="auEdExit" style="width:100%;margin-top:6px;padding:8px 0;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);cursor:pointer">편집 종료</button>'+'<p style="font-size:11px;color:rgba(255,255,255,.55);margin-top:8px">별 <b id="auEdCnt">0</b>개 · 복사한 코드를 채팅에 붙여주면 사이트에 고정해 드립니다</p>';
+  document.body.appendChild(pn);
+  pn.addEventListener('click',function(e){
+   var b=e.target.closest('[data-ausz]');
+   if(b){_auEd.sz=+b.dataset.ausz;pn.querySelectorAll('[data-ausz]').forEach(function(x){x.style.background='transparent';x.style.color='#fff';});b.style.background='#fff';b.style.color='#111';return;}
+   if(e.target.id==='auEdCopy'){var code='var AU_STARS='+JSON.stringify(_auStars())+';';
+    try{navigator.clipboard.writeText(code);e.target.textContent='복사됨!';setTimeout(function(){e.target.textContent='코드 복사';},1200);}catch(_c){prompt('복사하세요',code);}return;}
+   if(e.target.id==='auEdExit'){try{sessionStorage.removeItem('knollad_staredit');}catch(_x){}location.hash='';location.reload();return;}
+   if(e.target.id==='auEdClr'){if(confirm('별을 전부 지울까요?')){window.__auStars=[];_auSave();_auRedraw();}return;}
+  });
+  document.getElementById('auEdTw').onchange=function(){_auEd.tw=this.checked?1:0;};
+  document.addEventListener('mousedown',function(e){var st=e.target.closest('.au-star');if(st&&st.dataset.auIdx!==undefined){_auEd.drag={i:+st.dataset.auIdx,el:st,moved:false};e.preventDefault();}});
+  document.addEventListener('mousemove',function(e){var d=_auEd.drag;if(!d)return;d.moved=true;var box=_auBox();if(!box)return;var r=box.getBoundingClientRect();
+   var x=Math.min(100,Math.max(0,(e.clientX-r.left)/r.width*100)),y=Math.min(100,Math.max(0,(e.clientY-r.top)/r.height*100));
+   d.el.style.left=x+'%';d.el.style.top=y+'%';_auStars()[d.i][0]=Math.round(x*10)/10;_auStars()[d.i][1]=Math.round(y*10)/10;});
+  document.addEventListener('mouseup',function(){if(_auEd.drag){var was=_auEd.drag;_auEd.drag=null;if(was.moved){_auEd.justDragged=true;_auSave();setTimeout(function(){_auEd.justDragged=false;},50);}}});
+  document.addEventListener('click',function(e){
+   if(e.target.closest('#auEdPanel'))return;
+   if(_auEd.justDragged){e.preventDefault();e.stopPropagation();return;}
+   var st=e.target.closest('.au-star');
+   if(st&&st.dataset.auIdx!==undefined){if(_auEd.drag&&_auEd.drag.moved)return;_auStars().splice(+st.dataset.auIdx,1);_auSave();_auRedraw();e.preventDefault();e.stopPropagation();return;}
+   if(e.target.closest('button,a,input,textarea,select,label'))return;
+   var box=_auBox();if(!box)return;var host=e.target.closest('.au-stage,.pf-page');if(!host)return;
+   var r=box.getBoundingClientRect();
+   var x=Math.round((e.clientX-r.left)/r.width*1000)/10,y=Math.round((e.clientY-r.top)/r.height*1000)/10;
+   if(x<0||x>100||y<0||y>100)return;
+   _auStars().push([x,y,_auEd.sz,_auEd.tw]);_auSave();_auRedraw();
+  },true);
+ }
+ _auRedraw();_auSave();
+}
 function auFixStars(){try{var orbs=[].slice.call(document.querySelectorAll('.au-orb')).map(function(o){var r=o.getBoundingClientRect();return {cx:r.left+window.scrollX+r.width/2,cy:r.top+window.scrollY+r.width/2,rad:r.width/2+14};});
 if(!orbs.length)return;[].slice.call(document.querySelectorAll('.au-star')).forEach(function(st){var r=st.getBoundingClientRect();var sx=r.left+window.scrollX,sy=r.top+window.scrollY;
 for(var k=0;k<orbs.length;k++){if(Math.hypot(sx-orbs[k].cx,sy-orbs[k].cy)<orbs[k].rad){st.style.display='none';return;}}});}catch(_e){}}
@@ -457,7 +507,7 @@ function render(){
   try{if(window.lucide)lucide.createIcons();}catch(_li){}
   var _cr=document.getElementById("consultRoot");if(!_cr){_cr=document.createElement("div");_cr.id="consultRoot";document.body.appendChild(_cr);_cr.innerHTML=consultWidget();}var _tip=document.getElementById("consultTip");if(_tip)_tip.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";var _fab=document.getElementById("consultFab");if(_fab)_fab.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";
   if(S.view==="home"){setTimeout(function(){upgradeWall();wallVis();initReveal();armCounters();},120);}
-  if(document.querySelector(".au-stage,.pf-page"))setTimeout(auFixStars,140);
+  if(document.querySelector(".au-stage,.pf-page"))setTimeout(function(){if(auEdOn()){auStarEdit();}else{auFixStars();}},140);
   if(S.view==="celeb"||S.view==="celebrity"||S.view==="personal-branding"){setTimeout(function(){wallVis();initReveal();armCounters();pbAutoplay();},120);}
   if(v==="home"||v==="channel-picker"||v==="cust-channels"||v==="admin-channels")maybeLiveRefresh();
   if(S.role)saveSession();
@@ -549,12 +599,15 @@ function viewPortfolio(){if(SC_LIST===null)setTimeout(scLoad,0);PF_SHOWN=15;var 
    var AU_STARS=[ [30,5,4,1], [70,12,6,0], [50,40,3,1] ];
    행성(구체)과 겹치면 자동으로 숨겨지니 위치는 대충 잡아도 됩니다. */
 var AU_STARS=[];
+try{if(String(location.hash).indexOf("staredit")>=0)sessionStorage.setItem("knollad_staredit","1");}catch(_ah){}
+function auEdOn(){try{return sessionStorage.getItem("knollad_staredit")==="1";}catch(_e){return false;}}
+try{var _auLS=JSON.parse(localStorage.getItem("knollad_stars_v1")||"null");if(_auLS&&_auLS.length!==undefined)window.__auStars=_auLS;}catch(_ae){}
 function auOrbs(){var o='<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0">'+'<div class="au-orb p" style="width:620px;height:620px;right:-210px;top:-60px"></div>'
 +'<div class="au-orb b" style="width:480px;height:480px;left:-190px;top:16%"></div>'
 +'<div class="au-orb v" style="width:520px;height:520px;right:-190px;top:44%"></div>'
 +'<div class="au-orb b" style="width:560px;height:560px;left:-220px;top:70%"></div>'
 +'<div class="au-orb p" style="width:380px;height:380px;right:-130px;top:90%;opacity:.75"></div>';
-var st=AU_STARS;
+var st=(window.__auStars||AU_STARS);
 st.forEach(function(p,i){var sz=p[2]||4;o+='<div class="au-star'+(p[3]?' s2':'')+'" style="width:'+sz+'px;height:'+sz+'px;left:'+p[0]+'%;top:'+p[1]+'%"></div>';});
 return o+'</div>';}
 function viewHome(){const isCust=S.role==="customer";
