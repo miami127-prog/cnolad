@@ -60,8 +60,8 @@ input,button,textarea,select{font-family:inherit}
 .hero-dim2{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,.8),rgba(0,0,0,.2) 32%,rgba(0,0,0,.2) 68%,rgba(0,0,0,.82))}
 @keyframes riseUp{0%{opacity:0;transform:translateY(38px)}100%{opacity:1;transform:translateY(0)}}
 .rise{opacity:0;animation:riseUp 1.15s cubic-bezier(.16,1,.3,1) both}
-.cta-lift{transition:transform .18s ease,box-shadow .18s ease}
-.cta-lift:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.cta-lift{position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s ease}.cta-lift::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}.cta-lift:hover::after{left:130%}
+.cta-lift:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}
 .hw-row{backface-visibility:hidden}
 section{contain:layout}
@@ -330,6 +330,45 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 .au-stage [style*="color:#B7791F"]{color:#FFD08A!important}
 .au-stage [style*="color:#E5484D"]{color:#FFA3AA!important}
 .au-stage .bg-white,.au-stage .bg-white *,.au-stage button,.au-stage button *,.au-stage input,.au-stage textarea,.au-stage select{text-shadow:none!important}
+
+/* ===== Amicro micro-interactions ===== */
+@keyframes auPop{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes auPulse{0%,100%{box-shadow:0 0 0 0 rgba(49,130,246,.45)}55%{box-shadow:0 0 0 10px rgba(49,130,246,0)}}
+@keyframes auWig{0%{transform:rotate(0) scale(1)}40%{transform:rotate(-7deg) scale(1.12)}70%{transform:rotate(4deg) scale(1.06)}100%{transform:rotate(-6deg) scale(1.1)}}
+/* 통계 타일: 순차 팝 */
+.reveal .stat-topline{opacity:0}
+.reveal.in .stat-topline{animation:auPop .6s cubic-bezier(.22,1,.36,1) both}
+.reveal.in .stat-topline:nth-child(1){animation-delay:.05s}.reveal.in .stat-topline:nth-child(2){animation-delay:.13s}
+.reveal.in .stat-topline:nth-child(3){animation-delay:.21s}.reveal.in .stat-topline:nth-child(4){animation-delay:.29s}
+.reveal.in .stat-topline:nth-child(5){animation-delay:.37s}
+/* WHY 카드 아이콘 위글 */
+.au-stage .grid>div.reveal .w-12{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.au-stage .grid>div.reveal:hover .w-12{animation:auWig .55s cubic-bezier(.34,1.56,.64,1) both}
+/* 진행 스텝 활성 원 · 전송 버튼 펄스 */
+.au-stage div[style*="background:#3182F6"][style*="border-radius:50%"]{animation:auPulse 2.4s ease-in-out infinite}
+/* 메신저 버블 팝 */
+.reveal [style*="border-radius:16px"][style*="padding:11px 15px"]{opacity:0}
+.reveal.in [style*="border-radius:16px"][style*="padding:11px 15px"]{animation:auPop .5s cubic-bezier(.22,1,.36,1) both}
+.reveal.in [style*="align-self:flex-end"] [style*="padding:11px 15px"]{animation-delay:.15s}
+.reveal.in [style*="align-self:flex-start"] [style*="padding:11px 15px"]{animation-delay:.45s}
+/* 셀럽 글래스 카드 호버 리프트 */
+.au-stage [style*="rgba(255,255,255,.05)"]{transition:transform .45s cubic-bezier(.34,1.56,.64,1),box-shadow .45s ease,background .3s}
+.au-stage [style*="rgba(255,255,255,.05)"]:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(15,10,80,.32)}
+/* 포트폴리오 타일 입장 스태거 */
+.pf-page .pf-tile{animation:auPop .55s cubic-bezier(.22,1,.36,1) both}
+.pf-page .pf-tile:nth-child(1){animation-delay:.03s}.pf-page .pf-tile:nth-child(2){animation-delay:.08s}
+.pf-page .pf-tile:nth-child(3){animation-delay:.13s}.pf-page .pf-tile:nth-child(4){animation-delay:.18s}
+.pf-page .pf-tile:nth-child(5){animation-delay:.23s}.pf-page .pf-tile:nth-child(6){animation-delay:.28s}
+.pf-page .pf-tile:nth-child(7){animation-delay:.33s}.pf-page .pf-tile:nth-child(8){animation-delay:.38s}
+.pf-page .pf-tile:nth-child(9){animation-delay:.43s}.pf-page .pf-tile:nth-child(10){animation-delay:.48s}
+/* 퍼블릭 버튼 공통 스프링 */
+.au-stage button:not([disabled]),.pf-page button{transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease,background .2s,color .2s}
+.au-stage button:not([disabled]):active,.pf-page button:active{transform:scale(.96)}
+@media(prefers-reduced-motion:reduce){
+ .reveal .stat-topline,.reveal [style*="padding:11px 15px"],.pf-page .pf-tile{opacity:1!important;animation:none!important}
+ .au-stage div[style*="border-radius:50%"]{animation:none!important}
+ .cta-lift::after{display:none}
+}
 .aubar{width:0!important;transition:width 1.25s cubic-bezier(.22,1,.36,1) .25s}
 .reveal.in .aubar{width:var(--w)!important}
 .auline{stroke-dasharray:620;stroke-dashoffset:620;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1) .2s}
@@ -345,7 +384,7 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609210300"></script>
-<script src="/app2.js?v=202609210300"></script>
+<script src="/app.js?v=202609210320"></script>
+<script src="/app2.js?v=202609210320"></script>
 </body>
 </html
