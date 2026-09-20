@@ -452,7 +452,7 @@ function auStarEdit(){if(!auEdOn())return;var box=_auBox();if(!box)return;box.st
  }
  _auRedraw();_auSave();
 }
-function auFixStars(){try{var orbs=[].slice.call(document.querySelectorAll('.au-orb')).map(function(o){var r=o.getBoundingClientRect();return {cx:r.left+window.scrollX+r.width/2,cy:r.top+window.scrollY+r.width/2,rad:r.width/2+14};});
+function auFixStars(){return;try{if(window.__auStars&&window.__auStars.length)return;var orbs=[].slice.call(document.querySelectorAll('.au-orb')).map(function(o){var r=o.getBoundingClientRect();return {cx:r.left+window.scrollX+r.width/2,cy:r.top+window.scrollY+r.width/2,rad:r.width/2+14};});
 if(!orbs.length)return;[].slice.call(document.querySelectorAll('.au-star')).forEach(function(st){var r=st.getBoundingClientRect();var sx=r.left+window.scrollX,sy=r.top+window.scrollY;
 for(var k=0;k<orbs.length;k++){if(Math.hypot(sx-orbs[k].cx,sy-orbs[k].cy)<orbs[k].rad){st.style.display='none';return;}}});}catch(_e){}}
 function render(){
@@ -598,7 +598,7 @@ function viewPortfolio(){if(SC_LIST===null)setTimeout(scLoad,0);PF_SHOWN=15;var 
    · 예시: AU_STARS.push 없이 아래 배열 안에 줄만 추가하면 됩니다
    var AU_STARS=[ [30,5,4,1], [70,12,6,0], [50,40,3,1] ];
    행성(구체)과 겹치면 자동으로 숨겨지니 위치는 대충 잡아도 됩니다. */
-var AU_STARS=[];
+var AU_STARS=[[74.9,1.2,8,1],[3.9,34.7,8,1],[72.8,12.1,4,1],[80.5,76.3,4,1],[38.9,39.5,4,1],[7.3,86.3,4,1],[13.7,30.7,4,1],[83.5,99.4,4,1],[67.8,52.2,4,1],[92.4,42.5,4,1],[6.4,39.3,4,1],[95,69.2,4,1],[96.3,30,4,1],[9.4,12.1,3,1],[9,4.8,3,1],[85.9,31.5,3,1],[27.4,85.5,3,1],[85,86.3,4,1],[40.1,11.3,6,1]];
 try{if(String(location.hash).indexOf("staredit")>=0)sessionStorage.setItem("knollad_staredit","1");}catch(_ah){}
 function auEdOn(){try{return sessionStorage.getItem("knollad_staredit")==="1";}catch(_e){return false;}}
 try{var _auLS=JSON.parse(localStorage.getItem("knollad_stars_v1")||"null");if(_auLS&&_auLS.length!==undefined)window.__auStars=_auLS;}catch(_ae){}
