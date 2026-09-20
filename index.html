@@ -109,7 +109,7 @@ section.pb-24{padding-bottom:44px!important;}
 /* 로그인 버튼: 얇은 폰트만 */
 #loginBtn{font-weight:500!important}
 /* ── 사이드바 다크 네이비 ── */
-[data-sidenav]{background:linear-gradient(180deg,#4A00B8 0%,#38008E 55%,#26006A 100%)!important;border-color:rgba(255,255,255,.06)!important}
+[data-sidenav]{background:linear-gradient(180deg,#18244E 0%,#131D40 55%,#0E1630 100%)!important;border-color:rgba(255,255,255,.06)!important}
 [data-sidenav] [data-sidenav] .side-nav-btn{font-weight:600}
 .side-cta{margin:14px 2px 6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:14px;display:block}
 .side-cta b{display:block;font-size:13.5px;color:#fff;font-weight:700;letter-spacing:-.2px}
@@ -287,57 +287,65 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 }
 </style>
 <style id="au-css">
-/* ===== Material Design (design-isms material-design · 시안 2 퍼플 밴드) ===== */
-.au-stage{position:relative;background:#F5F6F8}
-.au-top,.au-bot,.au-orb,.au-star{display:none!important}
+/* ===== Aurora / Gradient (design-isms gradient-aurora) ===== */
+.au-stage{position:relative;background:radial-gradient(1250px 850px at 82% -6%,#F565F2 0%,rgba(245,101,242,.55) 34%,rgba(245,101,242,0) 60%),radial-gradient(900px 650px at 45% -10%,#E85BE8 0%,rgba(232,91,232,0) 52%),radial-gradient(950px 700px at 96% 20%,#E06BF0 0%,rgba(224,107,240,0) 55%),radial-gradient(850px 650px at 2% 32%,#9A55F0 0%,rgba(154,85,240,0) 56%),radial-gradient(1100px 850px at 112% 44%,#B75BF2 0%,rgba(183,91,242,0) 58%),radial-gradient(1050px 820px at -16% 12%,#2247F0 0%,rgba(34,71,240,0) 62%),radial-gradient(800px 620px at 55% 50%,rgba(197,88,232,.7) 0%,rgba(197,88,232,0) 58%),radial-gradient(1300px 950px at 26% 110%,#3E6BF5 0%,rgba(62,107,245,0) 60%),radial-gradient(950px 720px at 68% 70%,#4FACFE 0%,rgba(79,172,254,0) 55%),radial-gradient(900px 700px at 92% 88%,#E465EE 0%,rgba(228,101,238,0) 55%),linear-gradient(155deg,#1B2ED6 0%,#2E45EC 26%,#4E4FF2 50%,#7A52F2 72%,#B75BF2 90%,#E465EE 106%)}
+.au-stage>section{background:transparent!important;position:relative;z-index:2}
 .au-z{position:relative;z-index:2}
-.au-stage>section{position:relative;z-index:2;background:transparent!important}
-.au-stage>section.mt-purple,section.mt-purple{background:#6200EE!important;overflow:hidden}
-.mt-purple::before{content:'';position:absolute;left:-140px;bottom:-320px;width:640px;height:640px;border-radius:50%;background:#7A22FF;z-index:0}
-.mt-purple::after{content:'';position:absolute;right:-110px;top:-280px;width:540px;height:540px;border-radius:50%;background:#7A22FF;opacity:.6;z-index:0}
-.mt-purple>*{position:relative;z-index:2}
-/* 보라 밴드 위 흰 카드 */
-.mt-purple .stat-topline{background:#fff!important;border-color:#fff!important;box-shadow:0 12px 28px rgba(30,0,90,.28)!important;transition:transform .3s cubic-bezier(.4,0,.2,1),box-shadow .3s}
-.mt-purple .stat-topline:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(30,0,90,.34)!important}
-.mt-purple .stat-topline .text-white{color:#212121!important}
-.mt-purple .text-\[\#5b9bff\]{color:#6200EE!important}
-.mt-purple .text-\[\#8a96b3\]{color:#8B95A1!important}
-.mt-purple [style*="rgba(255,255,255,.10)"]{background:#fff!important;border-color:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:0 12px 28px rgba(30,0,90,.28)}
-.mt-purple [style*="rgba(255,255,255,.10)"] .text-white{color:#212121!important}
-/* 라이트 섹션(hlight) 머티리얼 보정 */
-.au-stage .hlight [style*="color:#5b9bff"]{color:#6200EE!important}
-.au-stage .hlight .text-\[\#5b9bff\]{color:#6200EE!important}
-.au-stage .hlight [style*="rgba(49,130,246,.18)"]{background:#EDE3FF!important}
-.au-stage .hlight .grid>div[style*="rgba(255,255,255,.055)"]{background:#fff!important;border:1px solid #EEF0F5!important;box-shadow:0 3px 10px rgba(17,24,39,.06)!important;transition:transform .3s cubic-bezier(.4,0,.2,1),box-shadow .3s cubic-bezier(.4,0,.2,1)}
-.au-stage .hlight .grid>div[style*="rgba(255,255,255,.055)"]:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(98,0,238,.16)!important}
-/* 파란 액센트 → 퍼플 (스테이지 내부) */
-.au-stage div[style*="background:#3182F6"]{background:#6200EE!important}
-.au-stage .aubar[style*="background:#3182F6"]{background:linear-gradient(90deg,#6200EE,#9D5CFF)!important}
-.au-stage .aubar[style*="#5B9BFF"]{background:#9D5CFF!important}
-.au-stage .aubar[style*="#A9C9FF"]{background:#C9A7FF!important}
-.au-stage .aubar[style*="#CBE0FF"]{background:#E4D5FF!important}
-.au-stage [style*="color:#3182F6"]{color:#6200EE!important}
-.au-stage [style*="rgba(49,130,246,.3)"]{border-color:#E2D2FF!important}
-.au-stage [style*="background:#EFF5FF"]{background:#F3EBFF!important}
-.au-stage svg path[stroke="#3182F6"]{stroke:#6200EE}
-.au-stage svg path[fill="rgba(49,130,246,.12)"]{fill:rgba(98,0,238,.12)}
-.au-stage svg circle[fill="#3182F6"]{fill:#6200EE}
-.au-stage button[style*="linear-gradient(135deg,#3182F6"]{background:linear-gradient(135deg,#6200EE,#7A22FF)!important;box-shadow:0 12px 30px rgba(98,0,238,.35)!important}
-/* 스크롤 애니메이션 (유지) */
-.aubar{width:0!important;transition:width 1.25s cubic-bezier(.4,0,.2,1) .2s}
+.au-top{position:absolute;left:0;right:0;top:0;height:230px;background:linear-gradient(180deg,#000,rgba(0,0,0,.5) 45%,transparent);pointer-events:none;z-index:1}
+.au-bot{position:absolute;left:0;right:0;bottom:0;height:280px;background:linear-gradient(0deg,#0a0a0c,rgba(10,10,12,.45) 50%,transparent);pointer-events:none;z-index:1}
+.au-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(2px);z-index:0;animation:auD1 10s ease-in-out infinite alternate}
+.au-orb:nth-of-type(2n){animation:auD2 12s ease-in-out infinite alternate}
+@keyframes auD1{to{transform:translate(-16px,14px)}}
+@keyframes auD2{to{transform:translate(14px,-12px)}}
+.au-orb.p{background:radial-gradient(circle at 33% 30%,rgba(255,235,255,.38) 0%,rgba(250,180,255,.2) 30%,rgba(240,147,251,.11) 55%,rgba(240,147,251,.04) 68%,rgba(240,147,251,0) 71%);box-shadow:0 0 150px 55px rgba(240,147,251,.42),0 0 44px 10px rgba(255,195,255,.38),inset 0 0 90px rgba(255,215,255,.34),inset 12px 16px 46px rgba(255,255,255,.3)}
+.au-orb.b{background:radial-gradient(circle at 32% 28%,rgba(225,238,255,.34) 0%,rgba(160,190,255,.19) 30%,rgba(110,150,255,.1) 55%,rgba(110,150,255,.04) 68%,rgba(110,150,255,0) 71%);box-shadow:0 0 140px 50px rgba(120,160,255,.4),0 0 40px 9px rgba(190,215,255,.36),inset 0 0 84px rgba(205,225,255,.3),inset 12px 16px 44px rgba(255,255,255,.27)}
+.au-orb.v{background:radial-gradient(circle at 33% 30%,rgba(240,225,255,.32) 0%,rgba(190,155,255,.18) 30%,rgba(150,110,245,.1) 55%,rgba(150,110,245,.04) 68%,rgba(150,110,245,0) 71%);box-shadow:0 0 130px 48px rgba(165,125,250,.38),0 0 38px 9px rgba(215,190,255,.34),inset 0 0 80px rgba(225,205,255,.3),inset 11px 15px 42px rgba(255,255,255,.26)}
+.au-star{position:absolute;background:#fff;border-radius:50%;z-index:0;animation:auTw 3.4s ease-in-out infinite}
+.au-star.s2{animation-delay:1.4s}.au-star.s3{animation-delay:2.2s}
+@keyframes auTw{0%,100%{opacity:.25}50%{opacity:.9}}
+.au-stage [style*="rgba(255,255,255,.05)"]{background:rgba(255,255,255,.09)!important;border-color:rgba(255,255,255,.2)!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.au-stage [style*="rgba(255,255,255,.055)"]{background:rgba(255,255,255,.10)!important;border-color:rgba(255,255,255,.22)!important}
+.au-stage .stat-topline{background:rgba(255,255,255,.10)!important;border-color:rgba(255,255,255,.22)!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:transform .45s cubic-bezier(.34,1.56,.64,1),box-shadow .45s ease}
+.au-stage .stat-topline:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(15,10,80,.35)}
+.au-stage .grid>div[style*="rgba(255,255,255,.055)"]{transition:transform .45s cubic-bezier(.34,1.56,.64,1),box-shadow .45s ease,background .3s}
+.au-stage .grid>div[style*="rgba(255,255,255,.055)"]:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(15,10,80,.35);background:rgba(255,255,255,.15)!important}
+.au-stage [style*="color:#5b9bff"]{color:#CFE4FF!important}
+.au-stage .text-\[\#5b9bff\]{color:#CFE4FF!important}
+.au-stage .text-\[\#8a96b3\]{color:rgba(255,255,255,.72)!important}
+.au-stage [style*="color:rgba(255,255,255,.58)"]{color:#fff!important}
+.au-stage [style*="color:rgba(255,255,255,.6)"]{color:#fff!important}
+.au-stage [style*="color:rgba(255,255,255,.62)"]{color:#fff!important}
+.au-stage [style*="rgba(49,130,246,.18)"]{background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.3)}
+.au-stage [style*="color:rgba(255,255,255,.55)"]{color:#fff!important}
+.au-stage [style*="color:rgba(255,255,255,.5)"]{color:#fff!important}
+.au-stage:after{content:'';position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(0deg,rgba(28,12,58,.42),rgba(28,12,58,.18) 55%,transparent);pointer-events:none;z-index:1}
+.au-stage [style*="color:rgba(255,255,255,.4)"]{color:#fff!important}
+.au-stage [style*="color:rgba(255,255,255,.45)"]{color:#fff!important}
+.au-stage [style*="color:rgba(255,255,255,.52)"]{color:#fff!important}
+.au-stage [style*="color:rgba(255,255,255,.7)"]{color:#fff!important}
+.au-stage [style*="color:rgba(255,255,255,.72)"]{color:#fff!important}
+.au-stage [style*="color:#8fb8ff"]{color:#D6E7FF!important}
+.au-stage [style*="color:#3182F6"]{color:#A8CCFF!important}
+.au-stage [style*="color:#0E9F6E"]{color:#7DECC0!important}
+.au-stage [style*="color:#B7791F"]{color:#FFD08A!important}
+.au-stage [style*="color:#E5484D"]{color:#FFA3AA!important}
+.au-stage .bg-white,.au-stage .bg-white *,.au-stage button,.au-stage button *,.au-stage input,.au-stage textarea,.au-stage select{text-shadow:none!important}
+.aubar{width:0!important;transition:width 1.25s cubic-bezier(.22,1,.36,1) .25s}
 .reveal.in .aubar{width:var(--w)!important}
 .auline{stroke-dasharray:620;stroke-dashoffset:620;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1) .2s}
 .reveal.in .auline{stroke-dashoffset:0}
 .auarea{opacity:0;transition:opacity .8s ease 1.05s}
 .reveal.in .auarea{opacity:1}
 @media(prefers-reduced-motion:reduce){.aubar{transition:none;width:var(--w)!important}.auline{transition:none;stroke-dashoffset:0}.auarea{transition:none;opacity:1}}
+@media(max-width:820px){.au-stage [style]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.au-stage .stat-topline{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.au-orb,.au-star{display:none}}
+@media(prefers-reduced-motion:reduce){.au-orb,.au-star{animation:none!important}}
 </style>
 </head>
 <body class="font-sans">
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609210200"></script>
-<script src="/app2.js?v=202609210200"></script>
+<script src="/app.js?v=202609210300"></script>
+<script src="/app2.js?v=202609210300"></script>
 </body>
 </html
