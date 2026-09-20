@@ -297,7 +297,7 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 .au-stage>section{background:transparent!important;position:relative;z-index:2}
 .au-z{position:relative;z-index:2}
 .au-top{position:absolute;left:0;right:0;top:0;height:230px;background:linear-gradient(180deg,#000,rgba(0,0,0,.5) 45%,transparent);pointer-events:none;z-index:1}
-.au-bot{position:absolute;left:0;right:0;bottom:0;height:180px;background:linear-gradient(0deg,#0a0a0c,rgba(10,10,12,.45) 50%,transparent);pointer-events:none;z-index:1}
+.au-bot{position:absolute;left:0;right:0;bottom:0;height:280px;background:linear-gradient(0deg,#0a0a0c,rgba(10,10,12,.45) 50%,transparent);pointer-events:none;z-index:1}
 .au-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(2px);z-index:0;animation:auD1 10s ease-in-out infinite alternate}
 .au-orb:nth-of-type(2n){animation:auD2 12s ease-in-out infinite alternate}
 @keyframes auD1{to{transform:translate(-16px,14px)}}
@@ -317,10 +317,23 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 .au-stage [style*="color:#5b9bff"]{color:#CFE4FF!important}
 .au-stage .text-\[\#5b9bff\]{color:#CFE4FF!important}
 .au-stage .text-\[\#8a96b3\]{color:rgba(255,255,255,.72)!important}
-.au-stage [style*="color:rgba(255,255,255,.58)"]{color:rgba(255,255,255,.72)!important}
-.au-stage [style*="color:rgba(255,255,255,.6)"]{color:rgba(255,255,255,.78)!important}
-.au-stage [style*="color:rgba(255,255,255,.62)"]{color:rgba(255,255,255,.78)!important}
+.au-stage [style*="color:rgba(255,255,255,.58)"]{color:rgba(255,255,255,.86)!important}
+.au-stage [style*="color:rgba(255,255,255,.6)"]{color:rgba(255,255,255,.88)!important}
+.au-stage [style*="color:rgba(255,255,255,.62)"]{color:rgba(255,255,255,.88)!important}
 .au-stage [style*="rgba(49,130,246,.18)"]{background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.3)}
+.au-stage [style*="color:rgba(255,255,255,.55)"]{color:rgba(255,255,255,.84)!important}
+.au-stage [style*="color:rgba(255,255,255,.5)"]{color:rgba(255,255,255,.82)!important}
+.au-stage h1,.au-stage h2,.au-stage h3,.au-stage h4{text-shadow:0 2px 16px rgba(12,10,55,.5)}
+.au-stage p,.au-stage li,.au-stage span{text-shadow:0 1px 10px rgba(12,10,55,.32)}
+.au-stage [style*="background:#fff"] *,.au-stage [style*="background:#F9FAFB"] *,.au-stage [style*="background:#F4F5F7"] *{text-shadow:none}
+.au-stage:after{content:'';position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(0deg,rgba(28,12,58,.42),rgba(28,12,58,.18) 55%,transparent);pointer-events:none;z-index:1}
+.aubar{width:0!important;transition:width 1.25s cubic-bezier(.22,1,.36,1) .25s}
+.reveal.in .aubar{width:var(--w)!important}
+.auline{stroke-dasharray:620;stroke-dashoffset:620;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1) .2s}
+.reveal.in .auline{stroke-dashoffset:0}
+.auarea{opacity:0;transition:opacity .8s ease 1.05s}
+.reveal.in .auarea{opacity:1}
+@media(prefers-reduced-motion:reduce){.aubar{transition:none;width:var(--w)!important}.auline{transition:none;stroke-dashoffset:0}.auarea{transition:none;opacity:1}}
 @media(max-width:820px){.au-stage [style]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.au-stage .stat-topline{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.au-orb,.au-star{display:none}}
 @media(prefers-reduced-motion:reduce){.au-orb,.au-star{animation:none!important}}
 </style>
@@ -329,7 +342,7 @@ aside[data-sidenav].is-folded nav{padding-left:.3rem!important;padding-right:.3r
 <div id="root"></div>
 <div id="modalRoot"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="/app.js?v=202609202330"></script>
-<script src="/app2.js?v=202609202330"></script>
+<script src="/app.js?v=202609202345"></script>
+<script src="/app2.js?v=202609202345"></script>
 </body>
 </html
