@@ -402,6 +402,9 @@ function logout(){authLogout();S._notiLast=null;S._notiMaxCreated=null;S._notiCo
 var _scrollKeep=0,_scrollLock=false;
 document.addEventListener("input",function(e){try{var t=e.target;if(t&&t.id&&(t.tagName==="TEXTAREA"||t.tagName==="INPUT")){S._touched=S._touched||{};S._touched[t.id]=1;}}catch(_e){}},true);
 window.addEventListener("scroll",function(){try{syncScrollTopBtn();}catch(_st){}if(!_scrollLock)_scrollKeep=window.scrollY||window.pageYOffset||0;},{passive:true});
+function auFixStars(){try{var orbs=[].slice.call(document.querySelectorAll('.au-orb')).map(function(o){var r=o.getBoundingClientRect();return {cx:r.left+window.scrollX+r.width/2,cy:r.top+window.scrollY+r.width/2,rad:r.width/2+14};});
+if(!orbs.length)return;[].slice.call(document.querySelectorAll('.au-star')).forEach(function(st){var r=st.getBoundingClientRect();var sx=r.left+window.scrollX,sy=r.top+window.scrollY;
+for(var k=0;k<orbs.length;k++){if(Math.hypot(sx-orbs[k].cx,sy-orbs[k].cy)<orbs[k].rad){st.style.display='none';return;}}});}catch(_e){}}
 function render(){
   const v=S.view;let h;
   try{
@@ -454,6 +457,7 @@ function render(){
   try{if(window.lucide)lucide.createIcons();}catch(_li){}
   var _cr=document.getElementById("consultRoot");if(!_cr){_cr=document.createElement("div");_cr.id="consultRoot";document.body.appendChild(_cr);_cr.innerHTML=consultWidget();}var _tip=document.getElementById("consultTip");if(_tip)_tip.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";var _fab=document.getElementById("consultFab");if(_fab)_fab.style.display=(v==="home"||v==="portfolio"||v==="celeb"||v==="celebrity"||v==="personal-branding")?"":"none";
   if(S.view==="home"){setTimeout(function(){upgradeWall();wallVis();initReveal();armCounters();},120);}
+  if(document.querySelector(".au-stage,.pf-page"))setTimeout(auFixStars,140);
   if(S.view==="celeb"||S.view==="celebrity"||S.view==="personal-branding"){setTimeout(function(){wallVis();initReveal();armCounters();pbAutoplay();},120);}
   if(v==="home"||v==="channel-picker"||v==="cust-channels"||v==="admin-channels")maybeLiveRefresh();
   if(S.role)saveSession();
@@ -543,8 +547,8 @@ function auOrbs(){var o='<div style="position:absolute;inset:0;overflow:hidden;p
 +'<div class="au-orb v" style="width:520px;height:520px;right:-190px;top:44%"></div>'
 +'<div class="au-orb b" style="width:560px;height:560px;left:-220px;top:70%"></div>'
 +'<div class="au-orb p" style="width:380px;height:380px;right:-130px;top:90%;opacity:.75"></div>';
-var st=[[10,6],[38,4],[62,9],[91,14],[80,30],[8,34],[52,46],[15,62],[88,68],[33,87]];
-st.forEach(function(p,i){var sz=[3,5,3,7,4,3,5,3,6,4][i%10];o+='<div class="au-star'+(i%3===1?' s2':i%3===2?' s3':'')+'" style="width:'+sz+'px;height:'+sz+'px;left:'+p[0]+'%;top:'+p[1]+'%"></div>';});
+var st=[[30,3],[55,5],[70,8],[45,12],[10,3],[62,17],[35,22],[86,22],[50,28],[68,33],[28,38],[58,42],[12,44],[40,50],[65,55],[88,58],[30,60],[55,66],[45,76],[20,88],[65,82],[35,90],[52,95]];
+st.forEach(function(p,i){var sz=[3,4,3,6,3,4,3,5,3,4,6,3,4,3,5,3,4,6,3,4,3,5,4][i%23];o+='<div class="au-star'+(i%3===1?' s2':i%3===2?' s3':'')+'" style="width:'+sz+'px;height:'+sz+'px;left:'+p[0]+'%;top:'+p[1]+'%"></div>';});
 return o+'</div>';}
 function viewHome(){const isCust=S.role==="customer";
 var FEATS=[["award","숏폼 상위 0.1%급 자체 채널 보유","단순 영상 외주 서비스가 아닙니다. 실제 구독자와 시청자를 보유한 숏폼 상위권 채널 네트워크에 직접 광고를 집행합니다."],["git-compare-arrows","납품과 성과는 다릅니다","보기 좋은 콘텐츠를 납품하는 것과 실제 조회수·반응을 만들어내는 것은 완전히 다른 영역입니다."],["zap","진행 과정 자동화","신청부터 채널 선택, 집행 요청, 진행 현황 확인까지 자동화된 프로세스로 관리할 수 있습니다."],["layout-dashboard","대시보드 제공","진행 중인 캠페인의 조회수, 채널 현황, 노출 상태를 한눈에 확인할 수 있습니다."],["bar-chart-3","인사이트 리포트","캠페인별 조회수와 성과 데이터를 자동으로 정리해 리포트로 제공합니다."],["message-circle","실시간 소통 · 편리한 광고","신청부터 노출까지 번거로움 없이, 담당자와 메신저로 진행 상황과 요청사항을 빠르게 소통할 수 있습니다."]];
