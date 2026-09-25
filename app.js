@@ -192,8 +192,8 @@ privacy:{t:"개인정보처리방침",ver:[{date:LEGAL_EFFECTIVE,label:"v2 · "+
 4. 고객 문의 응대, 부정 이용 방지, 서비스 운영·개선 및 통계
 
 제2조 (처리하는 개인정보의 항목 및 수집 방법)
-1. 캠페인 신청 시 (필수): 담당자명, 이메일(아이디), 연락처, 브랜드/회사명, 희망 채널·수량
-2. 캠페인 신청 시 (선택): 업로드 희망일, 제품 링크, 활용 소재, 광고 고지 방식, 희망 영상 컨셉, 요청사항, 자료 파일(이미지·영상·가이드 등), 카카오톡 알림 수신 여부, 콘텐츠 2차 활용 동의 여부
+1. 캠페인 신청 시 (필수): 담당자명, 이메일(아이디), 연락처, 브랜드/회사명, 희망 채널·수량, 콘텐츠 2차 활용 동의
+2. 캠페인 신청 시 (선택): 업로드 희망일, 제품 링크, 활용 소재, 광고 고지 방식, 희망 영상 컨셉, 요청사항, 자료 파일(이미지·영상·가이드 등), 카카오톡 알림 수신 여부
 3. 법인·사업자 신청 시 (필수): 사업자등록증 사본 (세금계산서 발행 목적)
 4. 파트너사 신청 시 (필수): 담당자명
 5. 계정 발급 시: 아이디(이메일), 비밀번호
@@ -654,7 +654,7 @@ ${field('요청사항',`<textarea id="f_note" rows="2" placeholder="기타 요�
 ${field('자료 파일 업로드 (선택)',uploadZone("f_files","제품 이미지·영상·가이드·레퍼런스 등 (여러 개 가능)"))}
 ${S.cust?"":field('의뢰인 유형',`<div class="flex gap-5 mb-1"><label class="inline-flex items-center gap-2 text-[16px] cursor-pointer"><input type="radio" name="f_btype" value="개인" onchange="bizTypeToggle()" ${(S.form&&S.form.btype)==="개인"?"checked":""}> 개인</label><label class="inline-flex items-center gap-2 text-[16px] cursor-pointer"><input type="radio" name="f_btype" value="법인" onchange="bizTypeToggle()" ${(S.form&&S.form.btype)==="법인"?"checked":""}> 법인·사업자</label></div><div id="f_bizwrap" style="display:${(S.form&&S.form.btype)==="법인"?"block":"none"}"><p class="text-[14px] font-bold text-g700 mt-2 mb-1">사업자등록증 첨부 (필수)</p><input type="file" id="f_bizcert" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-[14px] text-g600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-blue-tint file:text-blue file:font-bold file:cursor-pointer"></div><p class="text-[12px] text-g400 mt-1">법인·사업자는 사업자등록증 첨부가 필수입니다. (개인 의뢰인·기존 회원·파트너사는 첨부 없이 신청 가능)</p>`)}
 <div class="pt-2 border-t border-g100 mt-2"><p class="text-[15px] font-medium text-g900 mb-2.5 mt-3">필수 동의 항목</p>
-<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree3" ${S.form.agree3?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">콘텐츠 2차 활용 동의 <span class="text-g400 font-bold">(선택)</span></span></label><label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree1" ${S.form.agree1?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">이용약관 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('terms')" class="text-[14px] text-g500 underline">내용 보기</button></label>
+<label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree3" ${S.form.agree3?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">콘텐츠 2차 활용 동의 <span class="text-blue font-bold">(필수)</span></span></label><label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree1" ${S.form.agree1?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">이용약관 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('terms')" class="text-[14px] text-g500 underline">내용 보기</button></label>
 <label class="flex items-center gap-2.5 cursor-pointer py-1"><input type="checkbox" id="f_agree2" ${S.form.agree2?'checked':''} class="w-5 h-5 rounded accent-blue flex-shrink-0"><span class="text-[15px] text-g900 flex-1">개인정보 수집 및 이용 동의 <span class="text-blue font-bold">(필수)</span></span><button type="button" onclick="openLegal('consent')" class="text-[14px] text-g500 underline">내용 보기</button></label></div>
 </div>`;}
 function isLoggedCust(){return !!(S.cust&&S.role==="customer"&&S.cust.role!=="파트너사");}
@@ -724,6 +724,7 @@ function emailTpl(a,title,body){var brand=(a&&(a.brand_name||a.brand))||"";var n
 function notifyTelegram(t){try{fetch(SUPA_URL+"/functions/v1/notify-telegram",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},SH),body:JSON.stringify({text:t})}).catch(function(){});}catch(e){}}
 function submitApply(){saveForm();const f=S.form;var _isP=(S.cust&&S.cust.role==="파트너사");if(_isP){if(!f.manager||!f.manager.trim()||!f.email||!f.email.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자·이메일·브랜드명을 입력해주세요");return;}if(!f.phone||!f.phone.trim()){toast("연락처를 입력해주세요");return;}f.name=f.manager;}else if(!f.name||!f.name.trim()||!f.email||!f.email.trim()||!f.phone||!f.phone.trim()||!f.brand||!f.brand.trim()){toast("필수: 담당자명·이메일·연락처·브랜드명을 모두 입력해주세요");return;}
   if(!f.agree1||!f.agree2){toast("필수 동의 항목(이용약관·개인정보)에 동의해주세요");return;}
+  if(!f.agree3){toast("콘텐츠 2차 활용 동의는 필수입니다. 동의해주셔야 신청이 가능합니다");return;}
   var _bz=document.getElementById("f_bizcert");var _hasBiz=_bz&&_bz.files&&_bz.files.length;
   if(!S.cust&&S.role!=="admin"&&S.role!=="cs"){var _bt=f.btype||(((document.querySelector('input[name="f_btype"]:checked')||{}).value));
   if(!_bt){toast("의뢰인 유형(개인 / 법인·사업자)을 선택해주세요");return;}
