@@ -613,26 +613,37 @@ return o+'</div>';}
 /* 메인 홈 · 크놀AD 소개 영상 (모니터형 플레이어) */
 var IF_ICO={play:'<svg viewBox="0 0 24 24" fill="currentColor" style="width:100%;height:100%"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l10.96-6.86a1 1 0 0 0 0-1.7L9.52 4.29A1 1 0 0 0 8 5.14z"/></svg>',pause:'<svg viewBox="0 0 24 24" fill="currentColor" style="width:100%;height:100%"><rect x="6" y="4.5" width="4.2" height="15" rx="1.2"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.2"/></svg>',back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><text x="12" y="15.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="currentColor" stroke="none">10</text></svg>',fwd:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/><text x="12" y="15.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="currentColor" stroke="none">10</text></svg>',vol:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',mute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>',full:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>'};
 function introFilm(){return '<div class="if-wrap reveal"><div class="if-head-t"><span class="if-kick">BRAND FILM</span><h2 class="if-h2">한눈에 보는 <span style="color:#5b9bff">크놀AD</span></h2></div>'
-+'<div class="if-mon"><div class="if-scr">'
++'<div class="if-mon"><div class="if-scr" id="ifS">'
 +'<div class="if-bar"><span class="if-no">▶</span><div class="if-bt"><span class="if-sub">크놀AD 소개 영상 · 3분 42초</span><b class="if-tt">신청부터 성과 확인까지, 크놀AD의 모든 것</b></div><span class="if-brand">CNOLAD</span></div>'
-+'<div class="if-vid" onclick="ifToggle()"><video id="ifV" src="/media/knollad_intro.mp4" poster="/media/knollad_intro_poster.jpg" preload="metadata" playsinline ontimeupdate="ifTick()" onplay="ifState()" onpause="ifState()" onended="ifState()"></video>'
-+'<button type="button" class="if-big" aria-label="재생">'+IF_ICO.play+'</button>'
-+'<div class="if-prog" onclick="event.stopPropagation();ifSeekTo(event)"><div id="ifP" class="if-pf"></div></div></div></div></div>'
-+'<div class="if-ctl"><button type="button" onclick="ifSkip(-10)" aria-label="10초 뒤로"><i>'+IF_ICO.back+'</i><span>10초</span></button>'
++'<div class="if-vid" onclick="ifToggle()" ondblclick="event.preventDefault();ifFull()"><video id="ifV" src="/media/knollad_intro.mp4" poster="/media/knollad_intro_poster.jpg" preload="metadata" playsinline ontimeupdate="ifTick()" onprogress="ifTick()" onloadedmetadata="ifTick()" onplay="ifState()" onpause="ifState()" onended="ifState()"></video>'
++'<button type="button" class="if-big" aria-label="재생">'+IF_ICO.play+'</button></div>'
++'<div class="if-dock">'
++'<div class="if-seek" id="ifSeek" onpointerdown="ifDragStart(event)" onpointermove="ifHover(event)" onpointerleave="ifHoverEnd()"><div class="if-rail"><div id="ifB" class="if-buf"></div><div id="ifP" class="if-pf"></div></div><div id="ifK" class="if-knob"></div><div id="ifTip" class="if-tip">0:00</div></div>'
++'<div class="if-row">'
 +'<button type="button" id="ifPlay" class="if-pp" onclick="ifToggle()" aria-label="재생/일시정지">'+IF_ICO.play+'</button>'
-+'<button type="button" onclick="ifSkip(10)" aria-label="10초 앞으로"><i>'+IF_ICO.fwd+'</i><span>10초</span></button>'
-+'<span class="if-sep"></span><span id="ifT" class="if-time">0:00 / 3:42</span><span class="if-sep"></span>'
-+'<button type="button" id="ifMu" onclick="ifMute()" aria-label="음소거"><i>'+IF_ICO.vol+'</i></button>'
-+'<button type="button" onclick="ifFull()" aria-label="전체화면"><i>'+IF_ICO.full+'</i></button></div></div>';}
++'<button type="button" class="if-ib" onclick="ifSkip(-10)" aria-label="10초 뒤로">'+IF_ICO.back+'</button>'
++'<button type="button" class="if-ib" onclick="ifSkip(10)" aria-label="10초 앞으로">'+IF_ICO.fwd+'</button>'
++'<span id="ifT" class="if-time">0:00 / 3:42</span>'
++'<span class="if-sp"></span>'
++'<button type="button" id="ifMu" class="if-ib" onclick="ifMute()" aria-label="음소거">'+IF_ICO.vol+'</button>'
++'<input id="ifVol" class="if-vol" type="range" min="0" max="1" step="0.05" value="1" oninput="ifVol(this.value)" aria-label="볼륨">'
++'<button type="button" class="if-ib if-fs" onclick="ifFull()" aria-label="전체화면" title="전체화면 (더블클릭)">'+IF_ICO.full+'</button>'
++'</div></div></div></div></div>';}
 function ifV(){return document.getElementById("ifV");}
 function ifFmt(x){x=Math.max(0,Math.floor(x||0));return Math.floor(x/60)+":"+("0"+(x%60)).slice(-2);}
+function ifDur(){var v=ifV();return (v&&isFinite(v.duration)&&v.duration>0)?v.duration:222;}
 function ifToggle(){var v=ifV();if(!v)return;if(v.paused||v.ended){var p=v.play();if(p&&p.catch)p.catch(function(){});}else v.pause();}
 function ifState(){var v=ifV();if(!v)return;var on=!v.paused&&!v.ended;var w=v.closest(".if-mon");if(w)w.classList.toggle("is-on",on);var b=document.getElementById("ifPlay");if(b)b.innerHTML=on?IF_ICO.pause:IF_ICO.play;}
-function ifTick(){var v=ifV();if(!v)return;var d=v.duration||222;var f=document.getElementById("ifP");if(f)f.style.width=(100*v.currentTime/d)+"%";var t=document.getElementById("ifT");if(t)t.textContent=ifFmt(v.currentTime)+" / "+ifFmt(d);}
-function ifSkip(n){var v=ifV();if(!v)return;v.currentTime=Math.max(0,Math.min((v.duration||222)-.1,v.currentTime+n));ifTick();}
-function ifSeekTo(e){var v=ifV();if(!v)return;var r=e.currentTarget.getBoundingClientRect();v.currentTime=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(v.duration||222);ifTick();}
-function ifMute(){var v=ifV();if(!v)return;v.muted=!v.muted;var b=document.getElementById("ifMu");if(b)b.innerHTML="<i>"+(v.muted?IF_ICO.mute:IF_ICO.vol)+"</i>";}
-function ifFull(){var v=ifV();if(!v)return;try{if(v.requestFullscreen)v.requestFullscreen();else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();}catch(e){}}
+function ifPaint(f){var p=document.getElementById("ifP"),k=document.getElementById("ifK");if(p)p.style.width=(f*100)+"%";if(k)k.style.left=(f*100)+"%";}
+function ifTick(){var v=ifV();if(!v)return;var d=ifDur();if(!window._ifDrag)ifPaint(v.currentTime/d);try{var bf=v.buffered;if(bf&&bf.length){var e=document.getElementById("ifB");if(e)e.style.width=(100*bf.end(bf.length-1)/d)+"%";}}catch(_e){}var t=document.getElementById("ifT");if(t)t.textContent=ifFmt(v.currentTime)+" / "+ifFmt(d);}
+function ifSkip(n){var v=ifV();if(!v)return;v.currentTime=Math.max(0,Math.min(ifDur()-.1,v.currentTime+n));ifTick();}
+function ifFrac(e){var el=document.getElementById("ifSeek");var r=el.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));}
+function ifDragStart(e){var el=document.getElementById("ifSeek");if(!el)return;e.preventDefault();window._ifDrag=true;el.classList.add("drag");try{el.setPointerCapture(e.pointerId);}catch(_e){}var mv=function(ev){var f=ifFrac(ev);ifPaint(f);ifHover(ev);var t=document.getElementById("ifT");if(t)t.textContent=ifFmt(f*ifDur())+" / "+ifFmt(ifDur());};var up=function(ev){el.removeEventListener("pointermove",mv);el.removeEventListener("pointerup",up);el.removeEventListener("pointercancel",up);window._ifDrag=false;el.classList.remove("drag");var v=ifV();if(v){v.currentTime=ifFrac(ev)*ifDur();}ifTick();};el.addEventListener("pointermove",mv);el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);mv(e);}
+function ifHover(e){var tip=document.getElementById("ifTip");if(!tip)return;var f=ifFrac(e);tip.textContent=ifFmt(f*ifDur());tip.style.left=(f*100)+"%";tip.style.opacity=1;}
+function ifHoverEnd(){if(window._ifDrag)return;var tip=document.getElementById("ifTip");if(tip)tip.style.opacity=0;}
+function ifMute(){var v=ifV();if(!v)return;v.muted=!v.muted;var b=document.getElementById("ifMu");if(b)b.innerHTML=v.muted?IF_ICO.mute:IF_ICO.vol;var r=document.getElementById("ifVol");if(r)r.value=v.muted?0:v.volume;}
+function ifVol(x){var v=ifV();if(!v)return;v.volume=+x;v.muted=(+x===0);var b=document.getElementById("ifMu");if(b)b.innerHTML=v.muted?IF_ICO.mute:IF_ICO.vol;}
+function ifFull(){var s=document.getElementById("ifS"),v=ifV();try{if(document.fullscreenElement){document.exitFullscreen();return;}if(s&&s.requestFullscreen)s.requestFullscreen();else if(s&&s.webkitRequestFullscreen)s.webkitRequestFullscreen();else if(v&&v.webkitEnterFullscreen)v.webkitEnterFullscreen();}catch(e){}}
 function viewHome(){const isCust=S.role==="customer";
 var FEATS=[["award","숏폼 상위 0.1%급 자체 채널 보유","단순 영상 외주 서비스가 아닙니다. 실제 구독자와 시청자를 보유한 숏폼 상위권 채널 네트워크에 직접 광고를 집행합니다."],["git-compare-arrows","납품과 성과는 다릅니다","보기 좋은 콘텐츠를 납품하는 것과 실제 조회수·반응을 만들어내는 것은 완전히 다른 영역입니다."],["zap","진행 과정 자동화","신청부터 채널 선택, 집행 요청, 진행 현황 확인까지 자동화된 프로세스로 관리할 수 있습니다."],["layout-dashboard","대시보드 제공","진행 중인 캠페인의 조회수, 채널 현황, 노출 상태를 한눈에 확인할 수 있습니다."],["bar-chart-3","인사이트 리포트","캠페인별 조회수와 성과 데이터를 자동으로 정리해 리포트로 제공합니다."],["message-circle","실시간 소통 · 편리한 광고","신청부터 노출까지 번거로움 없이, 담당자와 메신저로 진행 상황과 요청사항을 빠르게 소통할 수 있습니다."]];
 return `<div class="min-h-screen">${topbar()}
