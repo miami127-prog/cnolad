@@ -615,7 +615,7 @@ var IF_ICO={play:'<svg viewBox="0 0 24 24" fill="currentColor" style="width:100%
 function introFilm(){return '<div class="if-wrap reveal"><div class="if-head-t"><span class="if-kick">BRAND FILM</span><h2 class="if-h2">한눈에 보는 <span style="color:#5b9bff">크놀AD</span></h2></div>'
 +'<div class="if-mon"><div class="if-scr" id="ifS">'
 +'<div class="if-bar"><span class="if-no">▶</span><div class="if-bt"><span class="if-sub">크놀AD 소개 영상 · 3분 42초</span><b class="if-tt">신청부터 성과 확인까지, 크놀AD의 모든 것</b></div><span class="if-brand">CNOLAD</span></div>'
-+'<div class="if-vid" onclick="ifToggle()" ondblclick="event.preventDefault();ifFull()"><video id="ifV" src="/media/knollad_intro.mp4" poster="/media/knollad_intro_poster.jpg" preload="metadata" playsinline ontimeupdate="ifTick()" onprogress="ifTick()" onloadedmetadata="ifTick()" onplay="ifState()" onpause="ifState()" onended="ifState()"></video>'
++'<div class="if-vid" onclick="ifToggle()" ondblclick="event.preventDefault();ifFull()"><video id="ifV" src="/media/knollad_intro.mp4?v=hq1" poster="/media/knollad_intro_poster.jpg?v=hq1" preload="metadata" playsinline ontimeupdate="ifTick()" onprogress="ifTick()" onloadedmetadata="ifTick()" onplay="ifState()" onpause="ifState()" onended="ifState()"></video>'
 +'<button type="button" class="if-big" aria-label="재생">'+IF_ICO.play+'</button></div>'
 +'<div class="if-dock">'
 +'<div class="if-seek" id="ifSeek" onpointerdown="ifDragStart(event)" onpointermove="ifHover(event)" onpointerleave="ifHoverEnd()"><div class="if-rail"><div id="ifB" class="if-buf"></div><div id="ifP" class="if-pf"></div></div><div id="ifK" class="if-knob"></div><div id="ifTip" class="if-tip">0:00</div></div>'
